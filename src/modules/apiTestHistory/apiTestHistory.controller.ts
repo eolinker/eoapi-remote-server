@@ -7,13 +7,16 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTestHistoryService } from './apiTestHistory.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api_test_history')
+@UseGuards(AuthGuard('api-key'))
 export class ApiTestHistoryController {
   private readonly NOT_FOUND = {
     statusCode: 201,

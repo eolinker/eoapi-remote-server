@@ -7,13 +7,16 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiDataService } from './apiData.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api_data')
+@UseGuards(AuthGuard('api-key'))
 export class ApiDataController {
   private readonly NOT_FOUND = {
     statusCode: 201,

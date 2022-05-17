@@ -18,6 +18,29 @@ npm i -g @nestjs/cli
 
 ormconfig.json中需要配置MySQL数据库的连接信息。
 
+```
+{
+  "type": "mysql",
+  "host": "localhost",
+  "port": 3306,
+  "username": "配置用户名",
+  "password": "配置密码",
+  "database": "配置数据库",
+  "synchronize": false,
+  "logging": false,
+  "entities": ["dist/entities/**/*.js"],
+  "migrations": ["dist/migrations/**/*.js"],
+  "migrationsRun": true,
+  "cli": {
+    "migrationsDir": "src/migrations"
+  }
+}
+```
+
+复制.env.example为.env文件，并配置API_KEY。
+```
+API_KEY=1ab2c3d4e5f61ab2c3d4e5f6
+```
 
 ## 命令
 
