@@ -1,4 +1,5 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { AppService } from './app.service';
 
 @Controller()
@@ -8,5 +9,14 @@ export class AppController {
   @Get()
   getHello(): string {
     return this.appService.getHello();
+  }
+
+  @Get('system/status')
+  @UseGuards(AuthGuard('api-key'))
+  status() {
+    return {
+      statusCode: 200,
+      data: 'success',
+    };
   }
 }
