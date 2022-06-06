@@ -1,6 +1,7 @@
 # eoapi-remote-server
 storage api data in remote server
 
+node : version>16
 ## 运行代码
 
 ```
