@@ -14,6 +14,7 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { ValidateQueryPipe } from 'src/pipe/query.pipe';
 
 @Controller('api_test_history')
 @UseGuards(AuthGuard('api-key'))
@@ -98,9 +99,9 @@ export class ApiTestHistoryController {
     return this.NOT_FOUND;
   }
 
-  @Delete(':uuid')
-  async remove(@Param('uuid') uuid: string) {
-    const data = await this.service.remove(+uuid);
+  @Delete()
+  async remove(@Query(ValidateQueryPipe) query) {
+    const data = await this.service.remove(query.uuids);
     if (data && data.affected > 0) {
       return {
         statusCode: 200,

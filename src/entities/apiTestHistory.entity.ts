@@ -1,8 +1,8 @@
 import { Column, Entity } from 'typeorm';
-import { Base } from './base.entity';
+import { FictitiousBase } from './base.entity';
 
 @Entity()
-export class ApiTestHistory extends Base {
+export class ApiTestHistory extends FictitiousBase {
   @Column()
   projectID: number;
 
@@ -17,7 +17,4 @@ export class ApiTestHistory extends Base {
 
   @Column()
   response: string;
-
-  @Column()
-  weight: number;
 }

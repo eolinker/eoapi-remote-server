@@ -38,7 +38,7 @@ export class ApiTestHistoryService {
     return await this.repository.update(id, updateDto);
   }
 
-  async remove(id: number) {
-    return await this.repository.delete(id);
+  async remove(ids: number[]) {
+    return await this.repository.delete(ids);
   }
 }

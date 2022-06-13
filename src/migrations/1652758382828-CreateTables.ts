@@ -330,18 +330,6 @@ export class CreateTables1652758382828 implements MigrationInterface {
             comment: '自增主键ID',
           },
           {
-            name: 'name',
-            type: 'varchar',
-            length: '100',
-            comment: 'API名称',
-          },
-          {
-            name: 'description',
-            type: 'text',
-            isNullable: true,
-            comment: 'API描述',
-          },
-          {
             name: 'projectID',
             type: 'int',
             default: 0,
@@ -361,8 +349,8 @@ export class CreateTables1652758382828 implements MigrationInterface {
           },
           {
             name: 'request',
-            type: 'varchar',
-            length: '20',
+            type: 'json',
+            isNullable: true,
             comment: 'HTTP Request',
           },
           {
