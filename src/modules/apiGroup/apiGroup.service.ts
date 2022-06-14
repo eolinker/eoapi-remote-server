@@ -30,6 +30,9 @@ export class ApiGroupService {
     return await this.repository.find(query);
   }
 
+  async findByIds(ids: number[]) {
+    return await this.repository.findByIds(ids);
+  }
   async findOne(id: number): Promise<ApiGroup> {
     return await this.repository.findOne(id);
   }
@@ -37,7 +40,9 @@ export class ApiGroupService {
   async update(id: number, updateDto: UpdateDto) {
     return await this.repository.update(id, updateDto);
   }
-
+  async bulkUpdate(updateDto: Array<UpdateDto>){
+    return await this.repository.save(updateDto);
+  }
   async remove(id: number) {
     return await this.repository.delete(id);
   }

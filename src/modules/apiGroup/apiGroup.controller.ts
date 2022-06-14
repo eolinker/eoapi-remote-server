@@ -67,7 +67,24 @@ export class ApiGroupController {
 
     return this.NOT_FOUND;
   }
-
+  @Put('batch')
+  async batchUpdate(@Body() updateDtos: Array<UpdateDto>) {
+    let ids = updateDtos.map((val) => val.uuid);
+    const array = await this.service.findByIds(ids);
+    const newArr = array.map((el) => {
+      let item = updateDtos.find((val) => (val.uuid == el.uuid));
+      return {
+        ...el,
+        parentID: item.parentID,
+        weight: item.weight,
+      };
+    });
+    const data = await this.service.bulkUpdate(newArr);
+    if (data) {
+      return this.service.findByIds(ids);
+    }
+    return this.NOT_FOUND;
+  }
   @Put(':uuid')
   async update(@Param('uuid') uuid: string, @Body() updateDto: UpdateDto) {
     const data = await this.service.update(+uuid, updateDto);

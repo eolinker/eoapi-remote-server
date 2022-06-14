@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ApiData } from '../../entities/apiData.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
@@ -16,7 +16,9 @@ export class ApiDataService {
   async create(createDto: CreateDto) {
     return await this.repository.save(createDto);
   }
-
+  async findByIds(ids: number[]) {
+    return await this.repository.findByIds(ids);
+  }
   async batchCreate(createDto: Array<CreateDto>) {
     return this.repository
       .createQueryBuilder()
@@ -37,6 +39,10 @@ export class ApiDataService {
   async update(id: number, updateDto: UpdateDto) {
     return await this.repository.update(id, updateDto);
   }
+  async bulkUpdate(updateDto: Array<UpdateDto>){
+    return await this.repository.save(updateDto);
+  }
+
 
   async remove(id: number) {
     return await this.repository.delete(id);
