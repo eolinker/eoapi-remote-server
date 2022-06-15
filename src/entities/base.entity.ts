@@ -16,7 +16,7 @@ export abstract class Base {
   updatedAt: Timestamp;
 }
 /**
- * Without Entity base constructure
+ * Without name and description constructure
  */
 export abstract class FictitiousBase {
   @PrimaryGeneratedColumn()

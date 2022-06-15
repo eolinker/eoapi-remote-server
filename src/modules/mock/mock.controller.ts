@@ -15,7 +15,7 @@ import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { AuthGuard } from '@nestjs/passport';
 
-@Controller('project')
+@Controller('mock')
 @UseGuards(AuthGuard('api-key'))
 export class MockController {
   private readonly NOT_FOUND = {
@@ -32,7 +32,6 @@ export class MockController {
     if (data && data.uuid) {
       return await this.findOne(`${data.uuid}`);
     }
-
     return this.NOT_FOUND;
   }
 

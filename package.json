@@ -14,7 +14,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "migration:generate": "npx typeorm migration:generate",
-    "migration:run": "npx typeorm migration:run",
+    "migration:run": "npm run build&&npx typeorm migration:run",
     "migration:revert": "npx typeorm migration:revert",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
