@@ -1,7 +1,7 @@
 import { Column, Entity, Generated, TableColumnOptions } from 'typeorm';
 import { Base } from './base.entity';
 
-@Entity()
+@Entity({ name: 'api_data' })
 export class ApiData extends Base {
   @Column()
   @Generated('uuid')

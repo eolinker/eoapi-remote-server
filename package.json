@@ -7,10 +7,11 @@
   "license": "Apache-2.0",
   "scripts": {
     "prebuild": "rimraf dist",
+    "postinstall": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "rimraf dist && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "migration:generate": "npx typeorm migration:generate",

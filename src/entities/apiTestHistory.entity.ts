@@ -1,7 +1,7 @@
 import { Column, Entity, TableColumnOptions } from 'typeorm';
 import { FictitiousBase } from './base.entity';
 
-@Entity()
+@Entity({ name: 'api_test_history' })
 export class ApiTestHistory extends FictitiousBase {
   @Column()
   projectID: number;

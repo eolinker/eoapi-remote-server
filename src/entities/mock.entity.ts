@@ -1,7 +1,7 @@
 import { Column, Entity, TableColumnOptions } from 'typeorm';
 import { Base } from './base.entity';
 
-@Entity()
+@Entity({ name: 'mock' })
 export class Mock extends Base {
   @Column()
   projectID: number;
