@@ -20,7 +20,7 @@ import { MockModule } from './modules/mock/mock.module';
     EnvironmentModule,
     ApiDataModule,
     ApiTestHistoryModule,
-    MockModule
+    MockModule,
   ],
   controllers: [AppController],
   providers: [AppService],

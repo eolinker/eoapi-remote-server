@@ -1,22 +1,22 @@
 import {
   Controller,
   Get,
+  Req,
   Post,
   Body,
   Put,
   Param,
   Delete,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { MockService } from './mock.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
+import { All } from '@nestjs/common';
 
 @Controller('mock')
-@UseGuards(AuthGuard('api-key'))
 export class MockController {
   private readonly NOT_FOUND = {
     statusCode: 201,
@@ -64,6 +64,16 @@ export class MockController {
     }
 
     return this.NOT_FOUND;
+  }
+
+  @All(':projectID/**')
+  async findMock(
+    @Param('projectID') projectID: string,
+    @Req() request: Request,
+  ) {
+    const response = await this.service.findMock(projectID, request);
+
+    return response ?? this.NOT_FOUND;
   }
 
   @Put(':uuid')

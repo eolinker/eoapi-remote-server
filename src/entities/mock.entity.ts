@@ -11,6 +11,12 @@ export class Mock extends Base {
 
   @Column()
   response: string;
+
+  @Column()
+  createWay: string;
+
+  @Column()
+  conditions: string;
 }
 
 export const MockColumn: TableColumnOptions[] = [
@@ -51,6 +57,18 @@ export const MockColumn: TableColumnOptions[] = [
     type: 'text',
     isNullable: true,
     comment: 'Mock response data',
+  },
+  {
+    name: 'createWay',
+    type: 'text',
+    isNullable: true,
+    comment: 'Mock response data',
+  },
+  {
+    name: 'conditions',
+    type: 'text',
+    isNullable: true,
+    comment: 'Mock conditions',
   },
   {
     name: 'createdAt',

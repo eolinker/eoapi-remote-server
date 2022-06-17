@@ -5,16 +5,23 @@ import { ApiData } from '../../entities/apiData.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
+import { MockService } from '../mock/mock.service';
 
 @Injectable()
 export class ApiDataService {
   constructor(
     @InjectRepository(ApiData)
     private readonly repository: Repository<ApiData>,
+    private readonly mockService: MockService,
   ) {}
 
   async create(createDto: CreateDto) {
-    return await this.repository.save(createDto);
+    const apiData = await this.repository.save(createDto);
+    await this.mockService.create(
+      this.mockService.createSystemMockDTO(apiData),
+      'system',
+    );
+    return apiData;
   }
   async findByIds(ids: number[]) {
     return await this.repository.findByIds(ids);
@@ -39,10 +46,9 @@ export class ApiDataService {
   async update(id: number, updateDto: UpdateDto) {
     return await this.repository.update(id, updateDto);
   }
-  async bulkUpdate(updateDto: Array<UpdateDto>){
+  async bulkUpdate(updateDto: Array<UpdateDto>) {
     return await this.repository.save(updateDto);
   }
-
 
   async remove(id: number) {
     return await this.repository.delete(id);
