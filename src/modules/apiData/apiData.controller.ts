@@ -36,17 +36,15 @@ export class ApiDataController {
   ];
 
   constructor(private readonly service: ApiDataService) {}
-  filterItem(item) {
+  filterItem(item: any = {}) {
     this.JSON_FIELDS.forEach((field) => {
-      if (item[field]) {
-        item[field] = JSON.stringify(item[field]);
-      }
+      item[field] = item[field] ? JSON.stringify(item[field]) : '{}';
     });
     return item;
   }
   @Post()
   async create(@Body() createDto: CreateDto) {
-    createDto=this.filterItem(createDto);
+    createDto = this.filterItem(createDto);
     const data = await this.service.create(createDto);
     if (data && data.uuid) {
       return await this.findOne(`${data.uuid}`);
@@ -90,16 +88,15 @@ export class ApiDataController {
   }
   @Put('batch')
   async batchUpdate(@Body() updateDtos: Array<UpdateDto>) {
-    let ids = updateDtos.map((val) => val.uuid);
+    const ids = updateDtos.map((val) => val.uuid);
     const array = await this.service.findByIds(ids);
     const newArr = array.map((el) => {
-      let item = updateDtos.find((val) => val.uuid === el.uuid);
-      item=this.filterItem(item);
-      return {
+      const item = updateDtos.find((val) => Number(val.uuid) === el.uuid);
+      return this.filterItem({
         ...el,
-        groupID: item.groupID,
+        groupID: Number(item.groupID),
         weight: item.weight,
-      };
+      });
     });
     const data = await this.service.bulkUpdate(newArr);
     if (data) {
@@ -109,7 +106,7 @@ export class ApiDataController {
   }
   @Put(':uuid')
   async update(@Param('uuid') uuid: string, @Body() updateDto: UpdateDto) {
-    updateDto=this.filterItem(updateDto);
+    updateDto = this.filterItem(updateDto);
     const data = await this.service.update(+uuid, updateDto);
     if (data) {
       return await this.findOne(uuid);
