@@ -6,10 +6,7 @@ import { Mock } from '../../entities/mock.entity';
 import { ApiData } from 'src/entities/apiData.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Mock]),
-    TypeOrmModule.forFeature([ApiData]),
-  ],
+  imports: [TypeOrmModule.forFeature([Mock, ApiData])],
   controllers: [MockController],
   providers: [MockService],
   exports: [MockService],

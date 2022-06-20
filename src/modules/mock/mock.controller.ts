@@ -88,6 +88,14 @@ export class MockController {
 
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string) {
+    const mock = await this.service.findOne(+uuid);
+    if (mock.createWay === 'system') {
+      return {
+        statusCode: 200,
+        data: {},
+        message: '系统自动创建的mock不能删除',
+      };
+    }
     const data = await this.service.remove(+uuid);
     if (data && data.affected > 0) {
       return {

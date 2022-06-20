@@ -84,7 +84,7 @@ export class MockService {
     return await this.repository.delete(id);
   }
 
-  createSystemMockDTO(apiData: ApiDataCreateDto & ApiData) {
+  createSystemMockDTO(apiData: ApiData) {
     return {
       name: '默认 Mock',
       description: '系统默认mock',
