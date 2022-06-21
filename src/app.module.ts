@@ -9,6 +9,7 @@ import { ApiGroupModule } from './modules/apiGroup/apiGroup.module';
 import { EnvironmentModule } from './modules/environment/environment.module';
 import { ApiDataModule } from './modules/apiData/apiData.module';
 import { ApiTestHistoryModule } from './modules/apiTestHistory/apiTestHistory.module';
+import { MockModule } from './modules/mock/mock.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ApiTestHistoryModule } from './modules/apiTestHistory/apiTestHistory.mo
     EnvironmentModule,
     ApiDataModule,
     ApiTestHistoryModule,
+    MockModule,
   ],
   controllers: [AppController],
   providers: [AppService],

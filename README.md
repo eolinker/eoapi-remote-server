@@ -1,7 +1,9 @@
 # eoapi-remote-server
+
 storage api data in remote server
 
 node : version>16
+
 ## 运行代码
 
 ```
@@ -17,7 +19,7 @@ npm i -g @nestjs/cli
 
 ## 配置
 
-ormconfig.json中需要配置MySQL数据库的连接信息。
+ormconfig.json 中需要配置 MySQL 数据库的连接信息。
 
 ```
 {
@@ -38,7 +40,8 @@ ormconfig.json中需要配置MySQL数据库的连接信息。
 }
 ```
 
-复制.env.example为.env文件，并配置API_KEY。
+复制.env.example 为.env 文件，并配置 API_KEY。
+
 ```
 API_KEY=1ab2c3d4e5f61ab2c3d4e5f6
 ```
@@ -47,23 +50,22 @@ API_KEY=1ab2c3d4e5f61ab2c3d4e5f6
 
 ### 运行
 
-| 命令                     | 描述                                 |
-| ------------------------ | ------------------------------------ |
-| `npm run start`              | 运行服务器 |
+| 命令            | 描述       |
+| --------------- | ---------- |
+| `npm run start` | 运行服务器 |
 
+### 更新数据库
 
-### 迁移脚本
-
-| 命令                     | 描述                                 |
-| ------------------------ | ------------------------------------ 
-| `npm run migration:generate`              | 生成迁移 (npm run migration:generate -- -n TestMigration) |
-| `npm run migration:run`              | 运行迁移，需要先打包构建 (npm run build) |
-| `npm run migration:revert`              | 回滚最后一次迁移 |
+| 命令                                             | 描述             |
+| ------------------------------------------------ | ---------------- |
+| `npm run migration:generate -- -n TestMigration` | 生成迁移         |
+| `npm run migration:run`                          | 运行更新         |
+| `npm run migration:revert`                       | 回滚最后一次更新 |
 
 ### 打包构建
 
-| 命令                     | 描述                     |
-| ------------------------ | ------------------------ |
+| 命令            | 描述     |
+| --------------- | -------- |
 | `npm run build` | 打包代码 |
 
 # 协议

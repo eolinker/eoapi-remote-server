@@ -6,17 +6,17 @@ export abstract class Base {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
-  @Column('timestamp')
+  @Column({ type: 'timestamp', nullable: true })
   createdAt: Timestamp;
 
-  @Column('timestamp')
+  @Column({ type: 'timestamp', nullable: true })
   updatedAt: Timestamp;
 }
 /**
- * Without Entity base constructure
+ * Without name and description constructure
  */
 export abstract class FictitiousBase {
   @PrimaryGeneratedColumn()

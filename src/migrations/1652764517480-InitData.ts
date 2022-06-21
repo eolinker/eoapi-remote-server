@@ -15,6 +15,7 @@ export class InitData1652764517480 implements MigrationInterface {
     const items = [
       {
         uuid: 1,
+        uniqueID:'f2c2a5c2-a41a-428c-88ac-62f7a563d572',
         name: '获取城市今日天气',
         projectID: 1,
         uri: 'http://www.weather.com.cn/data/cityinfo/{cityCode}.html',
@@ -114,6 +115,7 @@ export class InitData1652764517480 implements MigrationInterface {
       },
       {
         uuid: 2,
+        uniqueID:'9ed1190a-d057-4127-94ca-0f99a8890e72',
         name: '新冠全国疫情',
         projectID: 1,
         uri: 'https://view.inews.qq.com/g2/getOnsInfo',
@@ -346,6 +348,7 @@ export class InitData1652764517480 implements MigrationInterface {
     items.forEach((item) => {
       apiData.push([
         item.uuid,
+        item.uniqueID,
         item.name,
         item.projectID,
         item.groupID,
@@ -365,7 +368,7 @@ export class InitData1652764517480 implements MigrationInterface {
       ]);
     });
     await queryRunner.query(
-      `INSERT INTO api_data (uuid, name, projectID, groupID, uri, protocol, method, requestBodyType, requestBodyJsonType,requestBody,requestHeaders, queryParams, restParams, responseHeaders, responseBodyType, responseBodyJsonType, responseBody) VALUES ?`,
+      `INSERT INTO api_data (uuid, uniqueID,name, projectID, groupID, uri, protocol, method, requestBodyType, requestBodyJsonType,requestBody,requestHeaders, queryParams, restParams, responseHeaders, responseBodyType, responseBodyJsonType, responseBody) VALUES ?`,
       [apiData],
     );
   }

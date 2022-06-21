@@ -1,8 +1,8 @@
 import { Column, Entity, TableColumnOptions } from 'typeorm';
-import { FictitiousBase } from './base.entity';
+import { Base } from './base.entity';
 
-@Entity({ name: 'api_test_history' })
-export class ApiTestHistory extends FictitiousBase {
+@Entity({ name: 'mock' })
+export class Mock extends Base {
   @Column()
   projectID: number;
 
@@ -10,15 +10,16 @@ export class ApiTestHistory extends FictitiousBase {
   apiDataID: number;
 
   @Column()
-  general: string;
-
-  @Column()
-  request: string;
-
-  @Column()
   response: string;
+
+  @Column()
+  createWay: string;
+
+  @Column()
+  conditions: string;
 }
-export const APITestHistoryColumn: TableColumnOptions[] = [
+
+export const MockColumn: TableColumnOptions[] = [
   {
     name: 'uuid',
     type: 'int',
@@ -26,6 +27,18 @@ export const APITestHistoryColumn: TableColumnOptions[] = [
     isGenerated: true,
     generationStrategy: 'increment',
     comment: 'increment primary key',
+  },
+  {
+    name: 'name',
+    type: 'text',
+    isNullable: true,
+    comment: 'Mock name',
+  },
+  {
+    name: 'description',
+    type: 'text',
+    isNullable: true,
+    comment: 'Mock description',
   },
   {
     name: 'projectID',
@@ -37,25 +50,25 @@ export const APITestHistoryColumn: TableColumnOptions[] = [
     name: 'apiDataID',
     type: 'int',
     default: 0,
-    comment: 'Api数据ID',
-  },
-  {
-    name: 'general',
-    type: 'json',
-    isNullable: true,
-    comment: 'General indicators',
-  },
-  {
-    name: 'request',
-    type: 'json',
-    isNullable: true,
-    comment: 'HTTP Request',
+    comment: 'API ID',
   },
   {
     name: 'response',
-    type: 'json',
+    type: 'text',
     isNullable: true,
-    comment: 'HTTP response',
+    comment: 'Mock response data',
+  },
+  {
+    name: 'createWay',
+    type: 'text',
+    isNullable: true,
+    comment: 'Mock response data',
+  },
+  {
+    name: 'conditions',
+    type: 'text',
+    isNullable: true,
+    comment: 'Mock conditions',
   },
   {
     name: 'createdAt',

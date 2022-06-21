@@ -5,16 +5,26 @@ import { ApiData } from '../../entities/apiData.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
+import { MockService } from '../mock/mock.service';
+import { Mock } from '../../entities/mock.entity';
 
 @Injectable()
 export class ApiDataService {
   constructor(
     @InjectRepository(ApiData)
     private readonly repository: Repository<ApiData>,
+    @InjectRepository(Mock)
+    private readonly mockRepository: Repository<Mock>,
+    private readonly mockService: MockService,
   ) {}
 
   async create(createDto: CreateDto) {
-    return await this.repository.save(createDto);
+    const apiData = await this.repository.save(createDto);
+    await this.mockService.create(
+      this.mockService.createSystemMockDTO(apiData),
+      'system',
+    );
+    return apiData;
   }
   async findByIds(ids: number[]) {
     return await this.repository.findByIds(ids);
@@ -29,7 +39,22 @@ export class ApiDataService {
   }
 
   async findAll(query: QueryDto) {
-    return await this.repository.find(query);
+    const apiData = await this.repository.find(query);
+    const mockApiDataIds = (
+      await this.mockRepository.find({
+        apiDataID: In(apiData.map((n) => n.uuid)),
+      })
+    ).map((n) => n.apiDataID);
+
+    const noDefaultMockApiDatas = apiData
+      .filter((n) => !mockApiDataIds.includes(n.uuid))
+      .map((apiData) => this.mockService.createSystemMockDTO(apiData));
+
+    if (noDefaultMockApiDatas.length) {
+      await this.mockService.batchCreate(noDefaultMockApiDatas);
+    }
+
+    return apiData;
   }
 
   async findOne(id: number): Promise<ApiData> {
@@ -39,10 +64,9 @@ export class ApiDataService {
   async update(id: number, updateDto: UpdateDto) {
     return await this.repository.update(id, updateDto);
   }
-  async bulkUpdate(updateDto: Array<UpdateDto>){
+  async bulkUpdate(updateDto: Array<UpdateDto>) {
     return await this.repository.save(updateDto);
   }
-
 
   async remove(id: number) {
     return await this.repository.delete(id);
