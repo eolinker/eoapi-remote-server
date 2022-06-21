@@ -3,12 +3,12 @@ import { Base } from './base.entity';
 
 @Entity({ name: 'api_group' })
 export class ApiGroup extends Base {
-  @Column()
+  @Column({ default: 0 })
   projectID: number;
 
-  @Column()
+  @Column({ default: 0 })
   parentID: number;
 
-  @Column()
+  @Column({default:0})
   weight: number;
 }

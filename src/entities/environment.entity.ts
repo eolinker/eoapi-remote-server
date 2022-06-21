@@ -3,12 +3,12 @@ import { Base } from './base.entity';
 
 @Entity({ name: 'environment' })
 export class Environment extends Base {
-  @Column()
+  @Column({ default: 0 })
   projectID: number;
 
   @Column()
   hostUri: string;
 
-  @Column()
+  @Column({ type: 'json', nullable: true })
   parameters: string;
 }

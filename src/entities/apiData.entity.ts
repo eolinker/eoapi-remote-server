@@ -1,4 +1,4 @@
-import { Column, Entity, Generated, TableColumnOptions } from 'typeorm';
+import { Column, Entity, Generated } from 'typeorm';
 import { Base } from './base.entity';
 
 @Entity({ name: 'api_data' })
@@ -7,10 +7,10 @@ export class ApiData extends Base {
   @Generated('uuid')
   uniqueID: string;
 
-  @Column()
+  @Column({ default: 0 })
   projectID: number;
 
-  @Column()
+  @Column({ default: 0 })
   groupID: number;
 
   @Column()
@@ -25,25 +25,25 @@ export class ApiData extends Base {
   @Column()
   requestBodyType: string;
 
-  @Column()
+  @Column({ type: 'json' })
   requestHeaders: string;
 
   @Column()
   requestBodyJsonType: string;
 
-  @Column()
+  @Column({ type: 'json', nullable: true })
   requestBody: string;
 
-  @Column()
+  @Column({ type: 'json' })
   queryParams: string;
 
-  @Column()
+  @Column({ type: 'json' })
   restParams: string;
 
-  @Column()
+  @Column({ type: 'json' })
   responseHeaders: string;
 
-  @Column()
+  @Column({ type: 'json', nullable: true })
   responseBody: string;
 
   @Column()
@@ -52,143 +52,6 @@ export class ApiData extends Base {
   @Column()
   responseBodyJsonType: string;
 
-  @Column()
+  @Column({ default: 0 })
   weight: number;
 }
-
-export const ApiDataColumn: TableColumnOptions[] = [
-  {
-    name: 'uuid',
-    type: 'int',
-    isPrimary: true,
-    isGenerated: true,
-    generationStrategy: 'increment',
-    comment: 'increment primary key',
-  },
-  {
-    name: 'uniqueID',
-    type: 'varchar',
-    length: '100',
-    isGenerated: true,
-    generationStrategy: 'uuid',
-    comment: 'uniqueID',
-  },
-  {
-    name: 'name',
-    type: 'varchar',
-    length: '100',
-    comment: 'API name',
-  },
-  {
-    name: 'description',
-    type: 'text',
-    isNullable: true,
-    comment: 'API description',
-  },
-  {
-    name: 'projectID',
-    type: 'int',
-    default: 0,
-    comment: 'project primary key',
-  },
-  {
-    name: 'groupID',
-    type: 'int',
-    default: 0,
-    comment: 'group ID',
-  },
-  {
-    name: 'uri',
-    type: 'varchar',
-    comment: 'request url',
-  },
-  {
-    name: 'protocol',
-    type: 'varchar',
-    length: '20',
-    comment: 'API protocol',
-  },
-  {
-    name: 'method',
-    type: 'varchar',
-    length: '20',
-    comment: 'API request method',
-  },
-  {
-    name: 'requestBodyType',
-    type: 'varchar',
-    length: '20',
-    comment: 'API request body type',
-  },
-  {
-    name: 'requestHeaders',
-    type: 'json',
-    isNullable: true,
-    comment: 'request header',
-  },
-  {
-    name: 'requestBodyJsonType',
-    type: 'varchar',
-    length: '20',
-    comment: 'request body json type',
-  },
-  {
-    name: 'requestBody',
-    type: 'json',
-    isNullable: true,
-    comment: 'request body,may has level',
-  },
-  {
-    name: 'queryParams',
-    type: 'json',
-    isNullable: true,
-    comment: 'get/query params',
-  },
-  {
-    name: 'restParams',
-    type: 'json',
-    isNullable: true,
-    comment: 'rest params',
-  },
-  {
-    name: 'responseHeaders',
-    type: 'json',
-    isNullable: true,
-    comment: 'response header',
-  },
-  {
-    name: 'responseBody',
-    type: 'json',
-    isNullable: true,
-    comment: 'request body,may has level',
-  },
-  {
-    name: 'responseBodyType',
-    type: 'varchar',
-    length: '20',
-    comment: 'response body type',
-  },
-  {
-    name: 'responseBodyJsonType',
-    type: 'varchar',
-    length: '20',
-    comment: 'respinse body json type',
-  },
-  {
-    name: 'weight',
-    type: 'int',
-    default: 0,
-    comment: 'order weight',
-  },
-  {
-    name: 'createdAt',
-    type: 'timestamp',
-    default: 'current_timestamp',
-  },
-  {
-    name: 'updatedAt',
-    type: 'timestamp',
-    onUpdate: 'current_timestamp',
-    default: 'current_timestamp',
-  },
-];

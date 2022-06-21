@@ -1,234 +1,34 @@
-import { ApiDataColumn } from 'src/entities/apiData.entity';
-import { APITestHistoryColumn } from 'src/entities/apiTestHistory.entity';
-import { MockColumn } from 'src/entities/mock.entity';
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateTables1652758382828 implements MigrationInterface {
+export class createTable1652758382828 implements MigrationInterface {
+  name = 'createTable1652758382828';
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.createTable(
-      new Table({
-        name: 'project',
-        columns: [
-          {
-            name: 'uuid',
-            type: 'int',
-            isPrimary: true,
-            isGenerated: true,
-            generationStrategy: 'increment',
-            comment: 'increment primary key',
-          },
-          {
-            name: 'name',
-            type: 'varchar',
-            length: '100',
-            comment: '项目名称',
-          },
-          {
-            name: 'description',
-            type: 'text',
-            isNullable: true,
-            comment: '项目描述',
-          },
-          {
-            name: 'createdAt',
-            type: 'timestamp',
-            default: 'current_timestamp',
-          },
-          {
-            name: 'updatedAt',
-            type: 'timestamp',
-            onUpdate: 'current_timestamp',
-            default: 'current_timestamp',
-          },
-        ],
-        indices: [
-          {
-            name: 'IDX_NAME',
-            columnNames: ['name'],
-          },
-        ],
-      }),
-      true,
+    await queryRunner.query(
+      `CREATE TABLE \`api_data\` (\`uuid\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`description\` varchar(255) NULL, \`createdAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`updatedAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE NOW(), \`uniqueID\` varchar(36) NOT NULL, \`projectID\` int NOT NULL DEFAULT '0', \`groupID\` int NOT NULL DEFAULT '0', \`uri\` varchar(255) NOT NULL, \`protocol\` varchar(255) NOT NULL, \`method\` varchar(255) NOT NULL, \`requestBodyType\` varchar(255) NOT NULL, \`requestHeaders\` json NOT NULL, \`requestBodyJsonType\` varchar(255) NOT NULL, \`requestBody\` json NULL, \`queryParams\` json NOT NULL, \`restParams\` json NOT NULL, \`responseHeaders\` json NOT NULL, \`responseBody\` json NULL, \`responseBodyType\` varchar(255) NOT NULL, \`responseBodyJsonType\` varchar(255) NOT NULL, \`weight\` int NOT NULL DEFAULT '0', PRIMARY KEY (\`uuid\`)) ENGINE=InnoDB`,
     );
-
-    await queryRunner.createTable(
-      new Table({
-        name: 'environment',
-        columns: [
-          {
-            name: 'uuid',
-            type: 'int',
-            isPrimary: true,
-            isGenerated: true,
-            generationStrategy: 'increment',
-            comment: 'increment primary key',
-          },
-          {
-            name: 'name',
-            type: 'varchar',
-            length: '100',
-            comment: 'env name',
-          },
-          {
-            name: 'description',
-            type: 'text',
-            isNullable: true,
-            comment: 'env description',
-          },
-          {
-            name: 'projectID',
-            type: 'int',
-            default: 0,
-            comment: 'project primary key',
-          },
-          {
-            name: 'hostUri',
-            type: 'varchar',
-            length: '255',
-            comment: 'prefix url',
-          },
-          {
-            name: 'parameters',
-            type: 'json',
-            isNullable: true,
-            comment: 'env variables',
-          },
-          {
-            name: 'createdAt',
-            type: 'timestamp',
-            default: 'current_timestamp',
-          },
-          {
-            name: 'updatedAt',
-            type: 'timestamp',
-            onUpdate: 'current_timestamp',
-            default: 'current_timestamp',
-          },
-        ],
-        indices: [
-          {
-            name: 'IDX_PROJECT_ID',
-            columnNames: ['projectID'],
-          },
-        ],
-      }),
-      true,
+    await queryRunner.query(
+      `CREATE TABLE \`api_group\` (\`uuid\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`description\` varchar(255) NULL, \`createdAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`updatedAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE NOW(), \`projectID\` int NOT NULL DEFAULT '0', \`parentID\` int NOT NULL DEFAULT '0', \`weight\` int NOT NULL DEFAULT '0', PRIMARY KEY (\`uuid\`)) ENGINE=InnoDB`,
     );
-
-    await queryRunner.createTable(
-      new Table({
-        name: 'api_group',
-        columns: [
-          {
-            name: 'uuid',
-            type: 'int',
-            isPrimary: true,
-            isGenerated: true,
-            generationStrategy: 'increment',
-            comment: 'increment primary key',
-          },
-          {
-            name: 'name',
-            type: 'varchar',
-            length: '100',
-            comment: '分组名称',
-          },
-          {
-            name: 'description',
-            type: 'text',
-            isNullable: true,
-            comment: '分组描述',
-          },
-          {
-            name: 'projectID',
-            type: 'int',
-            default: 0,
-            comment: 'project primary key',
-          },
-          {
-            name: 'parentID',
-            type: 'int',
-            default: 0,
-            comment: '上层分组',
-          },
-          {
-            name: 'weight',
-            type: 'int',
-            default: 0,
-            comment: '排序号',
-          },
-          {
-            name: 'createdAt',
-            type: 'timestamp',
-            default: 'current_timestamp',
-          },
-          {
-            name: 'updatedAt',
-            type: 'timestamp',
-            onUpdate: 'current_timestamp',
-            default: 'current_timestamp',
-          },
-        ],
-        indices: [
-          {
-            name: 'IDX_PROJECT_ID_PARENT_ID',
-            columnNames: ['projectID', 'parentID'],
-          },
-        ],
-      }),
-      true,
+    await queryRunner.query(
+      `CREATE TABLE \`api_test_history\` (\`uuid\` int NOT NULL AUTO_INCREMENT, \`createdAt\` timestamp NOT NULL, \`updatedAt\` timestamp NOT NULL, \`projectID\` int NOT NULL DEFAULT '0', \`apiDataID\` int NOT NULL, \`general\` varchar(255) NOT NULL, \`request\` varchar(255) NOT NULL, \`response\` varchar(255) NOT NULL, PRIMARY KEY (\`uuid\`)) ENGINE=InnoDB`,
     );
-
-    await queryRunner.createTable(
-      new Table({
-        name: 'api_data',
-        columns: ApiDataColumn,
-        indices: [
-          {
-            name: 'IDX_GROUP_ID_PROJECT_ID',
-            columnNames: ['groupID', 'projectID'],
-          },
-        ],
-      }),
-      true,
+    await queryRunner.query(
+      `CREATE TABLE \`environment\` (\`uuid\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`description\` varchar(255) NULL, \`createdAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`updatedAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE NOW(), \`projectID\` int NOT NULL DEFAULT '0', \`hostUri\` varchar(255) NOT NULL, \`parameters\` json NULL, PRIMARY KEY (\`uuid\`)) ENGINE=InnoDB`,
     );
-
-    await queryRunner.createTable(
-      new Table({
-        name: 'api_test_history',
-        columns: APITestHistoryColumn,
-        indices: [
-          {
-            name: 'IDX_API_DATA_ID_PROJECT_ID',
-            columnNames: ['apiDataID', 'projectID'],
-          },
-        ],
-      }),
-      true,
+    await queryRunner.query(
+      `CREATE TABLE \`mock\` (\`uuid\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`description\` varchar(255) NULL, \`createdAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`updatedAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE NOW(), \`projectID\` int NOT NULL DEFAULT '0', \`apiDataID\` int NOT NULL, \`response\` varchar(255) NOT NULL, \`createWay\` varchar(255) NOT NULL, \`conditions\` varchar(255) NOT NULL, PRIMARY KEY (\`uuid\`)) ENGINE=InnoDB`,
     );
-    await queryRunner.createTable(
-      new Table({
-        name: 'mock',
-        columns: MockColumn,
-        indices: [
-          {
-            name: 'IDX_API_DATA_ID_PROJECT_ID',
-            columnNames: ['apiDataID', 'projectID'],
-          },
-        ],
-      }),
-      true,
+    await queryRunner.query(
+      `CREATE TABLE \`project\` (\`uuid\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`description\` varchar(255) NULL, \`createdAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`updatedAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE NOW(), PRIMARY KEY (\`uuid\`)) ENGINE=InnoDB`,
     );
-
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('apiTestHistory');
-    await queryRunner.dropTable('mock');
-    await queryRunner.dropTable('apiData');
-    await queryRunner.dropTable('apiGroup');
-    await queryRunner.dropTable('environment');
-    await queryRunner.dropTable('project');
-
+    await queryRunner.query(`DROP TABLE \`project\``);
+    await queryRunner.query(`DROP TABLE \`mock\``);
+    await queryRunner.query(`DROP TABLE \`environment\``);
+    await queryRunner.query(`DROP TABLE \`api_test_history\``);
+    await queryRunner.query(`DROP TABLE \`api_group\``);
+    await queryRunner.query(`DROP TABLE \`api_data\``);
   }
 }
