@@ -15,7 +15,7 @@ export class InitData1652764517480 implements MigrationInterface {
     const items = [
       {
         uuid: 1,
-        uniqueID:'f2c2a5c2-a41a-428c-88ac-62f7a563d572',
+        uniqueID: 'f2c2a5c2-a41a-428c-88ac-62f7a563d572',
         name: '获取城市今日天气',
         projectID: 1,
         uri: 'http://www.weather.com.cn/data/cityinfo/{cityCode}.html',
@@ -24,7 +24,7 @@ export class InitData1652764517480 implements MigrationInterface {
         method: 'GET',
         requestBodyType: 'raw',
         requestBodyJsonType: 'object',
-        requestBody: '',
+        requestBody: '{}',
         queryParams: [],
         restParams: [
           {
@@ -115,7 +115,7 @@ export class InitData1652764517480 implements MigrationInterface {
       },
       {
         uuid: 2,
-        uniqueID:'9ed1190a-d057-4127-94ca-0f99a8890e72',
+        uniqueID: '9ed1190a-d057-4127-94ca-0f99a8890e72',
         name: '新冠全国疫情',
         projectID: 1,
         uri: 'https://view.inews.qq.com/g2/getOnsInfo',
@@ -124,7 +124,7 @@ export class InitData1652764517480 implements MigrationInterface {
         method: 'GET',
         requestBodyType: 'raw',
         requestBodyJsonType: 'object',
-        requestBody: '',
+        requestBody: '{}',
         queryParams: [{ name: 'name', required: true, example: 'disease_h5' }],
         restParams: [],
         requestHeaders: [],
