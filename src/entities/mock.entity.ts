@@ -15,6 +15,6 @@ export class Mock extends Base {
   @Column()
   createWay: string;
 
-  @Column()
+  @Column({ nullable: true })
   conditions: string;
 }
