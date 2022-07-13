@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository,In } from 'typeorm';
 import { ApiGroup } from '../../entities/apiGroup.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
@@ -27,20 +27,26 @@ export class ApiGroupService {
   }
 
   async findAll(query: QueryDto) {
-    return await this.repository.find(query);
+    return await this.repository.find({
+      where: query,
+    });
   }
 
   async findByIds(ids: number[]) {
-    return await this.repository.findByIds(ids);
+    return await this.repository.findBy({
+      uuid: In(ids),
+    });
   }
   async findOne(id: number): Promise<ApiGroup> {
-    return await this.repository.findOne(id);
+    return await this.repository.findOneBy({
+      uuid:id
+    });
   }
 
   async update(id: number, updateDto: UpdateDto) {
     return await this.repository.update(id, updateDto);
   }
-  async bulkUpdate(updateDto: Array<UpdateDto>){
+  async bulkUpdate(updateDto: Array<UpdateDto>) {
     return await this.repository.save(updateDto);
   }
   async remove(id: number) {

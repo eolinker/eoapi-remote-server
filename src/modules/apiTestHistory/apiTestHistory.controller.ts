@@ -73,7 +73,7 @@ export class ApiTestHistoryController {
 
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string) {
-    const data = await this.service.findOne(+uuid);
+    const data = await this.service.findOne(Number(uuid));
     if (data) {
       return {
         statusCode: 200,
@@ -91,7 +91,7 @@ export class ApiTestHistoryController {
         updateDto[field] = JSON.stringify(updateDto[field]);
       }
     });
-    const data = await this.service.update(+uuid, updateDto);
+    const data = await this.service.update(Number(uuid), updateDto);
     if (data) {
       return await this.findOne(uuid);
     }

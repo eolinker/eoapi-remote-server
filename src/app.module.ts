@@ -13,7 +13,17 @@ import { MockModule } from './modules/mock/mock.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(), // 数据库
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: '123456a.',
+      database: 'eoapi',
+      synchronize: false,
+      logging: false,
+      entities: ['dist/entities/**/*.js']
+    }), // 数据库
     AuthModule, // 认证
     ProjectModule,
     ApiGroupModule,

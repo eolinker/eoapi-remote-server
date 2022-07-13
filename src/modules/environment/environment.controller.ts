@@ -72,7 +72,7 @@ export class EnvironmentController {
 
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string) {
-    const data = await this.service.findOne(+uuid);
+    const data = await this.service.findOne(Number(uuid));
     if (data) {
       return {
         statusCode: 200,
@@ -90,7 +90,7 @@ export class EnvironmentController {
         updateDto[field] = JSON.stringify(updateDto[field]);
       }
     });
-    const data = await this.service.update(+uuid, updateDto);
+    const data = await this.service.update(Number(uuid), updateDto);
     if (data) {
       return await this.findOne(uuid);
     }
@@ -100,7 +100,7 @@ export class EnvironmentController {
 
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string) {
-    const data = await this.service.remove(+uuid);
+    const data = await this.service.remove(Number(uuid));
     if (data && data.affected > 0) {
       return {
         statusCode: 200,

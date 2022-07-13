@@ -55,7 +55,7 @@ export class MockController {
 
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string) {
-    const data = await this.service.findOne(+uuid);
+    const data = await this.service.findOne(Number(uuid));
     if (data) {
       return {
         statusCode: 200,
@@ -78,7 +78,7 @@ export class MockController {
 
   @Put(':uuid')
   async update(@Param('uuid') uuid: string, @Body() updateDto: UpdateDto) {
-    const data = await this.service.update(+uuid, updateDto);
+    const data = await this.service.update(Number(uuid), updateDto);
     if (data) {
       return await this.findOne(uuid);
     }
@@ -88,7 +88,7 @@ export class MockController {
 
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string) {
-    const mock = await this.service.findOne(+uuid);
+    const mock = await this.service.findOne(Number(uuid));
     if (mock.createWay === 'system') {
       return {
         statusCode: 200,
@@ -96,7 +96,7 @@ export class MockController {
         message: '系统自动创建的mock不能删除',
       };
     }
-    const data = await this.service.remove(+uuid);
+    const data = await this.service.remove(Number(uuid));
     if (data && data.affected > 0) {
       return {
         statusCode: 200,
