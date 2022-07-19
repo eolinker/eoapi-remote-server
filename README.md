@@ -7,14 +7,24 @@ node : version>16
 ## 运行代码
 
 ```
-npm ci
-npm run start
+yarn
+yarn start:dev
 ```
 
 如果想提高开发效率，可以安装 nestjs 官方提供的命令行 nestjs-cli 快速生成组件、服务等模板。
 
 ```
 npm i -g @nestjs/cli
+```
+
+## 使用docker
+```bash
+# 第一次运行需要先构建镜像
+docker-compose up --build  
+# 如果已经执行过上面命令，后续则可以直接运行:
+docker-compose up
+# or 
+docker-compose up -d
 ```
 
 ## 配置
