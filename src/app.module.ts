@@ -10,10 +10,11 @@ import { EnvironmentModule } from './modules/environment/environment.module';
 import { ApiDataModule } from './modules/apiData/apiData.module';
 import { ApiTestHistoryModule } from './modules/apiTestHistory/apiTestHistory.module';
 import { MockModule } from './modules/mock/mock.module';
+import ormConfig from './config/configuration';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(), // 数据库
+    TypeOrmModule.forRoot(ormConfig()), // 数据库
     AuthModule, // 认证
     ProjectModule,
     ApiGroupModule,

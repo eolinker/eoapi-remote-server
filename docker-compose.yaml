@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  eoapi-remote-server:
+    # build: 从当前路径构建镜像
+    build: .
+    ports:
+      - 3000:3000
+    # links的目的是把一个服务的名称在当前服务里面创建一个别名
+    links:
+      - mysql:server_mysql
+    # 当前服务启动之前先要把depends_on指定的服务启动起来才行
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:latest
+    platform: linux/amd64
+    container_name: eoapi-mysql
+    restart: always
+    ports:
+      - 3306:3306
+    # 主要就是把服务的端口映射出来给其他服务使用的。
+    expose:
+      - 3306
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci #设置utf8字符集
+    environment:
+      MYSQL_DATABASE: eoapi
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root

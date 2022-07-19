@@ -19,7 +19,7 @@ npm i -g @nestjs/cli
 
 ## 配置
 
-ormconfig.json 中需要配置 MySQL 数据库的连接信息。
+`src/config/config.development.ts` 中需要配置 MySQL 数据库的连接信息。
 
 ```
 {
