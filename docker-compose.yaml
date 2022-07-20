@@ -5,7 +5,7 @@ services:
     # build: 从当前路径构建镜像
     build: .
     ports:
-      - 3000:3000
+      - 3002:3000
     # links的目的是把一个服务的名称在当前服务里面创建一个别名
     links:
       - mysql:server_mysql
@@ -15,7 +15,6 @@ services:
 
   mysql:
     image: mysql:latest
-    platform: linux/amd64
     container_name: eoapi-mysql
     restart: always
     ports:

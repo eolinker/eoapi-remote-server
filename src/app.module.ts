@@ -11,10 +11,12 @@ import { ApiDataModule } from './modules/apiData/apiData.module';
 import { ApiTestHistoryModule } from './modules/apiTestHistory/apiTestHistory.module';
 import { MockModule } from './modules/mock/mock.module';
 import ormConfig from './config/configuration';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormConfig()), // 数据库
+    ConfigModule.forRoot(),
     AuthModule, // 认证
     ProjectModule,
     ApiGroupModule,

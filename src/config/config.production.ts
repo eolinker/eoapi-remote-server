@@ -7,7 +7,7 @@ export default {
   username: 'root',
   password: 'root',
   database: 'eoapi',
-  synchronize: true,
+  synchronize: false,
   logging: false,
   entities: ['dist/entities/**/*.js'],
   migrations: ['dist/migrations/**/*.js'],
