@@ -4,3 +4,6 @@
 *.scss linguist-detectable=false
 *.js linguist-detectable=true
 *.vue linguist-detectable=true
+
+# /src/config/config.production.ts merge=ours
+# docker-compose.yaml merge=ours

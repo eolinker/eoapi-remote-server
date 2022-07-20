@@ -11,7 +11,7 @@ export default {
   logging: false,
   entities: ['dist/entities/**/*.js'],
   migrations: ['dist/migrations/**/*.js'],
-  migrationsRun: true,
+  migrationsRun: false,
   cli: {
     migrationsDir: 'src/migrations',
   },

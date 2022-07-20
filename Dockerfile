@@ -1,4 +1,12 @@
+# FROM 表示设置要制作的镜像基于哪个镜像，FROM指令必须是整个Dockerfile的第一个指令，如果指定的镜像不存在默认会自动从Docker Hub上下载。
+# 指定我们的基础镜像是node，latest表示版本是最新, 如果要求空间极致，可以选择lts-alpine
+# 使用 as 来为某一阶段命名
 FROM node:lts-alpine as builder
+
+# WORKDIR指令用于设置Dockerfile中的RUN、CMD和ENTRYPOINT指令执行命令的工作目录(默认为/目录)，该指令在Dockerfile文件中可以出现多次，
+# 如果使用相对路径则为相对于WORKDIR上一次的值，
+# 例如WORKDIR /data，WORKDIR logs，RUN pwd最终输出的当前目录是/data/logs。
+# cd到 /eoapi-remote-server
 WORKDIR /eoapi-remote-server
 
 # set timezone
@@ -13,7 +21,13 @@ RUN yarn build
 RUN rm -rf node_modules
 RUN yarn install --production
 
-# httpserver set port
+RUN npm set registry https://registry.npmmirror.com
+RUN npm install pm2 -g
+
+# 容器对外暴露的端口号
 EXPOSE 3000
 
-CMD ["yarn", "start:prod"]
+# 容器启动时执行的命令，类似npm run start
+# CMD ["yarn", "start:prod"]
+# why not use pm2 ==> https://stackoverflow.com/questions/51191378/what-is-the-point-of-using-pm2-and-docker-together
+CMD ["pm2-runtime", "ecosystem.config.js"]

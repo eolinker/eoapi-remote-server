@@ -4,8 +4,10 @@ services:
   eoapi-remote-server:
     # build: 从当前路径构建镜像
     build: .
+    restart: always
     ports:
       - 3002:3000
+    #links链接到其它服务中的容器，配置后eoapi-remote-server容器就可以用server_mysql连接数据库，如：server_mysql:3306
     # links的目的是把一个服务的名称在当前服务里面创建一个别名
     links:
       - mysql:server_mysql
