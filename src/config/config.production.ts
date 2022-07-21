@@ -2,16 +2,16 @@ import { ConnectionOptions } from 'typeorm';
 
 export default {
   type: 'mysql',
-  host: 'server_mysql',
+  host: 'mysql',
   port: 3306,
   username: 'root',
-  password: 'root',
+  password: '123456a.',
   database: 'eoapi',
   synchronize: false,
   logging: false,
   entities: ['dist/entities/**/*.js'],
   migrations: ['dist/migrations/**/*.js'],
-  migrationsRun: false,
+  migrationsRun: true,
   cli: {
     migrationsDir: 'src/migrations',
   },

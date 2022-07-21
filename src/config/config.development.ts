@@ -5,7 +5,7 @@ export default {
   host: '127.0.0.1',
   port: 3306,
   username: 'root',
-  password: 'root',
+  password: '123456a.',
   database: 'eoapi',
   synchronize: true,
   logging: false,

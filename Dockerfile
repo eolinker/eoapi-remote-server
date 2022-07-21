@@ -13,15 +13,20 @@ WORKDIR /eoapi-remote-server
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 RUN echo 'Asia/Shanghai' > /etc/timezone
 
+# mirror acceleration
+# RUN npm config set registry https://registry.npmmirror.com
+# RUN yarn config set registry https://registry.npmmirror.com
+# RUN npm config rm proxy && npm config rm https-proxy
+
 # install & build
 COPY ./ /eoapi-remote-server
 RUN yarn install
 RUN yarn build
+
 # clean dev dep
 RUN rm -rf node_modules
 RUN yarn install --production
 
-RUN npm set registry https://registry.npmmirror.com
 RUN npm install pm2 -g
 
 # 容器对外暴露的端口号
@@ -29,5 +34,4 @@ EXPOSE 3000
 
 # 容器启动时执行的命令，类似npm run start
 # CMD ["yarn", "start:prod"]
-# why not use pm2 ==> https://stackoverflow.com/questions/51191378/what-is-the-point-of-using-pm2-and-docker-together
 CMD ["pm2-runtime", "ecosystem.config.js"]

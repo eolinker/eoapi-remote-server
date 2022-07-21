@@ -6,11 +6,7 @@ services:
     build: .
     restart: always
     ports:
-      - 3002:3000
-    #links链接到其它服务中的容器，配置后eoapi-remote-server容器就可以用server_mysql连接数据库，如：server_mysql:3306
-    # links的目的是把一个服务的名称在当前服务里面创建一个别名
-    links:
-      - mysql:server_mysql
+      - 3000:3000
     # 当前服务启动之前先要把depends_on指定的服务启动起来才行
     depends_on:
       - mysql
@@ -24,8 +20,8 @@ services:
     # 主要就是把服务的端口映射出来给其他服务使用的。
     expose:
       - 3306
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci #设置utf8字符集
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci #设置utf8字符集
     environment:
       MYSQL_DATABASE: eoapi
       MYSQL_PASSWORD: root
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: 123456a.
