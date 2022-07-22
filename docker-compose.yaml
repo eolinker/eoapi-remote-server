@@ -5,8 +5,12 @@ services:
     # build: 从当前路径构建镜像
     build: .
     restart: always
+    environment:
+      TZ: Asia/Shanghai
     ports:
       - 3000:3000
+    networks:
+      - eoapi_net
     # 当前服务启动之前先要把depends_on指定的服务启动起来才行
     depends_on:
       - mysql
@@ -15,13 +19,17 @@ services:
     image: mysql:latest
     container_name: eoapi-mysql
     restart: always
-    ports:
-      - 3306:3306
-    # 主要就是把服务的端口映射出来给其他服务使用的。
-    expose:
-      - 3306
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci #设置utf8字符集
     environment:
+      TZ: Asia/Shanghai
       MYSQL_DATABASE: eoapi
-      MYSQL_PASSWORD: root
+      MYSQL_PASSWORD: 123456a.
       MYSQL_ROOT_PASSWORD: 123456a.
+    volumes:
+      - ./sample/mysql/:/var/lib/mysql/ # ./sample/mysql/路径可以替换成自己的路径
+    networks:
+      - eoapi_net
+
+networks:
+  eoapi_net:
+    name: eoapi_net

@@ -26,8 +26,9 @@ RUN yarn build
 # clean dev dep
 RUN rm -rf node_modules
 RUN yarn install --production
+RUN yarn cache clean
 
-RUN npm install pm2 -g
+RUN yarn global add pm2
 
 # 容器对外暴露的端口号
 EXPOSE 3000

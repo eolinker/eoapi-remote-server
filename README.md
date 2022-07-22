@@ -17,13 +17,9 @@ yarn start:dev
 npm i -g @nestjs/cli
 ```
 
-## 使用docker
+## 使用docker一键启动
+启动成功后，通过 http://localhost:3000 访问。
 ```bash
-# 第一次运行需要先构建镜像
-docker-compose up --build  
-# 如果已经执行过上面命令，后续则可以直接运行:
-docker-compose up
-# or 
 docker-compose up -d
 ```
 
