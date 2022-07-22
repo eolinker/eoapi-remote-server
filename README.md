@@ -22,6 +22,10 @@ npm i -g @nestjs/cli
 ```bash
 docker-compose up -d
 ```
+查看实时日志输出
+```bash
+docker-compose logs -f
+```
 
 ## 配置
 
