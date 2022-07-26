@@ -9,9 +9,7 @@ export const loadConfig = (): DataSourceOptions => {
   let envConfig: Partial<DataSourceOptions> = {};
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    envConfig = require(`./config.${
-      process.env.NODE_ENV || 'development'
-    }`).default;
+    envConfig = require(`./config.${process.env.NODE_ENV}`).default;
   } catch (e) {
     // 无效配置则自动忽略
   }

@@ -5,6 +5,7 @@ services:
     # build: 从当前路径构建镜像
     build: .
     image: eoapi-remote-server
+    container_name: eoapi-remote-server
     restart: always
     environment:
       TZ: Asia/Shanghai

@@ -54,4 +54,7 @@ export class ApiData extends Base {
 
   @Column({ default: 0 })
   weight: number;
+
+  // @Column({ default: '' })
+  // testField: string;
 }
