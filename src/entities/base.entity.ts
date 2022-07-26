@@ -1,4 +1,4 @@
-import { Column, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
+import { Column, CreateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
 export abstract class Base {
   @PrimaryGeneratedColumn()
   uuid: number;
@@ -9,15 +9,11 @@ export abstract class Base {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Timestamp;
+  @CreateDateColumn()
+  createdAt: Date;
 
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'NOW()',
-  })
-  updatedAt: Timestamp;
+  @CreateDateColumn()
+  updatedAt: Date;
 }
 /**
  * Without name and description constructure
@@ -26,9 +22,9 @@ export abstract class FictitiousBase {
   @PrimaryGeneratedColumn()
   uuid: number;
 
-  @Column('timestamp')
-  createdAt: Timestamp;
+  @CreateDateColumn()
+  createdAt: Date;
 
-  @Column('timestamp')
-  updatedAt: Timestamp;
+  @CreateDateColumn()
+  updatedAt: Date;
 }

@@ -4,6 +4,7 @@ services:
   eoapi-remote-server:
     # build: 从当前路径构建镜像
     build: .
+    image: eoapi-remote-server
     restart: always
     environment:
       TZ: Asia/Shanghai
@@ -25,6 +26,8 @@ services:
       MYSQL_DATABASE: eoapi
       MYSQL_PASSWORD: 123456a.
       MYSQL_ROOT_PASSWORD: 123456a.
+    ports:
+      - 33066:3306
     volumes:
       - ./sample/mysql/:/var/lib/mysql/ # ./sample/mysql/路径可以替换成自己的路径
     networks:

@@ -34,11 +34,11 @@ export class MockService {
   }
 
   async findAll(query: QueryDto) {
-    return await this.repository.find(query);
+    return await this.repository.find({ where: query });
   }
 
   async findOne(id: number): Promise<Mock> {
-    return await this.repository.findOne(id);
+    return await this.repository.findOne({ where: { uuid: id } });
   }
 
   async findMock(projectID: string, request: Request): Promise<string> {
@@ -71,7 +71,9 @@ export class MockService {
         }),
       );
     } else {
-      const mock = await this.repository.findOne(+query.mockID);
+      const mock = await this.repository.findOne({
+        where: { uuid: Number(query.mockID) },
+      });
       return mock?.response || '{}';
     }
   }

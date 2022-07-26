@@ -1,4 +1,4 @@
-import { ConsoleLogger, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { ApiData } from '../../entities/apiData.entity';
@@ -39,10 +39,12 @@ export class ApiDataService {
   }
 
   async findAll(query: QueryDto) {
-    const apiData = await this.repository.find(query);
+    const apiData = await this.repository.find({ where: query });
     const mockApiDataIds = (
       await this.mockRepository.find({
-        apiDataID: In(apiData.map((n) => n.uuid)),
+        where: {
+          apiDataID: In(apiData.map((n) => n.uuid)),
+        },
       })
     ).map((n) => n.apiDataID);
 
@@ -58,7 +60,7 @@ export class ApiDataService {
   }
 
   async findOne(id: number): Promise<ApiData> {
-    return await this.repository.findOne(id);
+    return await this.repository.findOne({ where: { uuid: id } });
   }
 
   async update(id: number, updateDto: UpdateDto) {

@@ -1,4 +1,4 @@
-import { ConnectionOptions } from 'typeorm';
+import { DataSourceOptions } from 'typeorm';
 
 export default {
   type: 'mysql',
@@ -15,4 +15,4 @@ export default {
   cli: {
     migrationsDir: 'src/migrations',
   },
-} as ConnectionOptions;
+} as DataSourceOptions;
