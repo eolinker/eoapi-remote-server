@@ -15,8 +15,10 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: ['.env'],
+    }),
     TypeOrmModule.forRoot(ormConfig()), // 数据库
-    ConfigModule.forRoot(),
     AuthModule, // 认证
     ProjectModule,
     ApiGroupModule,

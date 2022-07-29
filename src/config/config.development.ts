@@ -1,12 +1,14 @@
 import { ConnectionOptions } from 'typeorm';
 
+console.log('process.env', process.env.MYSQL_USERNAME);
+
 export default {
   type: 'mysql',
   host: '127.0.0.1',
-  port: 3306,
-  username: 'root',
-  password: '123456a.',
-  database: 'eoapi',
+  port: parseInt(process.env.MYSQL_PORT, 10),
+  username: process.env.MYSQL_USERNAME,
+  password: process.env.MYSQL_ROOT_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
   synchronize: true,
   logging: false,
   entities: ['dist/entities/**/*.js'],
