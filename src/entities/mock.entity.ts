@@ -1,4 +1,4 @@
-import { Column, Entity, TableColumnOptions } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { Base } from './base.entity';
 
 @Entity({ name: 'mock' })
@@ -9,7 +9,7 @@ export class Mock extends Base {
   @Column()
   apiDataID: number;
 
-  @Column()
+  @Column({ type: 'longtext' })
   response: string;
 
   @Column()

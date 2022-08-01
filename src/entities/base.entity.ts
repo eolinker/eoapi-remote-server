@@ -9,13 +9,18 @@ export abstract class Base {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    nullable: false,
+  })
   createdAt: Timestamp;
 
   @Column({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'NOW()',
+    nullable: false,
   })
   updatedAt: Timestamp;
 }
