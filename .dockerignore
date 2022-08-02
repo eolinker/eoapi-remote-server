@@ -4,6 +4,9 @@
 package-lock.json
 # yarn.lock
 
+# sample
+/sample
+
 # Logs
 logs
 *.log
