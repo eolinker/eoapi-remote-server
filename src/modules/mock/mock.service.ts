@@ -46,17 +46,31 @@ export class MockService {
     const pathName = path.replace(`/mock/${projectID}`, '');
 
     if (Number.isNaN(+query.mockID)) {
-      const apiData = await this.apiDataRepository
+      const apiDataList = await this.apiDataRepository
         .createQueryBuilder('api_data')
         .where('api_data.projectID = :projectID', {
           projectID: Number(projectID.replace('eo-', '')),
         })
-        .andWhere('api_data.uri = :uri', { uri: pathName })
+        // .andWhere('api_data.uri = :uri', { uri: pathName })
         .andWhere('api_data.method = :method', {
           method: method.toLocaleUpperCase(),
         })
         .andWhere('api_data.protocol = :protocol', { protocol })
-        .getOne();
+        .getMany();
+
+      const apiData = apiDataList.find((n) => {
+        let uri = n.uri.trim();
+        if (Array.isArray(n.restParams) && n.restParams.length > 0) {
+          const restMap = n.restParams.reduce(
+            (p, c) => ((p[c.name] = c.example), p),
+            {},
+          );
+          uri = uri.replace(/\{(.+?)\}/g, (match, p) => restMap[p] ?? match);
+          // console.log('restMap', restMap, n.uri, uri);
+        }
+        const uriReg = new RegExp(`/?${uri}/?`);
+        return n.method === method && uriReg.test(path);
+      });
 
       if (!apiData) {
         return JSON.stringify({
