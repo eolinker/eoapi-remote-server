@@ -10,15 +10,21 @@ import { EnvironmentModule } from './modules/environment/environment.module';
 import { ApiDataModule } from './modules/apiData/apiData.module';
 import { ApiTestHistoryModule } from './modules/apiTestHistory/apiTestHistory.module';
 import { MockModule } from './modules/mock/mock.module';
-import ormConfig from './config/configuration';
-import { ConfigModule } from '@nestjs/config';
+import { getTypeOrmModuleOptions } from './config/ormconfig';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env'],
     }),
-    TypeOrmModule.forRoot(ormConfig()), // 数据库
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: () => ({
+        ...getTypeOrmModuleOptions(),
+      }),
+    }), // 数据库
     AuthModule, // 认证
     ProjectModule,
     ApiGroupModule,

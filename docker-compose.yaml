@@ -9,10 +9,12 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      - MYSQL_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - '${EOAPI_SERVER_PORT}:3000'
-    networks:
-      - eoapi_net
     # 当前服务启动之前先要把depends_on指定的服务启动起来才行
     depends_on:
       - mysql
