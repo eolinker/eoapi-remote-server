@@ -31,7 +31,7 @@ MYSQL_PASSWORD=123456a.
 MYSQL_ROOT_PASSWORD=123456a.
 ```
 
-默认情况下，在`src/config/config.development.ts`和`docker-compose.yaml`中的数据库连接配置统一使用`.env`配置里的环境变量。
+默认情况下，在`.env`和`docker-compose.yaml`中的数据库连接配置统一使用`.env`配置里的环境变量。
 
 ## 本地开发
 
