@@ -20,13 +20,15 @@ RUN echo 'Asia/Shanghai' > /etc/timezone
 
 # install & build
 COPY ./ /eoapi-remote-server
+RUN chmod +x ./wait-for-it.sh
+RUN apk update && apk add bash
 RUN yarn install
 RUN yarn build
 
 # clean dev dep
-RUN rm -rf node_modules
-RUN yarn install --production
-RUN yarn cache clean
+# RUN rm -rf node_modules
+# RUN yarn install --production
+# RUN yarn cache clean
 
 RUN yarn global add pm2
 
@@ -35,4 +37,5 @@ EXPOSE 3000
 
 # 容器启动时执行的命令，类似npm run start
 # CMD ["yarn", "start:prod"]
-CMD ["pm2-runtime", "ecosystem.config.js"]
+# CMD ["pm2-runtime", "ecosystem.config.js"]
+ENTRYPOINT ./wait-for-it.sh mysql:3306 -- yarn migration:run && pm2-runtime ecosystem.config.js

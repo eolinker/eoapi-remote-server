@@ -12,12 +12,14 @@ services:
     environment:
       - MYSQL_HOST=host.docker.internal
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     ports:
       - '${EOAPI_SERVER_PORT}:3000'
     # 当前服务启动之前先要把depends_on指定的服务启动起来才行
     depends_on:
       - mysql
+    networks:
+      - eoapi_net
 
   mysql:
     image: mysql:latest

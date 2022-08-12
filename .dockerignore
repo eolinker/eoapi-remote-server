@@ -4,7 +4,6 @@
 package-lock.json
 # yarn.lock
 
-# sample
 /sample
 
 # Logs
@@ -39,7 +38,6 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # Code
-src/config/config.development.*
 docs/*
 sql/*
 test/*

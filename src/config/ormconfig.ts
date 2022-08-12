@@ -11,7 +11,7 @@ export const getTypeOrmModuleOptions = (): TypeOrmModuleOptions => ({
   autoLoadEntities: true,
 });
 
-export const OrmConfig = {
+export const getOrmConfig = () => ({
   ...getTypeOrmModuleOptions(),
   entities: ['dist/entities/**/*.js'],
   migrations: ['dist/migrations/**/*.js'],
@@ -19,5 +19,6 @@ export const OrmConfig = {
   cli: {
     migrationsDir: 'src/migrations',
   },
-};
-export default OrmConfig;
+});
+
+export default getOrmConfig();
