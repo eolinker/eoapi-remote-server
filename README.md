@@ -1,14 +1,12 @@
 # eoapi-remote-server
 
-storage api data in remote server
-
-node: version > 16
+Eoapi 远程数据源后端服务
 
 ## 环境变量配置
 
-在`.env` 文件中统一配置 TOKEN 以及 MySQL 连接等配置信息。
+>*如果你没有配置需求，可以[跳过此步骤](#使用-docker-一键启动)，系统会使用默认配置启动*
 
->ps: *如果你没有特别需求，则可以[跳过此步骤](#使用docker一键启动)，使用默认配置即可*
+在 `.env` 文件中统一配置 TOKEN 以及 MySQL 连接、端口等配置信息。
 
 ```bash
 # auth token
@@ -27,9 +25,9 @@ MYSQL_PASSWORD=123456a.
 MYSQL_ROOT_PASSWORD=123456a.
 ```
 
-默认情况下，在`src/config/ormconfig.ts`和`docker-compose.yaml`文件中统一使用了`.env`配置里的环境变量，比如：服务端口号、mysql连接等信息。
+默认情况下，在 `src/config/ormconfig.ts` 和 `docker-compose.yaml` 文件中统一使用了 `.env` 配置里的环境变量，比如：服务端口号、MySQL 连接等信息。
 
-## 使用docker一键启动
+## 使用 Docker 一键启动
 
 启动成功后，通过 <http://localhost:3000> 访问。
 
@@ -43,15 +41,16 @@ docker-compose up -d --build
 docker-compose logs -f
 ```
 
-## 本地开发
+## 开发
+Node.js 版本：^16
 
-如果想提高开发效率，可以安装 nestjs 官方提供的命令行 nestjs-cli 快速生成组件、服务等模板。
+如果想提高开发效率，可以安装 NestJS 官方提供的命令行 nestjs/cli 快速生成组件、服务等模板。
 
 ```bash
 npm i -g @nestjs/cli
 ```
 
-【可选】如果你觉得本地搭建mysql比较麻烦的话，你还可以使用docker单独启动一个mysql服务供开发时使用(默认端口号: 33066), 例如：
+【可选】如果你觉得本地搭建 MySQL 比较麻烦的话，你还可以使用 Docker 单独启动一个 MySQL 服务供开发时使用(默认端口号: 33066), 例如：
 
 ```bash
 docker-compose run -d --service-ports mysql
