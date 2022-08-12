@@ -4,15 +4,11 @@ storage api data in remote server
 
 node: version > 16
 
-如果想提高开发效率，可以安装 nestjs 官方提供的命令行 nestjs-cli 快速生成组件、服务等模板。
-
-```bash
-npm i -g @nestjs/cli
-```
-
 ## 环境变量配置
 
-在`.env` 文件中统一配置 MySQL 数据库的连接信息。
+在`.env` 文件中统一配置 TOKEN 以及 MySQL 连接等配置信息。
+
+>ps: *如果你没有特别需求，则可以[跳过此步骤](#使用docker一键启动)，使用默认配置即可*
 
 ```bash
 # auth token
@@ -31,11 +27,31 @@ MYSQL_PASSWORD=123456a.
 MYSQL_ROOT_PASSWORD=123456a.
 ```
 
-默认情况下，在`.env`和`docker-compose.yaml`中的数据库连接配置统一使用`.env`配置里的环境变量。
+默认情况下，在`src/config/ormconfig.ts`和`docker-compose.yaml`文件中统一使用了`.env`配置里的环境变量，比如：服务端口号、mysql连接等信息。
+
+## 使用docker一键启动
+
+启动成功后，通过 <http://localhost:3000> 访问。
+
+```bash
+docker-compose up -d --build
+```
+
+查看实时日志输出
+
+```bash
+docker-compose logs -f
+```
 
 ## 本地开发
 
-如果你不想自己本地搭建mysql服务的话，你可以使用docker单独启动一个mysql容器(默认端口号: 33066), 例如：
+如果想提高开发效率，可以安装 nestjs 官方提供的命令行 nestjs-cli 快速生成组件、服务等模板。
+
+```bash
+npm i -g @nestjs/cli
+```
+
+【可选】如果你觉得本地搭建mysql比较麻烦的话，你还可以使用docker单独启动一个mysql服务供开发时使用(默认端口号: 33066), 例如：
 
 ```bash
 docker-compose run -d --service-ports mysql
@@ -51,20 +67,6 @@ yarn
 
 ```bash
 yarn start:dev
-```
-
-## 使用docker一键启动
-
-启动成功后，通过 <http://localhost:3000> 访问。
-
-```bash
-docker-compose up -d
-```
-
-查看实时日志输出
-
-```bash
-docker-compose logs -f
 ```
 
 ### 运行
