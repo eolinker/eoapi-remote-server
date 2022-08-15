@@ -44,6 +44,7 @@ export class MockService {
   async findMock(projectID: string, request: Request): Promise<string> {
     const { path, method, query, body, protocol } = request;
     const pathName = path.replace(`/mock/${projectID}`, '');
+    const pathReg = new RegExp(`/?${pathName}/?`);
 
     if (Number.isNaN(+query.mockID)) {
       const apiDataList = await this.apiDataRepository
@@ -68,8 +69,7 @@ export class MockService {
           uri = uri.replace(/\{(.+?)\}/g, (match, p) => restMap[p] ?? match);
           // console.log('restMap', restMap, n.uri, uri);
         }
-        const uriReg = new RegExp(`/?${uri}/?`);
-        return n.method === method && uriReg.test(path);
+        return n.method === method && pathReg.test(uri);
       });
 
       if (!apiData) {
@@ -78,12 +78,19 @@ export class MockService {
           message: '没有匹配到该mock，请检查请求方法或路径是否正确。',
         });
       }
-      return JSON.stringify(
-        tree2obj([].concat(apiData.responseBody), {
-          key: 'name',
-          valueKey: 'description',
-        }),
-      );
+      console.log('apiData', apiData);
+      if (apiData.responseBodyType === 'raw') {
+        return apiData.responseBody;
+      } else if (apiData.responseBodyType === 'json') {
+        return JSON.stringify(
+          tree2obj([].concat(apiData.responseBody), {
+            key: 'name',
+            valueKey: 'description',
+          }),
+        );
+      } else {
+        return '{}';
+      }
     } else {
       const mock = await this.repository.findOne(+query.mockID);
       return mock?.response || '{}';
