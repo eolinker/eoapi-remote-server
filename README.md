@@ -56,13 +56,18 @@ npm i -g @nestjs/cli
 docker-compose run -d --service-ports mysql
 ```
 
-安装依赖
+1. 安装依赖
 
 ```bash
 yarn 
 ```
 
-运行代码
+2. 运行数据库迁移脚本
+```bash
+yarn migration:run
+```
+
+3. 运行代码
 
 ```bash
 yarn start:dev

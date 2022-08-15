@@ -1,29 +1,10 @@
-import { Column, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
-export abstract class Base {
-  @PrimaryGeneratedColumn()
-  uuid: number;
-
-  @Column()
-  name: string;
-
-  @Column({ nullable: true })
-  description: string;
-
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    nullable: false,
-  })
-  createdAt: Timestamp;
-
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'NOW()',
-    nullable: false,
-  })
-  updatedAt: Timestamp;
-}
+import {
+  Column,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
+  Timestamp,
+  UpdateDateColumn,
+} from 'typeorm';
 /**
  * Without name and description constructure
  */
@@ -31,9 +12,17 @@ export abstract class FictitiousBase {
   @PrimaryGeneratedColumn()
   uuid: number;
 
-  @Column('timestamp')
-  createdAt: Timestamp;
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 
-  @Column('timestamp')
-  updatedAt: Timestamp;
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
+}
+
+export abstract class Base extends FictitiousBase {
+  @Column()
+  name: string;
+
+  @Column({ nullable: true })
+  description: string;
 }

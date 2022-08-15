@@ -9,12 +9,12 @@ export class ApiTestHistory extends FictitiousBase {
   @Column()
   apiDataID: number;
 
-  @Column()
+  @Column({ type: 'simple-json' })
   general: string;
 
-  @Column()
+  @Column({ type: 'simple-json' })
   request: string;
 
-  @Column()
+  @Column({ type: 'simple-json' })
   response: string;
 }

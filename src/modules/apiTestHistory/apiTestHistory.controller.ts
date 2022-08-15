@@ -31,11 +31,6 @@ export class ApiTestHistoryController {
 
   @Post()
   async create(@Body() createDto: CreateDto) {
-    this.JSON_FIELDS.forEach((field) => {
-      if (createDto[field]) {
-        createDto[field] = JSON.stringify(createDto[field]);
-      }
-    });
     const data = await this.service.create(createDto);
     if (data && data.uuid) {
       return await this.findOne(`${data.uuid}`);
