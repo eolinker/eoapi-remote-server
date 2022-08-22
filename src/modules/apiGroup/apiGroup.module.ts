@@ -8,5 +8,6 @@ import { ApiGroup } from '../..//entities/apiGroup.entity';
   imports: [TypeOrmModule.forFeature([ApiGroup])],
   controllers: [ApiGroupController],
   providers: [ApiGroupService],
+  exports: [ApiGroupService],
 })
 export class ApiGroupModule {}

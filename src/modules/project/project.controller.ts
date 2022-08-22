@@ -14,6 +14,7 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { ImportDto } from './dto/import.dto';
 
 @Controller('project')
 @UseGuards(AuthGuard('api-key'))
@@ -88,5 +89,15 @@ export class ProjectController {
     }
 
     return this.NOT_FOUND;
+  }
+
+  @Put(':uuid/import')
+  async import(@Param('uuid') uuid: string, @Body() importDto: ImportDto) {
+    console.log('uuid', uuid, importDto);
+    const data = await this.service.import(Number(uuid), importDto);
+    return {
+      statusCode: 200,
+      data: data,
+    };
   }
 }

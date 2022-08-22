@@ -9,6 +9,8 @@ export const getTypeOrmModuleOptions = (): TypeOrmModuleOptions => ({
   database: process.env.MYSQL_DATABASE,
   entities: [__dirname + '/../**/entities/*.entity.{ts,js}'],
   autoLoadEntities: true,
+  // logging: true,
+  // synchronize: true,
 });
 
 export const getOrmConfig = () => ({
