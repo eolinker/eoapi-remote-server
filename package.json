@@ -33,6 +33,7 @@
     "@nestjs/passport": "^8.2.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.3",
+    "ajv": "^8.11.0",
     "cross-env": "^7.0.3",
     "mysql2": "^2.3.3",
     "passport": "^0.5.3",

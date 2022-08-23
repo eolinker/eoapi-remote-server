@@ -97,7 +97,9 @@ export class ProjectController {
     const data = await this.service.import(Number(uuid), importDto);
     return {
       statusCode: 200,
-      data: data,
+      data: {
+        errors: data,
+      },
     };
   }
 }

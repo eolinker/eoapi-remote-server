@@ -5,11 +5,17 @@ import { Project } from '../../entities/project.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
-import { Child, Collections, ImportDto } from './dto/import.dto';
-import { ApiData } from '../../entities/apiData.entity';
-import { ApiGroup } from '../../entities/apiGroup.entity';
+import { Child, Collections, Environment, ImportDto } from './dto/import.dto';
 import { ApiGroupService } from '../apiGroup/apiGroup.service';
 import { ApiDataService } from '../apiData/apiData.service';
+import { parseAndCheckApiData, parseAndCheckEnv } from './validate';
+import { EnvironmentService } from '../environment/environment.service';
+
+type Errors = {
+  apiData: any[];
+  group: any[];
+  enviroments: any[];
+};
 
 @Injectable()
 export class ProjectService {
@@ -18,6 +24,7 @@ export class ProjectService {
     private readonly repository: Repository<Project>,
     private readonly apiDataService: ApiDataService,
     private readonly apiGroupService: ApiGroupService,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   async create(createDto: CreateDto) {
@@ -50,37 +57,67 @@ export class ProjectService {
   }
 
   async import(uuid: number, importDto: Collections) {
-    const { collections } = importDto;
-    return this.importCollects(collections, uuid);
+    const { collections, enviroments } = importDto;
+    const errors = {
+      apiData: [],
+      group: [],
+      enviroments: [],
+    };
+    this.importEnv(enviroments, uuid, errors);
+    return this.importCollects(collections, uuid, 0, errors);
+  }
+
+  async importEnv(
+    enviroments: Environment[] = [],
+    projectID: number,
+    errors: Errors,
+  ) {
+    enviroments.forEach((item) => {
+      const env = {
+        ...item,
+        projectID,
+        parameters: item.parameters as unknown as string,
+      };
+      const result = parseAndCheckEnv(env);
+      if (!result.validate) {
+        errors.enviroments.push(item);
+      } else {
+        this.environmentService.create(env);
+      }
+    });
   }
 
   async importCollects(
     collections: Child[],
     projectID: number,
     parentID = 0,
-    errors = {
-      apiData: [],
-      group: [],
-    },
-  ): Promise<{
-    apiData: any[];
-    group: any[];
-  }> {
+    errors: Errors,
+  ): Promise<Errors> {
     return collections.reduce(async (prev: any, curr: any) => {
-      if (curr.uri) {
-        await this.apiDataService.create({
-          ...curr,
-          projectID,
-          groupID: parentID,
-        });
+      if (curr.uri || curr.method || curr.protocol) {
+        const result = parseAndCheckApiData(curr);
+        if (!result.validate) {
+          (await prev).apiData.push(curr.name || curr.uri);
+        } else {
+          await this.apiDataService.create({
+            ...curr,
+            projectID,
+            groupID: parentID,
+          });
+        }
       } else {
-        const { uuid } = await this.apiGroupService.create({
-          ...curr,
-          projectID,
-          parentID,
-        });
-        if (Array.isArray(curr.children)) {
-          await this.importCollects(curr.children, projectID, uuid, errors);
+        if (!curr.name) {
+          delete curr.children;
+          (await prev).group.push(curr);
+        } else {
+          const { uuid } = await this.apiGroupService.create({
+            ...curr,
+            projectID,
+            parentID,
+          });
+          if (Array.isArray(curr.children) && curr.children.length) {
+            await this.importCollects(curr.children, projectID, uuid, errors);
+          }
         }
       }
       return prev;
