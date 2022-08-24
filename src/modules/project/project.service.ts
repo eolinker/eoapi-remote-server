@@ -101,6 +101,8 @@ export class ProjectService {
         } else {
           await this.apiDataService.create({
             ...curr,
+            requestBody: curr.requestBody || [],
+            responseBody: curr.responseBody || [],
             projectID,
             groupID: parentID,
           });
