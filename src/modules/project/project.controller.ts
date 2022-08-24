@@ -93,7 +93,7 @@ export class ProjectController {
 
   @Put(':uuid/import')
   async import(@Param('uuid') uuid: string, @Body() importDto: ImportDto) {
-    console.log('uuid', uuid, importDto);
+    // console.log('uuid', uuid, importDto);
     const data = await this.service.import(Number(uuid), importDto);
     return {
       statusCode: 200,
