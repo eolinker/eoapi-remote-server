@@ -29,7 +29,7 @@ MYSQL_ROOT_PASSWORD=123456a.
 
 ## 使用 Docker 一键启动
 
-启动成功后，通过 <http://localhost:3000> 访问。
+启动成功后，通过 `http://<server_url>:3000` 访问。
 
 ```bash
 docker-compose up -d --build
