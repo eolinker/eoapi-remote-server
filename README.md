@@ -1,46 +1,9 @@
 # eoapi-remote-server
 
-Eoapi 远程数据源后端服务
+Eoapi 远程数据源后端服务，部署后即可通过公共数据源实现简单团队协作
 
-## 环境变量配置
-
->*如果你没有配置需求，可以[跳过此步骤](#使用-docker-一键启动)，系统会使用默认配置启动*
-
-在 `.env` 文件中统一配置 TOKEN 以及 MySQL 连接、端口等配置信息。
-
-```bash
-# auth token
-API_KEY=1ab2c3d4e5f61ab2c3d4e5f6
-
-# eoapi-server coinfigure
-EOAPI_SERVER_PORT=3000
-
-# mysql configure
-TZ=Asia/Shanghai
-# 映射到宿主机端口号
-MYSQL_PORT=33066
-MYSQL_USERNAME=root
-MYSQL_DATABASE=eoapi
-MYSQL_PASSWORD=123456a.
-MYSQL_ROOT_PASSWORD=123456a.
-```
-
-默认情况下，在 `src/config/ormconfig.ts` 和 `docker-compose.yaml` 文件中统一使用了 `.env` 配置里的环境变量，比如：服务端口号、MySQL 连接等信息。
-
-## 使用 Docker 一键启动
-
-启动成功后，通过 `http://<server_url>:3000` 访问。
-
-```bash
-docker-compose up -d --build
-```
-
-查看实时日志输出
-
-```bash
-docker-compose logs -f
-```
-
+## 部署
+请访问 [部署文档](https://docs.eoapi.io/docs/storage.html)
 ## 开发
 Node.js 版本：^16
 
