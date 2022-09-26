@@ -7,17 +7,17 @@ import {
   Param,
   Delete,
   Query,
-  UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ProjectService } from './project.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { ImportDto } from './dto/import.dto';
 
+@ApiBearerAuth()
+@ApiTags('Project')
 @Controller('project')
-@UseGuards(AuthGuard('api-key'))
 export class ProjectController {
   private readonly NOT_FOUND = {
     statusCode: 201,
@@ -39,30 +39,19 @@ export class ProjectController {
 
   @Post('batch')
   async batchCreate(@Body() createDto: Array<CreateDto>) {
-    const data = await this.service.batchCreate(createDto);
-    return {
-      statusCode: 200,
-      data: data,
-    };
+    return this.service.batchCreate(createDto);
   }
 
   @Get()
   async findAll(@Query() query: QueryDto) {
-    const data = await this.service.findAll(query);
-    return {
-      statusCode: 200,
-      data: data,
-    };
+    return this.service.findAll(query);
   }
 
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string) {
     const data = await this.service.findOne(+uuid);
     if (data) {
-      return {
-        statusCode: 200,
-        data: data,
-      };
+      return data;
     }
 
     return this.NOT_FOUND;
@@ -82,10 +71,7 @@ export class ProjectController {
   async remove(@Param('uuid') uuid: string) {
     const data = await this.service.remove(+uuid);
     if (data && data.affected > 0) {
-      return {
-        statusCode: 200,
-        data: data,
-      };
+      return data;
     }
 
     return this.NOT_FOUND;

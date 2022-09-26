@@ -9,12 +9,15 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { EnvironmentService } from './environment.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
-import { AuthGuard } from '@nestjs/passport';
 
+@ApiSecurity('')
+@ApiTags('Environment')
 @Controller('environment')
 @UseGuards(AuthGuard('api-key'))
 export class EnvironmentController {

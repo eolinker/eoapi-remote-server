@@ -7,17 +7,18 @@ import {
   Param,
   Delete,
   Query,
-  UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ValidateQueryPipe } from 'src/pipe/query.pipe';
 import { ApiGroupService } from './apiGroup.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { ValidateQueryPipe } from 'src/pipe/query.pipe';
 
+@ApiBearerAuth()
+@ApiTags('apiGroup')
 @Controller('group')
-@UseGuards(AuthGuard('api-key'))
 export class ApiGroupController {
   private readonly NOT_FOUND = {
     statusCode: 201,
@@ -31,7 +32,7 @@ export class ApiGroupController {
   async create(@Body() createDto: CreateDto) {
     const data = await this.service.create(createDto);
     if (data && data.uuid) {
-      return await this.findOne(`${data.uuid}`);
+      return await this.findOne(data.uuid);
     }
 
     return this.NOT_FOUND;
@@ -39,40 +40,24 @@ export class ApiGroupController {
 
   @Post('batch')
   async batchCreate(@Body() createDto: Array<CreateDto>) {
-    const data = await this.service.batchCreate(createDto);
-    return {
-      statusCode: 200,
-      data: data,
-    };
+    return this.service.batchCreate(createDto);
   }
 
   @Get()
   async findAll(@Query() query: QueryDto) {
-    const data = await this.service.findAll(query);
-    return {
-      statusCode: 200,
-      data: data,
-    };
+    return this.service.findAll(query);
   }
 
   @Get(':uuid')
-  async findOne(@Param('uuid') uuid: string) {
-    const data = await this.service.findOne(+uuid);
-    if (data) {
-      return {
-        statusCode: 200,
-        data: data,
-      };
-    }
-
-    return this.NOT_FOUND;
+  async findOne(@Param('uuid', ParseIntPipe) uuid: number) {
+    return this.service.findOne(uuid);
   }
   @Put('batch')
   async batchUpdate(@Body() updateDtos: Array<UpdateDto>) {
-    let ids = updateDtos.map((val) => val.uuid);
+    const ids = updateDtos.map((val) => val.uuid);
     const array = await this.service.findByIds(ids);
     const newArr = array.map((el) => {
-      let item = updateDtos.find((val) => (val.uuid == el.uuid));
+      const item = updateDtos.find((val) => val.uuid == el.uuid);
       return {
         ...el,
         parentID: item.parentID,
@@ -86,7 +71,10 @@ export class ApiGroupController {
     return this.NOT_FOUND;
   }
   @Put(':uuid')
-  async update(@Param('uuid') uuid: string, @Body() updateDto: UpdateDto) {
+  async update(
+    @Param('uuid', ParseIntPipe) uuid: number,
+    @Body() updateDto: UpdateDto,
+  ) {
     const data = await this.service.update(+uuid, updateDto);
     if (data) {
       return await this.findOne(uuid);
@@ -99,10 +87,7 @@ export class ApiGroupController {
   async remove(@Query(ValidateQueryPipe) query) {
     const data = await this.service.remove(query.uuids);
     if (data && data.affected > 0) {
-      return {
-        statusCode: 200,
-        data: data,
-      };
+      return data;
     }
 
     return this.NOT_FOUND;

@@ -27,11 +27,11 @@ export class EnvironmentService {
   }
 
   async findAll(query: QueryDto) {
-    return await this.repository.find(query);
+    return await this.repository.find({ where: query });
   }
 
-  async findOne(id: number): Promise<Environment> {
-    return await this.repository.findOne(id);
+  async findOne(uuid: number): Promise<Environment> {
+    return await this.repository.findOne({ where: { uuid } });
   }
 
   async update(id: number, updateDto: UpdateDto) {

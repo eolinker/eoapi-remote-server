@@ -7,18 +7,17 @@ import {
   Param,
   Delete,
   Query,
-  UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ValidateQueryPipe } from 'src/pipe/query.pipe';
 import { ApiDataService } from './apiData.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { ValidateQueryPipe } from 'src/pipe/query.pipe';
-import { retry } from 'rxjs';
 
+@ApiBearerAuth()
+@ApiTags('apiData')
 @Controller('api_data')
-@UseGuards(AuthGuard('api-key'))
 export class ApiDataController {
   private readonly NOT_FOUND = {
     statusCode: 201,
@@ -58,33 +57,17 @@ export class ApiDataController {
     createDto.map((val) => {
       return this.filterItem(val);
     });
-    const data = await this.service.batchCreate(createDto);
-    return {
-      statusCode: 200,
-      data: data,
-    };
+    return this.service.batchCreate(createDto);
   }
 
   @Get()
   async findAll(@Query() query: QueryDto) {
-    const data = await this.service.findAll(query);
-    return {
-      statusCode: 200,
-      data: data,
-    };
+    return this.service.findAll(query);
   }
 
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string) {
-    const data = await this.service.findOne(+uuid);
-    if (data) {
-      return {
-        statusCode: 200,
-        data: data,
-      };
-    }
-
-    return this.NOT_FOUND;
+    return this.service.findOne(+uuid);
   }
   @Put('batch')
   async batchUpdate(@Body() updateDtos: Array<UpdateDto>) {

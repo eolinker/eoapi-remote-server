@@ -7,17 +7,17 @@ import {
   Param,
   Delete,
   Query,
-  UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ValidateQueryPipe } from 'src/pipe/query.pipe';
 import { ApiTestHistoryService } from './apiTestHistory.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { ValidateQueryPipe } from 'src/pipe/query.pipe';
 
+@ApiBearerAuth()
+@ApiTags('apiTestHistory')
 @Controller('api_test_history')
-@UseGuards(AuthGuard('api-key'))
 export class ApiTestHistoryController {
   private readonly NOT_FOUND = {
     statusCode: 201,
@@ -49,34 +49,17 @@ export class ApiTestHistoryController {
       });
       return val;
     });
-    const data = await this.service.batchCreate(createDto);
-    return {
-      statusCode: 200,
-      data: data,
-    };
+    return this.service.batchCreate(createDto);
   }
 
   @Get()
   async findAll(@Query() query: QueryDto) {
-    const data = await this.service.findAll(query);
-
-    return {
-      statusCode: 200,
-      data: data,
-    };
+    return this.service.findAll(query);
   }
 
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string) {
-    const data = await this.service.findOne(+uuid);
-    if (data) {
-      return {
-        statusCode: 200,
-        data: data,
-      };
-    }
-
-    return this.NOT_FOUND;
+    return this.service.findOne(+uuid);
   }
 
   @Put(':uuid')
@@ -98,10 +81,7 @@ export class ApiTestHistoryController {
   async remove(@Query(ValidateQueryPipe) query) {
     const data = await this.service.remove(query.uuids);
     if (data && data.affected > 0) {
-      return {
-        statusCode: 200,
-        data: data,
-      };
+      return data;
     }
 
     return this.NOT_FOUND;

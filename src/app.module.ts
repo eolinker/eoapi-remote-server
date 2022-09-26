@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 // 引入数据库的及配置文件
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProjectModule } from './modules/project/project.module';
 import { ApiGroupModule } from './modules/apiGroup/apiGroup.module';
@@ -10,19 +11,30 @@ import { EnvironmentModule } from './modules/environment/environment.module';
 import { ApiDataModule } from './modules/apiData/apiData.module';
 import { ApiTestHistoryModule } from './modules/apiTestHistory/apiTestHistory.module';
 import { MockModule } from './modules/mock/mock.module';
-import { getTypeOrmModuleOptions } from './config/ormconfig';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { getConfiguration } from './config/configuration';
+import { UserModule } from '@/modules/user/user.module';
+import { WorkspaceModule } from '@/modules/workspace/workspace.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env'],
+      load: [getConfiguration],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: () => ({
-        ...getTypeOrmModuleOptions(),
+      useFactory: (configService: ConfigService) => ({
+        autoLoadEntities: true,
+        type: configService.get<any>('database.type'),
+        host: configService.get<string>('database.host'),
+        port: configService.get<number>('database.port'),
+        username: configService.get<string>('database.username'),
+        password: configService.get<string>('database.password'),
+        database: configService.get<string>('database.database'),
+        synchronize: configService.get<boolean>('database.synchronize'),
+        logging: configService.get('database.logging'),
+        timezone: configService.get('database.timezone'), // 时区
       }),
     }), // 数据库
     AuthModule, // 认证
@@ -32,6 +44,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     ApiDataModule,
     ApiTestHistoryModule,
     MockModule,
+    UserModule,
+    WorkspaceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

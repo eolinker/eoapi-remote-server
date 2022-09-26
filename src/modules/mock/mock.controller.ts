@@ -8,14 +8,16 @@ import {
   Param,
   Delete,
   Query,
+  All,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 import { MockService } from './mock.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
-import { Request } from 'express';
-import { All } from '@nestjs/common';
 
+@ApiTags('Mock')
 @Controller('mock')
 export class MockController {
   private readonly NOT_FOUND = {

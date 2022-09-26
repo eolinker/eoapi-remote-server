@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Mock } from '../../entities/mock.entity';
-import { CreateDto, CreateWay } from './dto/create.dto';
-import { CreateDto as ApiDataCreateDto } from '../apiData/dto/create.dto';
-import { UpdateDto } from './dto/update.dto';
-import { QueryDto } from './dto/query.dto';
 import { ApiData } from 'src/entities/apiData.entity';
 import { Request } from 'express';
 import { tree2obj } from 'src/utils';
+import { Mock } from '../../entities/mock.entity';
+import { CreateDto as ApiDataCreateDto } from '../apiData/dto/create.dto';
+import { CreateDto, CreateWay } from './dto/create.dto';
+import { UpdateDto } from './dto/update.dto';
+import { QueryDto } from './dto/query.dto';
 
 @Injectable()
 export class MockService {
@@ -34,11 +34,11 @@ export class MockService {
   }
 
   async findAll(query: QueryDto) {
-    return await this.repository.find(query);
+    return await this.repository.find({ where: query });
   }
 
-  async findOne(id: number): Promise<Mock> {
-    return await this.repository.findOne(id);
+  async findOne(uuid: number): Promise<Mock> {
+    return await this.repository.findOne({ where: { uuid } });
   }
 
   async findMock(projectID: string, request: Request): Promise<string> {
@@ -92,7 +92,9 @@ export class MockService {
         return '{}';
       }
     } else {
-      const mock = await this.repository.findOne(+query.mockID);
+      const mock = await this.repository.findOne({
+        where: { uuid: Number(query.mockID) },
+      });
       return mock?.response || '{}';
     }
   }

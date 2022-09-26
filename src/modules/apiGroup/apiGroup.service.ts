@@ -27,20 +27,20 @@ export class ApiGroupService {
   }
 
   async findAll(query: QueryDto) {
-    return await this.repository.find(query);
+    return await this.repository.find({ where: query });
   }
 
   async findByIds(ids: number[]) {
     return await this.repository.findByIds(ids);
   }
-  async findOne(id: number): Promise<ApiGroup> {
-    return await this.repository.findOne(id);
+  async findOne(uuid: number): Promise<ApiGroup> {
+    return await this.repository.findOne({ where: { uuid } });
   }
 
   async update(id: number, updateDto: UpdateDto) {
     return await this.repository.update(id, updateDto);
   }
-  async bulkUpdate(updateDto: Array<UpdateDto>){
+  async bulkUpdate(updateDto: Array<UpdateDto>) {
     return await this.repository.save(updateDto);
   }
   async remove(id: number) {
