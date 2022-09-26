@@ -1,12 +1,12 @@
-import { ConsoleLogger, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { ApiData } from '../../entities/apiData.entity';
 import { MockService } from '../mock/mock.service';
-import { Mock } from '../../entities/mock.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
+import { ApiData } from '@/entities/apiData.entity';
+import { Mock } from '@/entities/mock.entity';
 
 @Injectable()
 export class ApiDataService {

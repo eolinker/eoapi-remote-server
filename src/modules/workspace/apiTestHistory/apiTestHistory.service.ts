@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Environment } from '../../entities/environment.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
+import { ApiTestHistory } from '@/entities/apiTestHistory.entity';
 
 @Injectable()
-export class EnvironmentService {
+export class ApiTestHistoryService {
   constructor(
-    @InjectRepository(Environment)
-    private readonly repository: Repository<Environment>,
+    @InjectRepository(ApiTestHistory)
+    private readonly repository: Repository<ApiTestHistory>,
   ) {}
 
   async create(createDto: CreateDto) {
@@ -21,7 +21,7 @@ export class EnvironmentService {
     return this.repository
       .createQueryBuilder()
       .insert()
-      .into(Environment)
+      .into(ApiTestHistory)
       .values(createDto)
       .execute();
   }
@@ -30,7 +30,7 @@ export class EnvironmentService {
     return await this.repository.find({ where: query });
   }
 
-  async findOne(uuid: number): Promise<Environment> {
+  async findOne(uuid: number): Promise<ApiTestHistory> {
     return await this.repository.findOne({ where: { uuid } });
   }
 
@@ -38,7 +38,7 @@ export class EnvironmentService {
     return await this.repository.update(id, updateDto);
   }
 
-  async remove(id: number) {
-    return await this.repository.delete(id);
+  async remove(ids: number[]) {
+    return await this.repository.delete(ids);
   }
 }

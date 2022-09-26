@@ -1,44 +1,61 @@
 import {
   Controller,
   Get,
-  Req,
   Post,
   Body,
   Put,
   Param,
   Delete,
   Query,
-  All,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
-import { MockService } from './mock.service';
+import { EnvironmentService } from './environment.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
+import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
 
-@ApiTags('Mock')
-@Controller('mock')
-export class MockController {
+@ApiTags('Environment')
+@Controller(`${WORKSPACE_PROJECT_PREFIX}/environment`)
+@UseGuards(AuthGuard('api-key'))
+export class EnvironmentController {
   private readonly NOT_FOUND = {
     statusCode: 201,
     message: 'Cannot find record in database',
     error: 'Not Found',
   };
 
-  constructor(private readonly service: MockService) {}
+  private readonly JSON_FIELDS = ['parameters'];
+
+  constructor(private readonly service: EnvironmentService) {}
 
   @Post()
   async create(@Body() createDto: CreateDto) {
+    this.JSON_FIELDS.forEach((field) => {
+      if (createDto[field]) {
+        createDto[field] = JSON.stringify(createDto[field]);
+      }
+    });
     const data = await this.service.create(createDto);
     if (data && data.uuid) {
       return await this.findOne(`${data.uuid}`);
     }
+
     return this.NOT_FOUND;
   }
 
   @Post('batch')
   async batchCreate(@Body() createDto: Array<CreateDto>) {
+    createDto.map((val) => {
+      this.JSON_FIELDS.forEach((field) => {
+        if (val[field]) {
+          val[field] = JSON.stringify(val[field]);
+        }
+      });
+      return val;
+    });
     const data = await this.service.batchCreate(createDto);
     return {
       statusCode: 200,
@@ -49,6 +66,7 @@ export class MockController {
   @Get()
   async findAll(@Query() query: QueryDto) {
     const data = await this.service.findAll(query);
+
     return {
       statusCode: 200,
       data: data,
@@ -68,18 +86,13 @@ export class MockController {
     return this.NOT_FOUND;
   }
 
-  @All(':projectID/**')
-  async findMock(
-    @Param('projectID') projectID: string,
-    @Req() request: Request,
-  ) {
-    const response = await this.service.findMock(projectID, request);
-
-    return response ?? this.NOT_FOUND;
-  }
-
   @Put(':uuid')
   async update(@Param('uuid') uuid: string, @Body() updateDto: UpdateDto) {
+    this.JSON_FIELDS.forEach((field) => {
+      if (updateDto[field]) {
+        updateDto[field] = JSON.stringify(updateDto[field]);
+      }
+    });
     const data = await this.service.update(+uuid, updateDto);
     if (data) {
       return await this.findOne(uuid);
@@ -90,14 +103,6 @@ export class MockController {
 
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string) {
-    const mock = await this.service.findOne(+uuid);
-    if (mock.createWay === 'system') {
-      return {
-        statusCode: 200,
-        data: {},
-        message: '系统自动创建的mock不能删除',
-      };
-    }
     const data = await this.service.remove(+uuid);
     if (data && data.affected > 0) {
       return {

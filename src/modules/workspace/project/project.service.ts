@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Project } from '../../entities/project.entity';
+import { ApiGroupService } from '../apiGroup/apiGroup.service';
+import { ApiDataService } from '../apiData/apiData.service';
+import { EnvironmentService } from '../environment/environment.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { Child, Collections, Environment, ImportDto } from './dto/import.dto';
-import { ApiGroupService } from '../apiGroup/apiGroup.service';
-import { ApiDataService } from '../apiData/apiData.service';
 import { parseAndCheckApiData, parseAndCheckEnv } from './validate';
-import { EnvironmentService } from '../environment/environment.service';
+import { Project } from '@/entities/project.entity';
 
 type Errors = {
   apiData: any[];

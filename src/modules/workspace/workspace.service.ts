@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, FindOneOptions, In, Repository } from 'typeorm';
-import { CreateWorkspaceDto, UpdateWorkspaceDto } from './dto/create-user.dto';
+import { CreateWorkspaceDto, UpdateWorkspaceDto } from './workspace.dto';
 import { WorkspaceEntity } from '@/entities/workspace.entity';
 import { UserService } from '@/modules/user/user.service';
 

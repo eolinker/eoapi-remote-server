@@ -23,7 +23,7 @@ import {
   UpdateWorkspaceDto,
   WorkspaceMemberAddDto,
   WorkspaceMemberRemoveDto,
-} from './dto/create-user.dto';
+} from './workspace.dto';
 import { WorkspaceEntity } from '@/entities/workspace.entity';
 import { IUser, User } from '@/decorators/user.decorator';
 import { UserEntity } from '@/entities/user.entity';

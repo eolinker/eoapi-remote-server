@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  ArrayNotEmpty,
-  IsArray,
-  IsInt,
-  IsString,
-  MinLength,
-} from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsString, MinLength } from 'class-validator';
 import { UserEntity } from '@/entities/user.entity';
 
 export class CreateWorkspaceDto {

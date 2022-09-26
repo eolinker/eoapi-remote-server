@@ -4,11 +4,11 @@ import { Repository } from 'typeorm';
 import { ApiData } from 'src/entities/apiData.entity';
 import { Request } from 'express';
 import { tree2obj } from 'src/utils';
-import { Mock } from '../../entities/mock.entity';
 import { CreateDto as ApiDataCreateDto } from '../apiData/dto/create.dto';
 import { CreateDto, CreateWay } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
+import { Mock } from '@/entities/mock.entity';
 
 @Injectable()
 export class MockService {

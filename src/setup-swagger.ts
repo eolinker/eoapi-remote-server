@@ -13,10 +13,12 @@ export function setupSwagger(app: INestApplication): void {
     return;
   }
 
+  const swaggerPath = configService.get<string>('swagger.path', '/swagger-api');
   const swaggerConfig = new DocumentBuilder()
     .setTitle(configService.get<string>('swagger.title'))
     .setDescription(configService.get<string>('swagger.desc'))
     .setLicense('MIT', 'https://github.com/eolinker/eoapi-remote-server')
+    .setExternalDoc('JSON Schema', `/${swaggerPath}-json`)
     // JWT鉴权
     .addSecurity('', {
       description: '接口授权',
@@ -27,9 +29,5 @@ export function setupSwagger(app: INestApplication): void {
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
 
-  SwaggerModule.setup(
-    configService.get<string>('swagger.path', '/swagger-api'),
-    app,
-    document,
-  );
+  SwaggerModule.setup(swaggerPath, app, document);
 }
