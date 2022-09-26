@@ -16,7 +16,7 @@ export const getConfiguration = () => ({
     entities: [__dirname + '/../**/entities/*.entity.{ts,js}'],
     autoLoadEntities: true,
     synchronize: true,
-    logging: true,
+    logging: false,
     timezone: '+08:00', // 东八区
     migrations: ['dist/migrations/**/*.js'],
     migrationsRun: true,

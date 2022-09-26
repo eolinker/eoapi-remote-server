@@ -29,13 +29,6 @@ export class UserController {
     return this.userService.findOne({ id: user.userId });
   }
 
-  @ApiOperation({ summary: '用户退出登录' })
-  @Public()
-  @Post('logout')
-  async logout(@Request() req) {
-    return req.logout();
-  }
-
   @Put('profile')
   @ApiOperation({ summary: '更新个人资料' })
   async updateUserProfile(

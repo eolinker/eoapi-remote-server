@@ -9,6 +9,6 @@ export class ApiGroup extends Base {
   @Column({ default: 0 })
   parentID: number;
 
-  @Column({default:0})
+  @Column({ default: 0 })
   weight: number;
 }

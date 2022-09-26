@@ -16,7 +16,7 @@ export class WorkspaceEntity {
 
   @Column()
   @ApiProperty({ example: '在线空间1', description: '空间名称' })
-  name: string;
+  title: string;
 
   @Column()
   @ApiProperty({ example: 'scar', description: '空间创建者ID' })

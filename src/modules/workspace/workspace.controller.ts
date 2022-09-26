@@ -27,12 +27,16 @@ import {
 import { WorkspaceEntity } from '@/entities/workspace.entity';
 import { IUser, User } from '@/decorators/user.decorator';
 import { UserEntity } from '@/entities/user.entity';
+import { ProjectService } from '@/modules/workspace/project/project.service';
 
 @ApiBearerAuth()
 @ApiTags('workspace')
 @Controller('workspace')
 export class WorkspaceController {
-  constructor(private readonly workspaceService: WorkspaceService) {}
+  constructor(
+    private readonly workspaceService: WorkspaceService,
+    private projectService: ProjectService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: '创建空间' })
@@ -41,7 +45,16 @@ export class WorkspaceController {
     @User() user: IUser,
     @Body() createDto: CreateWorkspaceDto,
   ): Promise<WorkspaceEntity> {
-    return this.workspaceService.create(user.userId, createDto);
+    const workspace = await this.workspaceService.create(
+      user.userId,
+      createDto,
+    );
+    this.projectService.create({
+      name: '默认项目',
+      workspaceID: workspace.id,
+      description: workspace.title + '的默认项目',
+    });
+    return workspace;
   }
 
   @Post('upload')

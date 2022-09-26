@@ -34,7 +34,7 @@ export class WorkspaceService {
     id: number,
     updateDto: UpdateWorkspaceDto,
   ): Promise<WorkspaceEntity> {
-    await this.workspaceRepository.update(id, { name: updateDto.name });
+    await this.workspaceRepository.update(id, { title: updateDto.title });
     return this.workspaceRepository.findOneBy({ id });
   }
 

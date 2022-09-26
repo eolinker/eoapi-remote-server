@@ -5,7 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
-import { HeaderApiKeyStrategy } from './auth-header-api-key.strategy';
+import { HeaderApiKeyStrategy } from './strategies/auth-header-api-key.strategy';
 import { UserModule } from '@/modules/user/user.module';
 import { AuthService } from '@/modules/auth/auth.service';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';

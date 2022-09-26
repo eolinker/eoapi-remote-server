@@ -26,7 +26,7 @@ export class AuthEntity extends BaseEntity {
   public refreshTokenExpiresAt: number;
 
   @JoinColumn()
-  @ManyToOne((_type) => UserEntity)
+  @ManyToOne(() => UserEntity)
   public user: UserEntity;
 
   @Column({ type: 'int' })

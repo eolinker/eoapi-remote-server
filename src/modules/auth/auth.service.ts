@@ -44,7 +44,7 @@ export class AuthService {
     return this.loginUser(userEntity);
   }
 
-  async fineOne(where: FindOptionsWhere<AuthEntity>): Promise<AuthEntity> {
+  async findOne(where: FindOptionsWhere<AuthEntity>): Promise<AuthEntity> {
     return this.authEntityRepository.findOne({ where });
   }
 

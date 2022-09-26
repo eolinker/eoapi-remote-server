@@ -16,9 +16,10 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { ImportDto } from './dto/import.dto';
+import { WORKSPACE_ID_PREFIX } from '@/common/contants/prefix.contants';
 
 @ApiTags('Project')
-@Controller('project')
+@Controller(`${WORKSPACE_ID_PREFIX}/project`)
 @UseGuards(AuthGuard('api-key'))
 export class ProjectController {
   private readonly NOT_FOUND = {

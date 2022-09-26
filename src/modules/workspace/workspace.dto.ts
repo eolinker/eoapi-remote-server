@@ -6,7 +6,7 @@ export class CreateWorkspaceDto {
   @ApiProperty({ description: '空间名称' })
   @MinLength(1)
   @IsString()
-  readonly name: string;
+  readonly title: string;
 }
 export class UpdateWorkspaceDto extends CreateWorkspaceDto {}
 
@@ -14,7 +14,7 @@ export class WorkspaceListDto {
   @ApiProperty({ description: '空间名称' })
   @MinLength(1)
   @IsString()
-  readonly name: string;
+  readonly title: string;
 }
 
 export class WorkspaceMemberAddDto {
