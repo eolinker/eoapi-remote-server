@@ -9,8 +9,6 @@ services:
     restart: always
     env_file:
       - .env
-    environment:
-      - MYSQL_HOST=host.docker.internal
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:

@@ -13,7 +13,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
-import { UpdateUserInfoDto } from './user.dto';
+import { UpdateUserInfoDto, UpdateUserPasswordDto } from './user.dto';
 import { UserEntity } from '@/entities/user.entity';
 import { IUser, User } from '@/decorators/user.decorator';
 
@@ -38,6 +38,15 @@ export class UserController {
     @Body() updateUserDto: UpdateUserInfoDto,
   ): Promise<UserEntity> {
     return this.userService.updateUserProfile(user.userId, updateUserDto);
+  }
+
+  @Put('password')
+  @ApiOperation({ summary: '更改个人密码' })
+  async updateUserPassword(
+    @User() user: IUser,
+    @Body() updateUserDto: UpdateUserPasswordDto,
+  ): Promise<UserEntity> {
+    return this.userService.updateUserPassword(user.userId, updateUserDto);
   }
 
   @Get(':username')

@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FindManyOptions,
@@ -8,7 +12,11 @@ import {
   Repository,
 } from 'typeorm';
 import bcrypt from 'bcrypt';
-import { UpdateUserInfoDto, UserLoginDto } from './user.dto';
+import {
+  UpdateUserInfoDto,
+  UpdateUserPasswordDto,
+  UserLoginDto,
+} from './user.dto';
 import { UserEntity } from '@/entities/user.entity';
 
 @Injectable()
@@ -83,6 +91,29 @@ export class UserService {
       throw new ConflictException('用户名已存在');
     }
     await this.userRepository.update(userId, userInfoDto);
+    return this.userRepository.findOneBy({ id: userId });
+  }
+
+  async updateUserPassword(
+    userId,
+    userPasswordDto: UpdateUserPasswordDto,
+  ): Promise<UserEntity> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new ConflictException('用户不存在');
+    }
+    if (!userPasswordDto.newPassword) {
+      throw new ConflictException('新密码不能为空');
+    }
+    const oldPassword = await this.createPasswordHash(
+      userPasswordDto.oldPassword,
+    );
+    if (oldPassword !== user.password) {
+      throw new ForbiddenException('旧密码验证失败');
+    }
+    await this.userRepository.update(userId, {
+      password: await this.createPasswordHash(userPasswordDto.newPassword),
+    });
     return this.userRepository.findOneBy({ id: userId });
   }
 }
