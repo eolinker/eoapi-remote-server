@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiHideProperty } from '@nestjs/swagger';
 import {
   PrimaryGeneratedColumn,
   Column,
@@ -24,6 +24,7 @@ export class WorkspaceEntity {
   creatorID: number;
 
   @Exclude()
+  @ApiHideProperty()
   @ManyToMany(() => UserEntity, (user) => user.workspaces)
   @JoinTable()
   users: UserEntity[];

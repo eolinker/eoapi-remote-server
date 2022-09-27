@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { WorkspaceEntity } from './workspace.entity';
@@ -22,6 +22,7 @@ export class UserEntity {
   @ApiProperty({ example: 'url', description: '用户头像' })
   avatar?: string;
 
+  @ApiHideProperty()
   @Exclude()
   @ManyToMany(() => WorkspaceEntity, (workspace) => workspace.users)
   workspaces: WorkspaceEntity[];

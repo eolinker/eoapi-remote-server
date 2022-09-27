@@ -81,7 +81,6 @@ export class AuthService {
       }
     }
 
-    console.log('userEntity', userEntity);
     const date = new Date();
 
     const result = {
