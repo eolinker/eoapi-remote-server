@@ -41,7 +41,7 @@ export class JwtAuthGuard implements CanActivate {
     }
     try {
       // 挂载对象到当前请求上
-      request.user = this.jwtService.verify<IUser>(token);
+      request.currentUser = this.jwtService.verify<IUser>(token);
       const isExit = await this.authService.findOne({ accessToken: token });
       if (!isExit) {
         throw new UnauthorizedException();
@@ -50,7 +50,7 @@ export class JwtAuthGuard implements CanActivate {
       // 无法通过token校验
       throw new UnauthorizedException();
     }
-    if (isEmpty(request.user)) {
+    if (isEmpty(request.currentUser)) {
       throw new UnauthorizedException();
     }
 
@@ -58,12 +58,12 @@ export class JwtAuthGuard implements CanActivate {
 
     if (workspaceID) {
       const hasWorkspaceAuth = await this.userService.findOne({
-        id: request.user.userId,
+        id: request.currentUser.userId,
         workspaces: {
           id: workspaceID,
         },
       });
-      console.log('hasWorkspaceAuth', hasWorkspaceAuth);
+      console.log('user.userId', request.currentUser.userId);
       if (!hasWorkspaceAuth) {
         throw new ForbiddenException();
       }

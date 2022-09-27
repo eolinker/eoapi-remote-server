@@ -6,6 +6,7 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 import { UserEntity } from '@/entities/user.entity';
 
 @Entity({ name: 'workspace' })
@@ -22,6 +23,7 @@ export class WorkspaceEntity {
   @ApiProperty({ example: 'scar', description: '空间创建者ID' })
   creatorID: number;
 
+  @Exclude()
   @ManyToMany(() => UserEntity, (user) => user.workspaces)
   @JoinTable()
   users: UserEntity[];

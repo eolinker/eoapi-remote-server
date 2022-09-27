@@ -22,6 +22,7 @@ export class UserEntity {
   @ApiProperty({ example: 'url', description: '用户头像' })
   avatar?: string;
 
+  @Exclude()
   @ManyToMany(() => WorkspaceEntity, (workspace) => workspace.users)
   workspaces: WorkspaceEntity[];
 }

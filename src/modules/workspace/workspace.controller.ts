@@ -4,6 +4,7 @@ import {
   Delete,
   ForbiddenException,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
@@ -86,7 +87,7 @@ export class WorkspaceController {
   ): Promise<DeleteResult> {
     const workspace = await this.workspaceService.findOne({ where: { id } });
     if (!workspace) {
-      throw new UnauthorizedException('删除失败，空间不存在');
+      throw new NotFoundException('删除失败，空间不存在');
     }
     if (user.userId !== workspace.creatorID) {
       throw new UnauthorizedException('无删除该空间权限，请联系空间创建者');
@@ -112,17 +113,6 @@ export class WorkspaceController {
     @User() user: IUser,
     @Param('workspaceID') id,
   ): Promise<UserEntity[]> {
-    const workspace = await this.workspaceService.findOne({
-      where: { id },
-      relations: { users: true },
-    });
-    if (!workspace) {
-      throw new UnauthorizedException('空间不存在');
-    }
-    if (!workspace.users.some((u) => u.id === user.userId)) {
-      throw new UnauthorizedException('无该空间访问权限，请联系空间创建者');
-    }
-
     return this.workspaceService.getMemberList(id);
   }
 
@@ -134,9 +124,6 @@ export class WorkspaceController {
     @Body() createCatDto: WorkspaceMemberAddDto,
   ) {
     const workspace = await this.workspaceService.findOne({ where: { id } });
-    if (!workspace) {
-      throw new UnauthorizedException('空间不存在');
-    }
     if (user.userId !== workspace.creatorID) {
       throw new UnauthorizedException('无该空间添加成员权限，请联系空间创建者');
     }
