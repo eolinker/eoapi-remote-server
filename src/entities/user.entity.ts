@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { WorkspaceEntity } from '@/entities/workspace.entity';
+import { WorkspaceEntity } from './workspace.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity {

@@ -7,7 +7,7 @@ import {
   JoinTable,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { UserEntity } from '@/entities/user.entity';
+import { UserEntity } from './user.entity';
 
 @Entity({ name: 'workspace' })
 export class WorkspaceEntity {
