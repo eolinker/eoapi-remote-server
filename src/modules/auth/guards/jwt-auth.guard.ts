@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -64,7 +65,7 @@ export class JwtAuthGuard implements CanActivate {
       });
       console.log('hasWorkspaceAuth', hasWorkspaceAuth);
       if (!hasWorkspaceAuth) {
-        throw new UnauthorizedException();
+        throw new ForbiddenException();
       }
     }
 

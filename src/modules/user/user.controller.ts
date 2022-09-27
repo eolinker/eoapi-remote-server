@@ -7,18 +7,20 @@ import {
   Post,
   Put,
   Request,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
 import { UpdateUserInfoDto } from './user.dto';
 import { UserEntity } from '@/entities/user.entity';
-import { Public } from '@/decorators/public.decorator';
 import { IUser, User } from '@/decorators/user.decorator';
 
 @ApiBearerAuth()
 @ApiTags('user')
 @Controller('user')
+@UseGuards(AuthGuard('api-key'))
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

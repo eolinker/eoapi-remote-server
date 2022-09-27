@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import Strategy from 'passport-headerapikey';
@@ -19,6 +19,6 @@ export class HeaderApiKeyStrategy extends PassportStrategy(
     if (this.configService.get<string>('API_KEY') === apiKey) {
       done(null, true);
     }
-    done(new UnauthorizedException(), null);
+    done(new ForbiddenException(), null);
   };
 }

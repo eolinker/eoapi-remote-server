@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { Public } from '@/decorators/public.decorator';
 import { LoginInfoDto } from '@/modules/auth/dto/login.dto';
@@ -9,6 +10,7 @@ import { UserService } from '@/modules/user/user.service';
 
 @ApiTags('auth')
 @Controller('auth')
+@UseGuards(AuthGuard('api-key'))
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
