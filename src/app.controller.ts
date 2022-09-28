@@ -14,11 +14,9 @@ export class AppController {
   }
 
   @Get('system/status')
+  @Public()
   @UseGuards(AuthGuard('api-key'))
   status() {
-    return {
-      statusCode: 200,
-      data: 'success',
-    };
+    return 'success';
   }
 }

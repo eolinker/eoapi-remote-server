@@ -38,7 +38,7 @@ export class AuthController {
   @ApiOperation({
     summary: '用户登出',
   })
-  @Get('logout')
+  @Post('logout')
   public async logout(@Body() dto: JwtLogoutDto): Promise<boolean> {
     await this.authService.delete(dto);
     return true;
