@@ -5,9 +5,11 @@ import {
   Entity,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { UserEntity } from './user.entity';
+import { Project } from '@/entities/project.entity';
 
 @Entity({ name: 'workspace' })
 export class WorkspaceEntity {
@@ -28,4 +30,8 @@ export class WorkspaceEntity {
   @ManyToMany(() => UserEntity, (user) => user.workspaces)
   @JoinTable()
   users: UserEntity[];
+
+  @ApiProperty({ description: '当前空间下的所有项目' })
+  @OneToMany(() => Project, (project) => project.workspace)
+  projects: Project[];
 }

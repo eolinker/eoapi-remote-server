@@ -38,7 +38,7 @@ export class ApiDataService {
       .execute();
   }
 
-  async findAll(query: QueryDto) {
+  async findAll(query: Partial<QueryDto>) {
     const apiData = await this.repository.find({ where: query });
     const mockApiDataIds = (
       await this.mockRepository.find({

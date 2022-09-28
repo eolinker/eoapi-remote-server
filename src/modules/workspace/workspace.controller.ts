@@ -49,16 +49,7 @@ export class WorkspaceController {
     @User() user: IUser,
     @Body() createDto: CreateWorkspaceDto,
   ): Promise<WorkspaceEntity> {
-    const workspace = await this.workspaceService.create(
-      user.userId,
-      createDto,
-    );
-    this.projectService.create({
-      name: '默认项目',
-      workspaceID: workspace.id,
-      description: workspace.title + '的默认项目',
-    });
-    return workspace;
+    return this.workspaceService.create(user.userId, createDto);
   }
 
   @Post('upload')

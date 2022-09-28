@@ -1,6 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  OnModuleInit,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ModuleRef } from '@nestjs/core';
 import { DeleteResult, FindOptionsWhere, Repository } from 'typeorm';
 import { nanoid } from 'nanoid';
 import { LoginInfoDto } from '@/modules/auth/dto/login.dto';
@@ -14,14 +21,17 @@ import {
 import { LoginToken } from '@/modules/auth/auth.class';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements OnModuleInit {
+  private userService: UserService;
   constructor(
     @InjectRepository(AuthEntity)
     private readonly authEntityRepository: Repository<AuthEntity>,
-    private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private moduleRef: ModuleRef,
   ) {}
-
+  onModuleInit() {
+    this.userService = this.moduleRef.get(UserService, { strict: false });
+  }
   // async validateUser(username: string, password: string): Promise<any> {
   //   const user = await this.usersService.findOne({ username, password });
   //   if (user && (await bcrypt.compare(password, user.password))) {
@@ -56,6 +66,9 @@ export class AuthService {
     const authEntity = await this.authEntityRepository.findOne({
       where,
       relations: ['user'],
+      select: {
+        user: { id: true, passwordVersion: true, password: true },
+      },
     });
 
     if (
@@ -64,7 +77,6 @@ export class AuthService {
     ) {
       throw new UnauthorizedException();
     }
-
     return this.loginUser(authEntity.user, String(where.refreshToken));
   }
 
@@ -82,10 +94,13 @@ export class AuthService {
     }
 
     const date = new Date();
-
+    console.log(
+      'loginUseruserEntity.passwordVersion',
+      userEntity.passwordVersion,
+    );
     const result = {
       accessToken: this.jwtService.sign(
-        { userId: userEntity.id },
+        { userId: userEntity.id, pv: userEntity.passwordVersion },
         { expiresIn: accessTokenExpiresIn / 1000 },
       ),
       refreshToken: nanoid(),

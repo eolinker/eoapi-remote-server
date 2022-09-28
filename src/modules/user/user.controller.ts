@@ -16,6 +16,7 @@ import { UserService } from './user.service';
 import { UpdateUserInfoDto, UpdateUserPasswordDto } from './user.dto';
 import { UserEntity } from '@/entities/user.entity';
 import { IUser, User } from '@/decorators/user.decorator';
+import { LoginToken } from '@/modules/auth/auth.class';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -28,7 +29,7 @@ export class UserController {
   @Get('profile')
   @UseInterceptors(ClassSerializerInterceptor)
   public getUserProfile(@User() user: IUser): Promise<UserEntity> {
-    return this.userService.findOne({ id: user.userId });
+    return this.userService.findOneBy({ id: user.userId });
   }
 
   @Put('profile')
@@ -45,7 +46,7 @@ export class UserController {
   async updateUserPassword(
     @User() user: IUser,
     @Body() updateUserDto: UpdateUserPasswordDto,
-  ): Promise<UserEntity> {
+  ): Promise<LoginToken> {
     return this.userService.updateUserPassword(user.userId, updateUserDto);
   }
 

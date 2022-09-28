@@ -15,7 +15,6 @@ import { EnvironmentController } from '@/modules/workspace/environment/environme
 import { ApiTestHistoryController } from '@/modules/workspace/apiTestHistory/apiTestHistory.controller';
 import { MockController } from '@/modules/workspace/mock/mock.controller';
 import { ProjectController } from '@/modules/workspace/project/project.controller';
-import { UserService } from '@/modules/user/user.service';
 import { ApiDataService } from '@/modules/workspace/apiData/apiData.service';
 import { ApiTestHistoryService } from '@/modules/workspace/apiTestHistory/apiTestHistory.service';
 import { ProjectService } from '@/modules/workspace/project/project.service';
@@ -23,10 +22,11 @@ import { MockService } from '@/modules/workspace/mock/mock.service';
 import { EnvironmentService } from '@/modules/workspace/environment/environment.service';
 import { ApiGroupService } from '@/modules/workspace/apiGroup/apiGroup.service';
 import { ApiGroupController } from '@/modules/workspace/apiGroup/apiGroup.controller';
+import { UserModule } from '@/modules/user/user.module';
+import { AuthModule } from '@/modules/auth/auth.module';
 
 const commonProviders = [
   WorkspaceService,
-  UserService,
   ApiDataService,
   ApiGroupService,
   ApiTestHistoryService,
@@ -46,6 +46,8 @@ const commonProviders = [
       ApiGroup,
       Environment,
     ]),
+    UserModule,
+    AuthModule,
   ],
   controllers: [
     WorkspaceController,

@@ -15,7 +15,7 @@ export const getConfiguration = () => ({
     database: process.env.MYSQL_DATABASE,
     entities: [__dirname + '/../**/entities/*.entity.{ts,js}'],
     autoLoadEntities: true,
-    synchronize: false,
+    synchronize: true,
     logging: false,
     timezone: '+08:00', // 东八区
     migrations: ['dist/migrations/**/*.js'],

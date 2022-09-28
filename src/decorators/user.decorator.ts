@@ -2,6 +2,8 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 export interface IUser {
   userId: number;
+  /** 密码版本 */
+  pv: number;
 }
 
 export const User = createParamDecorator(

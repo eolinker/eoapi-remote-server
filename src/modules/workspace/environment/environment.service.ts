@@ -26,7 +26,7 @@ export class EnvironmentService {
       .execute();
   }
 
-  async findAll(query: QueryDto) {
+  async findAll(query: Partial<QueryDto>) {
     return await this.repository.find({ where: query });
   }
 

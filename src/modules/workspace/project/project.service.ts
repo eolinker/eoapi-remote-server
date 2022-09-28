@@ -40,12 +40,19 @@ export class ProjectService {
       .execute();
   }
 
-  async findAll(query: QueryDto) {
-    return await this.repository.find({ where: query });
+  async findAll(query: QueryDto, workspaceID: number) {
+    return await this.repository.find({
+      where: {
+        ...query,
+        workspace: { id: workspaceID },
+      },
+    });
   }
 
-  async findOne(uuid: number): Promise<Project> {
-    return await this.repository.findOne({ where: { uuid } });
+  async findOne(workspaceID: number, uuid: number): Promise<Project> {
+    return await this.repository.findOne({
+      where: { uuid: Number(uuid), workspace: { id: workspaceID } },
+    });
   }
 
   async update(id: number, updateDto: UpdateDto) {
@@ -56,15 +63,61 @@ export class ProjectService {
     return await this.repository.delete(id);
   }
 
-  async import(uuid: number, importDto: Collections) {
-    const { collections, enviroments } = importDto;
-    const errors = {
-      apiData: [],
-      group: [],
-      enviroments: [],
-    };
-    this.importEnv(enviroments, uuid, errors);
-    return this.importCollects(collections, uuid, 0, errors);
+  async import(workspaceID: number, uuid: number, importDto: Collections) {
+    const project = await this.findOne(workspaceID, uuid);
+    if (project) {
+      const { collections, enviroments } = importDto;
+      const errors = {
+        apiData: [],
+        group: [],
+        enviroments: [],
+      };
+      this.importEnv(enviroments, uuid, errors);
+      return this.importCollects(collections, uuid, 0, errors);
+    }
+    return '导入失败，项目不存在';
+  }
+
+  exportCollects(
+    apiGroup: any[],
+    apiData: any[],
+    parentID = 0,
+    groupID = null,
+  ) {
+    const apiGroupFilters = apiGroup.filter(
+      (child) => child.parentID === parentID,
+    );
+    if (Array.isArray(apiGroupFilters) && apiGroupFilters.length) {
+      return apiGroupFilters.map((item) => {
+        return {
+          name: item.name,
+          children: this.exportCollects(
+            apiGroup,
+            apiData,
+            item.uuid,
+            item.uuid,
+          ),
+        };
+      });
+    } else {
+      return apiData.filter((child) => child.groupID === groupID);
+    }
+  }
+
+  async export(workspaceID: number, uuid: number) {
+    const project = await this.findOne(workspaceID, uuid);
+    if (project) {
+      const apiData = await this.apiDataService.findAll({ projectID: uuid });
+      const apiGroup = await this.apiGroupService.findAll({ projectID: uuid });
+      const enviroments = await this.environmentService.findAll({
+        projectID: uuid,
+      });
+      return {
+        collections: this.exportCollects(apiGroup, apiData),
+        enviroments,
+      };
+    }
+    return '导出失败，项目不存在';
   }
 
   async importEnv(

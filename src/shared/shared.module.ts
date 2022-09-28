@@ -1,7 +1,9 @@
 import { HttpModule } from '@nestjs/axios';
-import { Global, CacheModule, Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
+import { UtilService } from '@/shared/services/util.service';
 
 // common provider list
+const providers = [UtilService];
 
 /**
  * 全局共享模块
@@ -14,7 +16,7 @@ import { Global, CacheModule, Module } from '@nestjs/common';
       maxRedirects: 5,
     }),
   ],
-  providers: [],
-  exports: [HttpModule, CacheModule],
+  providers: [...providers],
+  exports: [HttpModule, ...providers],
 })
 export class SharedModule {}

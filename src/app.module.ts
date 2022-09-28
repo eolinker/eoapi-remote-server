@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { RouterModule } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 // 引入数据库的及配置文件
@@ -9,6 +8,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { getConfiguration } from './config/configuration';
 import { UserModule } from '@/modules/user/user.module';
 import { WorkspaceModule } from '@/modules/workspace/workspace.module';
+import { SharedModule } from '@/shared/shared.module';
 
 @Module({
   imports: [
@@ -32,9 +32,10 @@ import { WorkspaceModule } from '@/modules/workspace/workspace.module';
         timezone: configService.get('database.timezone'), // 时区
       }),
     }), // 数据库
+    WorkspaceModule,
+    SharedModule,
     AuthModule, // 认证
     UserModule,
-    WorkspaceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

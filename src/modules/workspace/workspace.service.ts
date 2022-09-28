@@ -4,6 +4,7 @@ import { DeleteResult, FindOneOptions, In, Repository } from 'typeorm';
 import { CreateWorkspaceDto, UpdateWorkspaceDto } from './workspace.dto';
 import { WorkspaceEntity } from '@/entities/workspace.entity';
 import { UserService } from '@/modules/user/user.service';
+import { ProjectService } from '@/modules/workspace/project/project.service';
 
 @Injectable()
 export class WorkspaceService {
@@ -11,6 +12,7 @@ export class WorkspaceService {
     @InjectRepository(WorkspaceEntity)
     private workspaceRepository: Repository<WorkspaceEntity>,
     private userService: UserService,
+    private projectService: ProjectService,
   ) {}
 
   findOne(options: FindOneOptions<WorkspaceEntity>) {
@@ -21,12 +23,17 @@ export class WorkspaceService {
     creatorID: number,
     createWorkspaceDto: CreateWorkspaceDto,
   ): Promise<WorkspaceEntity> {
-    const creator = await this.userService.findOne({ id: creatorID });
-    console.log('creator', creator);
+    const creator = await this.userService.findOneBy({ id: creatorID });
+    const project = await this.projectService.create({
+      name: '默认项目',
+      description: createWorkspaceDto.title + '默认项目',
+    });
+    console.log('creator', creator, project);
     return this.workspaceRepository.save({
       ...createWorkspaceDto,
       creatorID,
       users: [creator],
+      projects: [project],
     });
   }
 
