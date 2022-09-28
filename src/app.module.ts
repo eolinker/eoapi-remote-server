@@ -10,10 +10,11 @@ import { UserModule } from '@/modules/user/user.module';
 import { WorkspaceModule } from '@/modules/workspace/workspace.module';
 import { SharedModule } from '@/shared/shared.module';
 
+console.log('process.env.NODE_ENV', `.env.${process.env.NODE_ENV}`);
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env'],
+      envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
       load: [getConfiguration],
     }),
     TypeOrmModule.forRootAsync({

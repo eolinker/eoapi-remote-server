@@ -25,7 +25,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "docker:rmi": "docker compose stop eoapi-remote-server && docker container rm eoapi-remote-server && docker rmi eoapi-remote-server",
-    "docker:dev": "docker compose --build -d",
+    "docker:dev": "docker compose up --build -d",
     "docker:prod": "docker compose --env-file .env.production up --build -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f"
