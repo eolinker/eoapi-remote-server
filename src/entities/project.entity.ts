@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Entity, ManyToOne } from 'typeorm';
 import { Base } from './base.entity';
-import { WorkspaceEntity } from '@/entities/workspace.entity';
+import { WorkspaceEntity } from './workspace.entity';
 
 @Entity({ name: 'project' })
 export class Project extends Base {

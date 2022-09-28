@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { UserEntity } from './user.entity';
-import { Project } from '@/entities/project.entity';
+import { Project } from './project.entity';
 
 @Entity({ name: 'workspace' })
 export class WorkspaceEntity {
