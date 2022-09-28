@@ -1,10 +1,10 @@
 export class ResOp {
   readonly data: any;
-  readonly code: number;
+  readonly statusCode: number;
   readonly message: string;
 
   constructor(code: number, data?: any, message = 'success') {
-    this.code = code;
+    this.statusCode = code;
     this.data = data;
     this.message = message;
   }

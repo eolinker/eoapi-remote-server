@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
@@ -31,7 +31,7 @@ export class AuthController {
     summary: '刷新token',
   })
   @Public()
-  @Post('refresh')
+  @Put('refresh')
   async refreshToken(@Body() dto: JwtRefreshTokenDto): Promise<LoginToken> {
     return this.authService.refresh(dto);
   }

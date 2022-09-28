@@ -15,6 +15,7 @@ export class UserEntity {
 
   @Exclude()
   @Column({ type: 'varchar', select: false })
+  @ApiHideProperty()
   @ApiProperty({ example: '123456', description: '密码' })
   password: string;
 
