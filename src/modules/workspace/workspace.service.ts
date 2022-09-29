@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, FindOneOptions, In, Repository } from 'typeorm';
-import { CreateWorkspaceDto, UpdateWorkspaceDto } from './workspace.dto';
+import { DeleteResult, FindOneOptions, In, Like, Repository } from 'typeorm';
+import {
+  CreateWorkspaceDto,
+  UpdateWorkspaceDto,
+  WorkspaceUser,
+} from './workspace.dto';
 import { WorkspaceEntity } from '@/entities/workspace.entity';
 import { UserService } from '@/modules/user/user.service';
 import { ProjectService } from '@/modules/workspace/project/project.service';
@@ -59,15 +63,25 @@ export class WorkspaceService {
     });
   }
 
-  async getMemberList(workspaceId: number) {
+  async getMemberList(
+    workspaceId: number,
+    username = '',
+  ): Promise<WorkspaceUser[]> {
     const [result] = await this.userService.findAndCount({
       where: {
         workspaces: {
           id: workspaceId,
         },
+        username: Like(`%${username}%`),
       },
     });
-    return result;
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+    return result.map((item) => ({
+      ...item,
+      roleName: item.id === workspace.creatorID ? 'Owner' : 'Member',
+    }));
   }
 
   async addMembers(workspaceId: number, userIDs: number[]) {

@@ -15,6 +15,7 @@ import {
   Not,
   Repository,
 } from 'typeorm';
+import { validate } from 'class-validator';
 import {
   UpdateUserInfoDto,
   UpdateUserPasswordDto,
@@ -71,6 +72,26 @@ export class UserService implements OnModuleInit {
   }
 
   async getOrCreateUser(userDto: UserLoginDto): Promise<UserEntity> {
+    const userValidator = new UserEntity();
+    userValidator.email = userDto.username;
+    userValidator.mobilePhone = userDto.username;
+
+    const other = await validate(userValidator).then((errors) => {
+      const result = {} as UserEntity;
+      const validateFields = errors.map((n) => n.property);
+      if (!validateFields.includes('email')) {
+        result.email = userDto.username;
+      }
+      if (!validateFields.includes('mobilePhone')) {
+        result.mobilePhone = userDto.username;
+      }
+      return result;
+    });
+
+    if (Object.keys(other).length === 0) {
+      throw new Error('用户名必须是手机号码或邮箱');
+    }
+
     const user = await this.userRepository.findOne({
       where: {
         username: userDto.username,
@@ -85,6 +106,7 @@ export class UserService implements OnModuleInit {
       }
     } else {
       return this.userRepository.save({
+        ...other,
         ...userDto,
         password: this.utils.md5(userDto.password),
       });

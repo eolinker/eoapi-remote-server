@@ -24,20 +24,17 @@ import {
   UpdateWorkspaceDto,
   WorkspaceMemberAddDto,
   WorkspaceMemberRemoveDto,
+  WorkspaceUser,
 } from './workspace.dto';
 import { WorkspaceEntity } from '@/entities/workspace.entity';
 import { IUser, User } from '@/decorators/user.decorator';
 import { UserEntity } from '@/entities/user.entity';
-import { ProjectService } from '@/modules/workspace/project/project.service';
 
 @ApiBearerAuth()
 @ApiTags('workspace')
 @Controller('workspace')
 export class WorkspaceController {
-  constructor(
-    private readonly workspaceService: WorkspaceService,
-    private projectService: ProjectService,
-  ) {}
+  constructor(private readonly workspaceService: WorkspaceService) {}
 
   @Post()
   @ApiOperation({ summary: '创建空间' })
@@ -85,23 +82,26 @@ export class WorkspaceController {
 
   @Get()
   @ApiOperation({ summary: '获取空间列表' })
-  @ApiResponse({
-    type: [WorkspaceEntity],
-  })
   list(@User() user: IUser): Promise<WorkspaceEntity[]> {
     return this.workspaceService.list(user.userId);
   }
 
   @Get(':workspaceID/member/list')
   @ApiOperation({ summary: '获取空间成员列表' })
+  async getMemberList(@Param('workspaceID') id): Promise<WorkspaceUser[]> {
+    return this.workspaceService.getMemberList(id);
+  }
+
+  @Get(':workspaceID/member/list/:username')
+  @ApiOperation({ summary: '搜索空间成员' })
   @ApiResponse({
     type: [UserEntity],
   })
-  async getMemberList(
-    @User() user: IUser,
+  async searchMemberByName(
     @Param('workspaceID') id,
-  ): Promise<UserEntity[]> {
-    return this.workspaceService.getMemberList(id);
+    @Param('username') username,
+  ): Promise<WorkspaceUser[]> {
+    return this.workspaceService.getMemberList(id, username);
   }
 
   @Post(':workspaceID/member/add')
