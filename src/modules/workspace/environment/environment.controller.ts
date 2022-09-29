@@ -7,9 +7,7 @@ import {
   Param,
   Delete,
   Query,
-  UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { EnvironmentService } from './environment.service';
 import { CreateDto } from './dto/create.dto';
@@ -19,7 +17,6 @@ import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
 
 @ApiTags('Environment')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/environment`)
-@UseGuards(AuthGuard('api-key'))
 export class EnvironmentController {
   private readonly NOT_FOUND = {
     statusCode: 201,
@@ -56,34 +53,17 @@ export class EnvironmentController {
       });
       return val;
     });
-    const data = await this.service.batchCreate(createDto);
-    return {
-      statusCode: 200,
-      data: data,
-    };
+    return this.service.batchCreate(createDto);
   }
 
   @Get()
   async findAll(@Query() query: QueryDto) {
-    const data = await this.service.findAll(query);
-
-    return {
-      statusCode: 200,
-      data: data,
-    };
+    return this.service.findAll(query);
   }
 
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string) {
-    const data = await this.service.findOne(+uuid);
-    if (data) {
-      return {
-        statusCode: 200,
-        data: data,
-      };
-    }
-
-    return this.NOT_FOUND;
+    return this.service.findOne(+uuid);
   }
 
   @Put(':uuid')
@@ -103,14 +83,6 @@ export class EnvironmentController {
 
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string) {
-    const data = await this.service.remove(+uuid);
-    if (data && data.affected > 0) {
-      return {
-        statusCode: 200,
-        data: data,
-      };
-    }
-
-    return this.NOT_FOUND;
+    return this.service.remove(+uuid);
   }
 }

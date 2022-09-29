@@ -1,5 +1,6 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
+import { IsEmail, IsMobilePhone } from 'class-validator';
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { WorkspaceEntity } from './workspace.entity';
 
@@ -12,6 +13,16 @@ export class UserEntity {
   @Column()
   @ApiProperty({ example: '路飞', description: '用户名' })
   username: string;
+
+  @ApiProperty({ description: '手机号码' })
+  @IsMobilePhone('zh-CN')
+  @Column({ nullable: true })
+  mobilePhone: string;
+
+  @ApiProperty({ example: 'scar@eolink.com', description: '邮箱' })
+  @Column({ nullable: true })
+  @IsEmail()
+  email: string;
 
   @Exclude()
   @Column({ type: 'varchar', select: false })

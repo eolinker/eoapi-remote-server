@@ -4,14 +4,10 @@ import {
   Controller,
   Get,
   Param,
-  Post,
   Put,
-  Request,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
 import { UpdateUserInfoDto, UpdateUserPasswordDto } from './user.dto';
 import { UserEntity } from '@/entities/user.entity';
@@ -21,7 +17,6 @@ import { LoginToken } from '@/modules/auth/auth.class';
 @ApiBearerAuth()
 @ApiTags('user')
 @Controller('user')
-@UseGuards(AuthGuard('api-key'))
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

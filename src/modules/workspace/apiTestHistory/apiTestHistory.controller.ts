@@ -7,10 +7,8 @@ import {
   Param,
   Delete,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { ValidateQueryPipe } from 'src/pipe/query.pipe';
 import { ApiTestHistoryService } from './apiTestHistory.service';
 import { CreateDto } from './dto/create.dto';
@@ -20,7 +18,6 @@ import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
 
 @ApiTags('apiTestHistory')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/api_test_history`)
-@UseGuards(AuthGuard('api-key'))
 export class ApiTestHistoryController {
   private readonly NOT_FOUND = {
     statusCode: 201,

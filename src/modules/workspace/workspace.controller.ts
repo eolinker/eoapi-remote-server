@@ -10,7 +10,6 @@ import {
   Post,
   Put,
   UnauthorizedException,
-  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -18,7 +17,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { DeleteResult } from 'typeorm';
 import { WorkspaceService } from './workspace.service';
 import {
@@ -35,7 +33,6 @@ import { ProjectService } from '@/modules/workspace/project/project.service';
 @ApiBearerAuth()
 @ApiTags('workspace')
 @Controller('workspace')
-@UseGuards(AuthGuard('api-key'))
 export class WorkspaceController {
   constructor(
     private readonly workspaceService: WorkspaceService,

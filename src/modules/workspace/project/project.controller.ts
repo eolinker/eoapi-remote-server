@@ -7,11 +7,9 @@ import {
   Param,
   Delete,
   Query,
-  UseGuards,
   ParseIntPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { ProjectService } from './project.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
@@ -21,7 +19,6 @@ import { WORKSPACE_ID_PREFIX } from '@/common/contants/prefix.contants';
 
 @ApiTags('Project')
 @Controller(`${WORKSPACE_ID_PREFIX}/project`)
-@UseGuards(AuthGuard('api-key'))
 export class ProjectController {
   private readonly NOT_FOUND = {
     statusCode: 201,

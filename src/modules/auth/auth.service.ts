@@ -94,10 +94,7 @@ export class AuthService implements OnModuleInit {
     }
 
     const date = new Date();
-    console.log(
-      'loginUseruserEntity.passwordVersion',
-      userEntity.passwordVersion,
-    );
+
     const result = {
       accessToken: this.jwtService.sign(
         { userId: userEntity.id, pv: userEntity.passwordVersion },

@@ -33,12 +33,24 @@ export class UpdateUserInfoDto {
 
 export class UpdateUserPasswordDto {
   @ApiProperty({ description: '旧密码', required: false })
-  @MinLength(1)
+  @MinLength(6)
   @IsString()
   readonly oldPassword: string;
 
   @ApiProperty({ description: '新密码', required: false })
-  @MinLength(1)
+  @MinLength(6)
+  @IsString()
+  readonly newPassword: string;
+}
+
+export class UserInfoValidator {
+  @ApiProperty({ description: '旧密码', required: false })
+  @MinLength(6)
+  @IsString()
+  readonly oldPassword: string;
+
+  @ApiProperty({ description: '新密码', required: false })
+  @MinLength(6)
   @IsString()
   readonly newPassword: string;
 }

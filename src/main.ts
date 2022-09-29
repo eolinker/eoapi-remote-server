@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 import { setupSwagger } from '@/setup-swagger';
 import { ApiExceptionFilter } from '@/common/filters/api-exception.filter';
 import { ApiTransformInterceptor } from '@/common/interceptors/api-transform.interceptor';
+import { ValidationPipe } from '@/pipe/validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +13,7 @@ async function bootstrap() {
   app.use(bodyParser.json({ limit: '50mb' }));
   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
+  app.useGlobalPipes(new ValidationPipe());
   // execption
   app.useGlobalFilters(new ApiExceptionFilter());
   // api interceptor

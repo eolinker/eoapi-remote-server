@@ -8,10 +8,8 @@ import {
   Delete,
   Query,
   ParseIntPipe,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { ValidateQueryPipe } from 'src/pipe/query.pipe';
 import { ApiGroupService } from './apiGroup.service';
 import { CreateDto } from './dto/create.dto';
@@ -21,7 +19,6 @@ import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
 
 @ApiTags('apiGroup')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/group`)
-@UseGuards(AuthGuard('api-key'))
 export class ApiGroupController {
   private readonly NOT_FOUND = {
     statusCode: 201,
