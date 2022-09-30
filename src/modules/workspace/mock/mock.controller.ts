@@ -9,6 +9,7 @@ import {
   Delete,
   Query,
   All,
+  BadRequestException,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -21,52 +22,27 @@ import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
 @ApiTags('Mock')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/mock`)
 export class MockController {
-  private readonly NOT_FOUND = {
-    statusCode: 201,
-    message: 'Cannot find record in database',
-    error: 'Not Found',
-  };
-
   constructor(private readonly service: MockService) {}
 
   @Post()
   async create(@Body() createDto: CreateDto) {
     const data = await this.service.create(createDto);
-    if (data && data.uuid) {
-      return await this.findOne(`${data.uuid}`);
-    }
-    return this.NOT_FOUND;
+    return this.findOne(`${data.uuid}`);
   }
 
   @Post('batch')
   async batchCreate(@Body() createDto: Array<CreateDto>) {
-    const data = await this.service.batchCreate(createDto);
-    return {
-      statusCode: 200,
-      data: data,
-    };
+    return this.service.batchCreate(createDto);
   }
 
   @Get()
   async findAll(@Query() query: QueryDto) {
-    const data = await this.service.findAll(query);
-    return {
-      statusCode: 200,
-      data: data,
-    };
+    return this.service.findAll(query);
   }
 
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string) {
-    const data = await this.service.findOne(+uuid);
-    if (data) {
-      return {
-        statusCode: 200,
-        data: data,
-      };
-    }
-
-    return this.NOT_FOUND;
+    return this.service.findOne(+uuid);
   }
 
   @All(':projectID/**')
@@ -74,39 +50,21 @@ export class MockController {
     @Param('projectID') projectID: string,
     @Req() request: Request,
   ) {
-    const response = await this.service.findMock(projectID, request);
-
-    return response ?? this.NOT_FOUND;
+    return this.service.findMock(projectID, request);
   }
 
   @Put(':uuid')
   async update(@Param('uuid') uuid: string, @Body() updateDto: UpdateDto) {
-    const data = await this.service.update(+uuid, updateDto);
-    if (data) {
-      return await this.findOne(uuid);
-    }
-
-    return this.NOT_FOUND;
+    await this.service.update(+uuid, updateDto);
+    return await this.findOne(uuid);
   }
 
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string) {
     const mock = await this.service.findOne(+uuid);
     if (mock.createWay === 'system') {
-      return {
-        statusCode: 200,
-        data: {},
-        message: '系统自动创建的mock不能删除',
-      };
+      return new BadRequestException('系统自动创建的mock不能删除');
     }
-    const data = await this.service.remove(+uuid);
-    if (data && data.affected > 0) {
-      return {
-        statusCode: 200,
-        data: data,
-      };
-    }
-
-    return this.NOT_FOUND;
+    return this.service.remove(+uuid);
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ApiData } from 'src/entities/apiData.entity';
@@ -41,7 +41,7 @@ export class MockService {
     return await this.repository.findOne({ where: { uuid } });
   }
 
-  async findMock(projectID: string, request: Request): Promise<string> {
+  async findMock(projectID: string, request: Request) {
     const { path, method, query, body, protocol } = request;
     const pathName = path.replace(`/mock/${projectID}`, '');
     const pathReg = new RegExp(`/?${pathName}/?`);
@@ -73,10 +73,9 @@ export class MockService {
       });
 
       if (!apiData) {
-        return JSON.stringify({
-          statusCode: 404,
-          message: '没有匹配到该mock，请检查请求方法或路径是否正确。',
-        });
+        return new NotFoundException(
+          '没有匹配到该mock，请检查请求方法或路径是否正确。',
+        );
       }
       console.log('apiData', apiData);
       if (apiData.responseBodyType === 'raw') {

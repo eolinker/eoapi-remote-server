@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   ParseIntPipe,
+  NotFoundException,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ProjectService } from './project.service';
@@ -20,12 +21,6 @@ import { WORKSPACE_ID_PREFIX } from '@/common/contants/prefix.contants';
 @ApiTags('Project')
 @Controller(`${WORKSPACE_ID_PREFIX}/project`)
 export class ProjectController {
-  private readonly NOT_FOUND = {
-    statusCode: 201,
-    message: 'Cannot find record in database',
-    error: 'Not Found',
-  };
-
   constructor(private readonly service: ProjectService) {}
 
   @Post()
@@ -34,11 +29,7 @@ export class ProjectController {
     @Body() createDto: CreateDto,
   ) {
     const data = await this.service.create(createDto);
-    if (data && data.uuid) {
-      return await this.findOne(workspaceID, `${data.uuid}`);
-    }
-
-    return this.NOT_FOUND;
+    return this.findOne(workspaceID, `${data.uuid}`);
   }
 
   @Post('batch')
@@ -59,12 +50,7 @@ export class ProjectController {
     @Param('uuid', ParseIntPipe) uuid,
     @Param('workspaceID', ParseIntPipe) workspaceID,
   ) {
-    const data = await this.service.findOne(workspaceID, uuid);
-    if (data) {
-      return data;
-    }
-
-    return this.NOT_FOUND;
+    return this.service.findOne(workspaceID, uuid);
   }
 
   @Put(':uuid')
@@ -78,7 +64,7 @@ export class ProjectController {
       return await this.findOne(workspaceID, uuid);
     }
 
-    return this.NOT_FOUND;
+    return new NotFoundException('更新失败！项目不存在');
   }
 
   @Delete(':uuid')
@@ -88,7 +74,7 @@ export class ProjectController {
       return data;
     }
 
-    return this.NOT_FOUND;
+    return new NotFoundException('删除失败！项目不存在');
   }
 
   @Put(':uuid/import')
@@ -104,10 +90,7 @@ export class ProjectController {
       importDto,
     );
     return {
-      statusCode: 200,
-      data: {
-        errors: data,
-      },
+      errors: data,
     };
   }
 

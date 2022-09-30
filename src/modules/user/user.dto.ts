@@ -1,5 +1,7 @@
+import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, MinLength } from 'class-validator';
+import { IsOptional, IsString, MinLength } from 'class-validator';
+import { UserEntity } from '@/entities/user.entity';
 
 export class UserLoginDto {
   @ApiProperty({ description: '用户名' })
@@ -19,17 +21,9 @@ export class UserLoginToken {
   token: string;
 }
 
-export class UpdateUserInfoDto {
-  @ApiProperty({ description: '用户名', required: false })
-  @MinLength(1)
-  @IsString()
-  readonly username: string;
-
-  @ApiProperty({ description: '头像', required: false })
-  @MinLength(1)
-  @IsString()
-  readonly avatar: string;
-}
+export class UpdateUserInfoDto extends PartialType(
+  OmitType(UserEntity, ['password', 'passwordVersion']),
+) {}
 
 export class UpdateUserPasswordDto {
   @ApiProperty({ description: '旧密码', required: false })

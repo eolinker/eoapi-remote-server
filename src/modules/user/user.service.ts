@@ -71,12 +71,12 @@ export class UserService implements OnModuleInit {
     return this.getOrCreateUser({ username, password });
   }
 
-  async getOrCreateUser(userDto: UserLoginDto): Promise<UserEntity> {
+  validateUser(userDto: Partial<UserEntity>) {
     const userValidator = new UserEntity();
     userValidator.email = userDto.username;
     userValidator.mobilePhone = userDto.username;
 
-    const other = await validate(userValidator).then((errors) => {
+    return validate(userValidator).then((errors) => {
       const result = {} as UserEntity;
       const validateFields = errors.map((n) => n.property);
       if (!validateFields.includes('email')) {
@@ -87,7 +87,10 @@ export class UserService implements OnModuleInit {
       }
       return result;
     });
+  }
 
+  async getOrCreateUser(userDto: UserLoginDto): Promise<UserEntity> {
+    const other = await this.validateUser(userDto);
     if (Object.keys(other).length === 0) {
       throw new Error('用户名必须是手机号码或邮箱');
     }
@@ -105,17 +108,25 @@ export class UserService implements OnModuleInit {
         throw new ForbiddenException('密码错误');
       }
     } else {
-      return this.userRepository.save({
+      const user = await this.userRepository.save({
         ...other,
         ...userDto,
         password: this.utils.md5(userDto.password),
       });
+
+      if (user.id === 1) {
+        // this.
+      }
+
+      return user;
     }
   }
 
   async searchUsers(username: string) {
     const [result] = await this.userRepository.findAndCount({
-      where: { username: Like(`%${username}%`) },
+      where: {
+        username: Like(`%${username}%`),
+      },
     });
     return result;
   }
@@ -124,6 +135,10 @@ export class UserService implements OnModuleInit {
     userId,
     userInfoDto: UpdateUserInfoDto,
   ): Promise<UserEntity> {
+    const other = await this.validateUser(userInfoDto);
+    if (userInfoDto.username && Object.keys(other).length === 0) {
+      throw new Error('用户名必须是手机号码或邮箱');
+    }
     const isConflict = await this.userRepository.findOne({
       where: { username: Equal(userInfoDto.username), id: Not(userId) },
     });
@@ -131,7 +146,7 @@ export class UserService implements OnModuleInit {
       throw new ConflictException('用户名已存在');
     }
     Reflect.deleteProperty(userInfoDto, 'password');
-    await this.userRepository.update(userId, userInfoDto);
+    await this.userRepository.update(userId, { ...userInfoDto, ...other });
     return this.userRepository.findOneBy({ id: userId });
   }
 

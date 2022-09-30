@@ -8,6 +8,8 @@ import {
   Delete,
   Query,
   ParseIntPipe,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ValidateQueryPipe } from 'src/pipe/query.pipe';
@@ -20,22 +22,12 @@ import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
 @ApiTags('apiGroup')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/group`)
 export class ApiGroupController {
-  private readonly NOT_FOUND = {
-    statusCode: 201,
-    message: 'Cannot find record in database',
-    error: 'Not Found',
-  };
-
   constructor(private readonly service: ApiGroupService) {}
 
   @Post()
   async create(@Body() createDto: CreateDto) {
     const data = await this.service.create(createDto);
-    if (data && data.uuid) {
-      return await this.findOne(data.uuid);
-    }
-
-    return this.NOT_FOUND;
+    return await this.findOne(data.uuid);
   }
 
   @Post('batch')
@@ -68,7 +60,7 @@ export class ApiGroupController {
     if (data) {
       return this.service.findByIds(ids);
     }
-    return this.NOT_FOUND;
+    return new BadRequestException('批量修改失败！');
   }
   @Put(':uuid')
   async update(
@@ -80,7 +72,7 @@ export class ApiGroupController {
       return await this.findOne(uuid);
     }
 
-    return this.NOT_FOUND;
+    return new NotFoundException('修改失败！分组不存在');
   }
 
   @Delete()
@@ -90,6 +82,6 @@ export class ApiGroupController {
       return data;
     }
 
-    return this.NOT_FOUND;
+    return new NotFoundException('删除失败！该分组不存在');
   }
 }

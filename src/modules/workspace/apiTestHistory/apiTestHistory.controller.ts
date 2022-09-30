@@ -19,12 +19,6 @@ import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
 @ApiTags('apiTestHistory')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/api_test_history`)
 export class ApiTestHistoryController {
-  private readonly NOT_FOUND = {
-    statusCode: 201,
-    message: 'Cannot find record in database',
-    error: 'Not Found',
-  };
-
   private readonly JSON_FIELDS = ['general', 'request', 'response'];
 
   constructor(private readonly service: ApiTestHistoryService) {}
@@ -32,11 +26,7 @@ export class ApiTestHistoryController {
   @Post()
   async create(@Body() createDto: CreateDto) {
     const data = await this.service.create(createDto);
-    if (data && data.uuid) {
-      return await this.findOne(`${data.uuid}`);
-    }
-
-    return this.NOT_FOUND;
+    return await this.findOne(`${data.uuid}`);
   }
 
   @Post('batch')
@@ -69,21 +59,12 @@ export class ApiTestHistoryController {
         updateDto[field] = JSON.stringify(updateDto[field]);
       }
     });
-    const data = await this.service.update(+uuid, updateDto);
-    if (data) {
-      return await this.findOne(uuid);
-    }
-
-    return this.NOT_FOUND;
+    await this.service.update(+uuid, updateDto);
+    return await this.findOne(uuid);
   }
 
   @Delete()
   async remove(@Query(ValidateQueryPipe) query) {
-    const data = await this.service.remove(query.uuids);
-    if (data && data.affected > 0) {
-      return data;
-    }
-
-    return this.NOT_FOUND;
+    return await this.service.remove(query.uuids);
   }
 }
