@@ -49,6 +49,12 @@ export class ProjectService {
     });
   }
 
+  async findOneBy(uuid: number): Promise<Project> {
+    return await this.repository.findOneBy({
+      uuid: Number(uuid),
+    });
+  }
+
   async findOne(workspaceID: number, uuid: number): Promise<Project> {
     return await this.repository.findOne({
       where: { uuid: Number(uuid), workspace: { id: workspaceID } },

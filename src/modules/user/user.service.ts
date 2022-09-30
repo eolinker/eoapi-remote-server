@@ -25,10 +25,14 @@ import { UserEntity } from '@/entities/user.entity';
 import { UtilService } from '@/shared/services/util.service';
 import { AuthService } from '@/modules/auth/auth.service';
 import { LoginToken } from '@/modules/auth/auth.class';
+import { WorkspaceService } from '@/modules/workspace/workspace.service';
+import { ProjectService } from '@/modules/workspace/project/project.service';
 
 @Injectable()
 export class UserService implements OnModuleInit {
   private authService: AuthService;
+  private workspaceService: WorkspaceService;
+  private projectService: ProjectService;
   constructor(
     private utils: UtilService,
     private moduleRef: ModuleRef,
@@ -38,6 +42,12 @@ export class UserService implements OnModuleInit {
 
   onModuleInit() {
     this.authService = this.moduleRef.get(AuthService, { strict: false });
+    this.workspaceService = this.moduleRef.get(WorkspaceService, {
+      strict: false,
+    });
+    this.projectService = this.moduleRef.get(ProjectService, {
+      strict: false,
+    });
   }
 
   findOne(options: FindOneOptions<UserEntity>): Promise<UserEntity | null> {
@@ -115,7 +125,16 @@ export class UserService implements OnModuleInit {
       });
 
       if (user.id === 1) {
-        // this.
+        const defaultProject = await this.projectService.findOneBy(1);
+        if (defaultProject) {
+          this.workspaceService.create(
+            user.id,
+            {
+              title: '默认空间',
+            },
+            defaultProject,
+          );
+        }
       }
 
       return user;

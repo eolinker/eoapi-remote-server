@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ModuleRef } from '@nestjs/core';
 import { DeleteResult, FindOneOptions, In, Like, Repository } from 'typeorm';
 import {
   CreateWorkspaceDto,
@@ -9,15 +10,22 @@ import {
 import { WorkspaceEntity } from '@/entities/workspace.entity';
 import { UserService } from '@/modules/user/user.service';
 import { ProjectService } from '@/modules/workspace/project/project.service';
+import { Project } from '@/entities/project.entity';
+import { CreateDto as ProjectCreateDto } from '@/modules/workspace/project/dto/create.dto';
 
 @Injectable()
-export class WorkspaceService {
+export class WorkspaceService implements OnModuleInit {
+  private userService: UserService;
   constructor(
+    private moduleRef: ModuleRef,
     @InjectRepository(WorkspaceEntity)
     private workspaceRepository: Repository<WorkspaceEntity>,
-    private userService: UserService,
     private projectService: ProjectService,
   ) {}
+
+  onModuleInit() {
+    this.userService = this.moduleRef.get(UserService, { strict: false });
+  }
 
   findOne(options: FindOneOptions<WorkspaceEntity>) {
     return this.workspaceRepository.findOne(options);
@@ -26,9 +34,10 @@ export class WorkspaceService {
   async create(
     creatorID: number,
     createWorkspaceDto: CreateWorkspaceDto,
+    project?: ProjectCreateDto & Project,
   ): Promise<WorkspaceEntity> {
     const creator = await this.userService.findOneBy({ id: creatorID });
-    const project = await this.projectService.create({
+    project ??= await this.projectService.create({
       name: '默认项目',
       description: createWorkspaceDto.title + '默认项目',
     });
