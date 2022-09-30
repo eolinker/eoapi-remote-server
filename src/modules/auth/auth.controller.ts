@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Put } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { Public } from '@/decorators/public.decorator';
+import { Public } from '@/common/decorators/public.decorator';
 import { LoginInfoDto } from '@/modules/auth/dto/login.dto';
 import { LoginToken } from '@/modules/auth/auth.class';
 import { JwtLogoutDto, JwtRefreshTokenDto } from '@/modules/auth/dto';

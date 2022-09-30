@@ -11,7 +11,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { UpdateUserInfoDto, UpdateUserPasswordDto } from './user.dto';
 import { UserEntity } from '@/entities/user.entity';
-import { IUser, User } from '@/decorators/user.decorator';
+import { IUser, User } from '@/common/decorators/user.decorator';
 import { LoginToken } from '@/modules/auth/auth.class';
 
 @ApiBearerAuth()

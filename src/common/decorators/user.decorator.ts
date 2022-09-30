@@ -1,10 +1,10 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-export interface IUser {
+export type IUser = {
   userId: number;
   /** 密码版本 */
   pv: number;
-}
+};
 
 export const User = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext) => {

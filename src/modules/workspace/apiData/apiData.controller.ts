@@ -19,12 +19,6 @@ import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
 @ApiTags('apiData')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/api_data`)
 export class ApiDataController {
-  private readonly NOT_FOUND = {
-    statusCode: 201,
-    message: 'Cannot find record in database',
-    error: 'Not Found',
-  };
-
   private readonly JSON_FIELDS = [
     'requestHeaders',
     'requestBody',
@@ -44,12 +38,7 @@ export class ApiDataController {
   @Post()
   async create(@Body() createDto: CreateDto) {
     createDto = this.filterItem(createDto);
-    const data = await this.service.create(createDto);
-    if (data && data.uuid) {
-      return await this.findOne(`${data.uuid}`);
-    }
-
-    return this.NOT_FOUND;
+    return this.service.create(createDto);
   }
 
   @Post('batch')
@@ -81,32 +70,16 @@ export class ApiDataController {
         weight: item.weight,
       });
     });
-    const data = await this.service.bulkUpdate(newArr);
-    if (data) {
-      return this.service.findByIds(ids);
-    }
-    return this.NOT_FOUND;
+    return this.service.bulkUpdate(newArr);
   }
   @Put(':uuid')
   async update(@Param('uuid') uuid: string, @Body() updateDto: UpdateDto) {
     updateDto = this.filterItem(updateDto);
-    const data = await this.service.update(+uuid, updateDto);
-    if (data) {
-      return await this.findOne(uuid);
-    }
-    return this.NOT_FOUND;
+    return this.service.update(+uuid, updateDto);
   }
 
   @Delete()
   async remove(@Query(ValidateQueryPipe) query) {
-    const data = await this.service.remove(query.uuids);
-    if (data && data.affected > 0) {
-      return {
-        statusCode: 200,
-        data: data,
-      };
-    }
-
-    return this.NOT_FOUND;
+    return this.service.remove(query.uuids);
   }
 }

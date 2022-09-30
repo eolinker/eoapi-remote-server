@@ -8,9 +8,9 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { isEmpty } from 'lodash';
-import { IS_PUBLIC_KEY } from '@/decorators/public.decorator';
+import { IS_PUBLIC_KEY } from '@/common/decorators/public.decorator';
 import { AuthService } from '@/modules/auth/auth.service';
-import { IUser } from '@/decorators/user.decorator';
+import { IUser } from '@/common/decorators/user.decorator';
 import { UserService } from '@/modules/user/user.service';
 
 /**

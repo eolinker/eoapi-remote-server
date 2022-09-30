@@ -27,7 +27,7 @@ import {
   WorkspaceUser,
 } from './workspace.dto';
 import { WorkspaceEntity } from '@/entities/workspace.entity';
-import { IUser, User } from '@/decorators/user.decorator';
+import { IUser, User } from '@/common/decorators/user.decorator';
 import { UserEntity } from '@/entities/user.entity';
 
 @ApiBearerAuth()
