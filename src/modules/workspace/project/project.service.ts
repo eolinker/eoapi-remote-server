@@ -84,30 +84,21 @@ export class ProjectService {
     return '导入失败，项目不存在';
   }
 
-  exportCollects(
-    apiGroup: any[],
-    apiData: any[],
-    parentID = 0,
-    groupID = null,
-  ) {
+  exportCollects(apiGroup: any[], apiData: any[], parentID = 0) {
     const apiGroupFilters = apiGroup.filter(
       (child) => child.parentID === parentID,
     );
-    if (Array.isArray(apiGroupFilters) && apiGroupFilters.length) {
-      return apiGroupFilters.map((item) => {
+    const apiDataFilters = apiData.filter(
+      (child) => child.groupID === parentID,
+    );
+    return apiGroupFilters
+      .map((item) => {
         return {
           name: item.name,
-          children: this.exportCollects(
-            apiGroup,
-            apiData,
-            item.uuid,
-            item.uuid,
-          ),
+          children: this.exportCollects(apiGroup, apiData, item.uuid),
         };
-      });
-    } else {
-      return apiData.filter((child) => child.groupID === groupID);
-    }
+      })
+      .concat(apiDataFilters);
   }
 
   async export(workspaceID: number, uuid: number) {
@@ -153,6 +144,7 @@ export class ProjectService {
     errors: Errors,
   ): Promise<Errors> {
     return collections.reduce(async (prev: any, curr: any) => {
+      Reflect.deleteProperty(curr, 'uuid');
       if (curr.uri || curr.method || curr.protocol) {
         const result = parseAndCheckApiData(curr);
         if (!result.validate) {

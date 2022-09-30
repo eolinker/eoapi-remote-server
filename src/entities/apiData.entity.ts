@@ -31,7 +31,7 @@ export class ApiData extends Base {
   @Column()
   requestBodyJsonType: string;
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'json', nullable: true, default: '[]' })
   requestBody: string;
 
   @Column({ type: 'json' })
@@ -43,7 +43,7 @@ export class ApiData extends Base {
   @Column({ type: 'json' })
   responseHeaders: string;
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'json', nullable: true, default: '[]' })
   responseBody: string;
 
   @Column()

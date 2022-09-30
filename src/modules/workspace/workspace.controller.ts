@@ -29,12 +29,17 @@ import {
 import { WorkspaceEntity } from '@/entities/workspace.entity';
 import { IUser, User } from '@/common/decorators/user.decorator';
 import { UserEntity } from '@/entities/user.entity';
+import { Collections } from '@/modules/workspace/project/dto/import.dto';
+import { ProjectService } from '@/modules/workspace/project/project.service';
 
 @ApiBearerAuth()
 @ApiTags('workspace')
 @Controller('workspace')
 export class WorkspaceController {
-  constructor(private readonly workspaceService: WorkspaceService) {}
+  constructor(
+    private readonly workspaceService: WorkspaceService,
+    private readonly projectService: ProjectService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: '创建空间' })
@@ -48,10 +53,15 @@ export class WorkspaceController {
 
   @Post('upload')
   @ApiOperation({ summary: '导入本地数据并创建空间' })
-  async importLocalData(
-    @Body() createCatDto: CreateWorkspaceDto,
-  ): Promise<string> {
-    return String(createCatDto);
+  async importLocalData(@User() user: IUser, @Body() collections: Collections) {
+    const workspace = await this.workspaceService.create(user.userId, {
+      title: '默认空间',
+    });
+    return this.projectService.import(
+      workspace.id,
+      workspace.projects.at(0).uuid,
+      collections,
+    );
   }
 
   @Put(':workspaceID')

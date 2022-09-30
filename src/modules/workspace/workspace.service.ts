@@ -41,7 +41,6 @@ export class WorkspaceService implements OnModuleInit {
       name: '默认项目',
       description: createWorkspaceDto.title + '默认项目',
     });
-    console.log('creator', creator, project);
     return this.workspaceRepository.save({
       ...createWorkspaceDto,
       creatorID,
