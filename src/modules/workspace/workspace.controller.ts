@@ -57,11 +57,19 @@ export class WorkspaceController {
     const workspace = await this.workspaceService.create(user.userId, {
       title: '默认空间',
     });
-    return this.projectService.import(
+    const exportResult = await this.projectService.import(
       workspace.id,
       workspace.projects.at(0).uuid,
       collections,
     );
+    if (typeof exportResult === 'string') {
+      return new Error(exportResult);
+    } else {
+      return {
+        ...exportResult,
+        workspace,
+      };
+    }
   }
 
   @Put(':workspaceID')
