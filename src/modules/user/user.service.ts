@@ -16,10 +16,12 @@ import {
   Repository,
 } from 'typeorm';
 import { validate } from 'class-validator';
+import { nanoid } from 'nanoid';
 import {
   UpdateUserInfoDto,
   UpdateUserPasswordDto,
   UserLoginDto,
+  UserLoginResultDto,
 } from './user.dto';
 import { UserEntity } from '@/entities/user.entity';
 import { UtilService } from '@/shared/services/util.service';
@@ -71,7 +73,7 @@ export class UserService implements OnModuleInit {
   async getByCredentials(
     username: string,
     password: string,
-  ): Promise<UserEntity | null> {
+  ): Promise<UserLoginResultDto | null> {
     // return this.userRepository.findOne({
     //   where: {
     //     username,
@@ -99,31 +101,35 @@ export class UserService implements OnModuleInit {
     });
   }
 
-  async getOrCreateUser(userDto: UserLoginDto): Promise<UserEntity> {
-    const other = await this.validateUser(userDto);
-    if (Object.keys(other).length === 0) {
-      throw new Error('用户名必须是手机号码或邮箱');
-    }
-
+  async getOrCreateUser(userDto: UserLoginDto): Promise<UserLoginResultDto> {
     const user = await this.userRepository.findOne({
-      where: {
-        username: userDto.username,
-      },
+      where: [
+        { username: Equal(userDto.username) },
+        { email: Equal(userDto.username) },
+        { mobilePhone: Equal(userDto.username) },
+      ],
       select: ['id', 'username', 'password', 'avatar', 'passwordVersion'],
     });
     if (user) {
       if (this.utils.md5(userDto.password) === user.password) {
-        return user;
+        return {
+          ...user,
+          isFirstLogin: false,
+        };
       } else {
         throw new ForbiddenException('密码错误');
       }
     } else {
+      const other = await this.validateUser(userDto);
+      if (Object.keys(other).length === 0) {
+        throw new Error('用户名必须是手机号码或邮箱');
+      }
       const user = await this.userRepository.save({
         ...other,
         ...userDto,
         password: this.utils.md5(userDto.password),
       });
-
+      this.userRepository.update(user.id, { username: `user_${nanoid(10)}` });
       if (user.id === 1) {
         const defaultProject = await this.projectService.findOneBy(1);
         if (defaultProject) {
@@ -137,15 +143,20 @@ export class UserService implements OnModuleInit {
         }
       }
 
-      return user;
+      return {
+        ...user,
+        isFirstLogin: true,
+      };
     }
   }
 
   async searchUsers(username: string) {
     const [result] = await this.userRepository.findAndCount({
-      where: {
-        username: Like(`%${username}%`),
-      },
+      where: [
+        { username: Like(`%${username}%`) },
+        { email: Like(`%${username}%`) },
+        { mobilePhone: Like(`%${username}%`) },
+      ],
     });
     return result;
   }
@@ -154,10 +165,10 @@ export class UserService implements OnModuleInit {
     userId,
     userInfoDto: UpdateUserInfoDto,
   ): Promise<UserEntity> {
-    const other = await this.validateUser(userInfoDto);
-    if (userInfoDto.username && Object.keys(other).length === 0) {
-      throw new Error('用户名必须是手机号码或邮箱');
-    }
+    // const other = await this.validateUser(userInfoDto);
+    // if (userInfoDto.username && Object.keys(other).length === 0) {
+    //   throw new Error('用户名必须是手机号码或邮箱');
+    // }
     const isConflict = await this.userRepository.findOne({
       where: { username: Equal(userInfoDto.username), id: Not(userId) },
     });
@@ -165,7 +176,9 @@ export class UserService implements OnModuleInit {
       throw new ConflictException('用户名已存在');
     }
     Reflect.deleteProperty(userInfoDto, 'password');
-    await this.userRepository.update(userId, { ...userInfoDto, ...other });
+    await this.userRepository.update(userId, {
+      username: userInfoDto.username,
+    });
     return this.userRepository.findOneBy({ id: userId });
   }
 
@@ -193,6 +206,9 @@ export class UserService implements OnModuleInit {
     });
     const userInfo = await this.userRepository.findOneBy({ id: userId });
     userInfo.passwordVersion = user.passwordVersion + 1;
-    return this.authService.loginUser(userInfo);
+    return this.authService.loginUser({
+      ...userInfo,
+      isFirstLogin: false,
+    });
   }
 }

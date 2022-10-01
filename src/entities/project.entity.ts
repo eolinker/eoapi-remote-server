@@ -6,6 +6,8 @@ import { WorkspaceEntity } from './workspace.entity';
 @Entity({ name: 'project' })
 export class Project extends Base {
   @ApiProperty({ description: '项目所属空间' })
-  @ManyToOne(() => WorkspaceEntity, (user) => user.projects)
+  @ManyToOne(() => WorkspaceEntity, (user) => user.projects, {
+    onDelete: 'CASCADE',
+  })
   workspace: WorkspaceEntity;
 }

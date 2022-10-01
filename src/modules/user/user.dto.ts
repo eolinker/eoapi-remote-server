@@ -48,3 +48,7 @@ export class UserInfoValidator {
   @IsString()
   readonly newPassword: string;
 }
+
+export class UserLoginResultDto extends UserEntity {
+  isFirstLogin: boolean;
+}

@@ -3,9 +3,10 @@ import { Exclude } from 'class-transformer';
 import { IsEmail, IsMobilePhone, IsString } from 'class-validator';
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { WorkspaceEntity } from './workspace.entity';
+import { TimestampBase } from './base.entity';
 
 @Entity({ name: 'user' })
-export class UserEntity {
+export class UserEntity extends TimestampBase {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;

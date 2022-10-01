@@ -10,9 +10,10 @@ import {
 import { Exclude } from 'class-transformer';
 import { UserEntity } from './user.entity';
 import { Project } from './project.entity';
+import { TimestampBase } from './base.entity';
 
 @Entity({ name: 'workspace' })
-export class WorkspaceEntity {
+export class WorkspaceEntity extends TimestampBase {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;

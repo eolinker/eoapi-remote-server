@@ -19,6 +19,7 @@ import {
   refreshTokenExpiresIn,
 } from '@/modules/auth/auth.constants';
 import { LoginToken } from '@/modules/auth/auth.class';
+import { UserLoginResultDto } from '@/modules/user/user.dto';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -77,11 +78,17 @@ export class AuthService implements OnModuleInit {
     ) {
       throw new UnauthorizedException();
     }
-    return this.loginUser(authEntity.user, String(where.refreshToken));
+    return this.loginUser(
+      {
+        ...authEntity.user,
+        isFirstLogin: false,
+      },
+      String(where.refreshToken),
+    );
   }
 
   async loginUser(
-    userEntity: UserEntity,
+    userEntity: UserLoginResultDto,
     refreshToken = '',
   ): Promise<LoginToken> {
     if (refreshToken) {
@@ -103,6 +110,7 @@ export class AuthService implements OnModuleInit {
       refreshToken: nanoid(),
       accessTokenExpiresAt: date.getTime() + accessTokenExpiresIn,
       refreshTokenExpiresAt: date.getTime() + refreshTokenExpiresIn,
+      isFirstLogin: userEntity.isFirstLogin,
     };
     await this.authEntityRepository
       .create({
