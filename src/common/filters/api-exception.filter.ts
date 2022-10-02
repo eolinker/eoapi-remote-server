@@ -32,10 +32,10 @@ export class ApiExceptionFilter implements ExceptionFilter {
         : status;
     let message = '服务器异常，请稍后再试';
     // 开发模式下提示500类型错误，生产模式下屏蔽500内部错误提示
-    if (isDev() || status < 500) {
-      message =
-        exception instanceof HttpException ? exception.message : `${exception}`;
-    }
+    // if (isDev() || status < 500) {
+    message =
+      exception instanceof HttpException ? exception.message : `${exception}`;
+    // }
     const result = new ResOp(code, null, message);
     response.status(status).send(result);
   }
