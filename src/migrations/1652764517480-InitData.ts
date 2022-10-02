@@ -24,7 +24,7 @@ export class InitData1652764517480 implements MigrationInterface {
         method: 'GET',
         requestBodyType: 'raw',
         requestBodyJsonType: 'object',
-        requestBody: '{}',
+        requestBody: {},
         queryParams: [],
         restParams: [
           {
@@ -124,7 +124,7 @@ export class InitData1652764517480 implements MigrationInterface {
         method: 'GET',
         requestBodyType: 'raw',
         requestBodyJsonType: 'object',
-        requestBody: '{}',
+        requestBody: {},
         queryParams: [{ name: 'name', required: true, example: 'disease_h5' }],
         restParams: [],
         requestHeaders: [],

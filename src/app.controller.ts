@@ -1,22 +1,20 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
+import { Public } from '@/common/decorators/public.decorator';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  @Public()
   @Get()
   getHello(): string {
     return this.appService.getHello();
   }
 
   @Get('system/status')
-  @UseGuards(AuthGuard('api-key'))
+  @Public()
   status() {
-    return {
-      statusCode: 200,
-      data: 'success',
-    };
+    return 'success';
   }
 }

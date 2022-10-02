@@ -1,22 +1,31 @@
 {
   "compilerOptions": {
     "module": "NodeNext",
+    "moduleResolution": "Node",
     "declaration": true,
     "removeComments": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2017",
+    "target": "ESNext",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "lib": [
+      "ESNext"
+    ],
+    "paths": {
+      /*定义别名*/
+      "@/*": [
+        "src/*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
