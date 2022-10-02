@@ -1,6 +1,6 @@
 {
   "name": "eoapi-remote-server",
-  "version": "1.1.0",
+  "version": "1.8.0",
   "description": "Storage api data in remote server",
   "author": "eoapi",
   "private": true,
