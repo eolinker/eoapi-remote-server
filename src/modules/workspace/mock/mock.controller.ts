@@ -10,6 +10,7 @@ import {
   Query,
   All,
   BadRequestException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -25,9 +26,9 @@ export class MockController {
   constructor(private readonly service: MockService) {}
 
   @Post()
-  async create(@Body() createDto: CreateDto) {
-    const data = await this.service.create(createDto);
-    return this.findOne(`${data.uuid}`);
+  async create(@Body() createDto: CreateDto, @Param('projectID') projectID) {
+    const data = await this.service.create({ ...createDto, projectID });
+    return this.findOne(data.uuid, projectID);
   }
 
   @Post('batch')
@@ -36,13 +37,13 @@ export class MockController {
   }
 
   @Get()
-  async findAll(@Query() query: QueryDto) {
-    return this.service.findAll(query);
+  async findAll(@Query() query: QueryDto, @Param('projectID') projectID) {
+    return this.service.findAll({ ...query, projectID });
   }
 
   @Get(':uuid')
-  async findOne(@Param('uuid') uuid: string) {
-    return this.service.findOne(+uuid);
+  async findOne(@Param('uuid') uuid, @Param('projectID') projectID) {
+    return this.service.findOne({ where: { uuid, projectID } });
   }
 
   @All(':projectID/**')
@@ -54,14 +55,21 @@ export class MockController {
   }
 
   @Put(':uuid')
-  async update(@Param('uuid') uuid: string, @Body() updateDto: UpdateDto) {
+  async update(
+    @Param('uuid') uuid: string,
+    @Param('projectID') projectID,
+    @Body() updateDto: UpdateDto,
+  ) {
     await this.service.update(+uuid, updateDto);
-    return await this.findOne(uuid);
+    return await this.findOne(uuid, projectID);
   }
 
   @Delete(':uuid')
-  async remove(@Param('uuid') uuid: string) {
-    const mock = await this.service.findOne(+uuid);
+  async remove(
+    @Param('uuid', ParseIntPipe) uuid: number,
+    @Param('projectID') projectID,
+  ) {
+    const mock = await this.service.findOne({ where: { uuid, projectID } });
     if (mock.createWay === 'system') {
       return new BadRequestException('系统自动创建的mock不能删除');
     }

@@ -29,52 +29,66 @@ export class ApiDataController {
   ];
 
   constructor(private readonly service: ApiDataService) {}
-  filterItem(item: any = {}) {
+  filterItem(item: any = {}, projectID) {
     this.JSON_FIELDS.forEach((field) => {
       item[field] = item[field] ? JSON.stringify(item[field]) : '{}';
+      item.projectID = projectID;
     });
     return item;
   }
   @Post()
-  async create(@Body() createDto: CreateDto) {
-    createDto = this.filterItem(createDto);
-    return this.service.create(createDto);
+  async create(@Body() createDto: CreateDto, @Param('projectID') projectID) {
+    createDto = this.filterItem(createDto, projectID);
+    return this.service.create({ ...createDto, projectID });
   }
 
   @Post('batch')
-  async batchCreate(@Body() createDto: Array<CreateDto>) {
+  async batchCreate(
+    @Body() createDto: Array<CreateDto>,
+    @Param('projectID') projectID,
+  ) {
     createDto.map((val) => {
-      return this.filterItem(val);
+      return this.filterItem(val, projectID);
     });
     return this.service.batchCreate(createDto);
   }
 
   @Get()
-  async findAll(@Query() query: QueryDto) {
-    return this.service.findAll(query);
+  async findAll(@Param('projectID') projectID, @Query() query: QueryDto) {
+    return this.service.findAll({ ...query, projectID });
   }
 
   @Get(':uuid')
-  async findOne(@Param('uuid') uuid: string) {
-    return this.service.findOne(+uuid);
+  async findOne(@Param('uuid') uuid, @Param('projectID') projectID) {
+    return this.service.findOne({ where: { uuid, projectID } });
   }
   @Put('batch')
-  async batchUpdate(@Body() updateDtos: Array<UpdateDto>) {
+  async batchUpdate(
+    @Body() updateDtos: Array<UpdateDto>,
+    @Param('projectID') projectID,
+  ) {
     const ids = updateDtos.map((val) => val.uuid);
     const array = await this.service.findByIds(ids);
     const newArr = array.map((el) => {
       const item = updateDtos.find((val) => Number(val.uuid) === el.uuid);
-      return this.filterItem({
-        ...el,
-        groupID: Number(item.groupID),
-        weight: item.weight,
-      });
+      return this.filterItem(
+        {
+          ...el,
+          groupID: Number(item.groupID),
+          weight: item.weight,
+        },
+        projectID,
+      );
     });
     return this.service.bulkUpdate(newArr);
   }
   @Put(':uuid')
-  async update(@Param('uuid') uuid: string, @Body() updateDto: UpdateDto) {
-    updateDto = this.filterItem(updateDto);
+  async update(
+    @Param('uuid') uuid: string,
+    @Param('projectID') projectID,
+    @Body() updateDto: UpdateDto,
+  ) {
+    updateDto = this.filterItem(updateDto, projectID);
     return this.service.update(+uuid, updateDto);
   }
 

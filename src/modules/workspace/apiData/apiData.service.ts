@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { FindOneOptions, In, Repository } from 'typeorm';
 import { MockService } from '../mock/mock.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
@@ -57,8 +57,8 @@ export class ApiDataService {
     return apiData;
   }
 
-  async findOne(uuid: number): Promise<ApiData> {
-    return await this.repository.findOne({ where: { uuid } });
+  async findOne(options: FindOneOptions<ApiData>): Promise<ApiData> {
+    return await this.repository.findOne(options);
   }
 
   async update(id: number, updateDto: UpdateDto) {

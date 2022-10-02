@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, FindOneOptions } from 'typeorm';
 import { ApiData } from 'src/entities/apiData.entity';
 import { Request } from 'express';
 import { tree2obj } from 'src/utils';
@@ -37,8 +37,8 @@ export class MockService {
     return await this.repository.find({ where: query });
   }
 
-  async findOne(uuid: number): Promise<Mock> {
-    return await this.repository.findOne({ where: { uuid } });
+  async findOne(options: FindOneOptions<Mock>): Promise<Mock> {
+    return await this.repository.findOne(options);
   }
 
   async findMock(projectID: string, request: Request) {

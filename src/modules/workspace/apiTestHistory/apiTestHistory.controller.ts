@@ -24,9 +24,9 @@ export class ApiTestHistoryController {
   constructor(private readonly service: ApiTestHistoryService) {}
 
   @Post()
-  async create(@Body() createDto: CreateDto) {
-    const data = await this.service.create(createDto);
-    return await this.findOne(`${data.uuid}`);
+  async create(@Body() createDto: CreateDto, @Param('projectID') projectID) {
+    const data = await this.service.create({ ...createDto, projectID });
+    return await this.findOne(`${data.uuid}`, projectID);
   }
 
   @Post('batch')
@@ -43,24 +43,28 @@ export class ApiTestHistoryController {
   }
 
   @Get()
-  async findAll(@Query() query: QueryDto) {
-    return this.service.findAll(query);
+  async findAll(@Query() query: QueryDto, @Param('projectID') projectID) {
+    return this.service.findAll({ ...query, projectID });
   }
 
   @Get(':uuid')
-  async findOne(@Param('uuid') uuid: string) {
-    return this.service.findOne(+uuid);
+  async findOne(@Param('uuid') uuid: string, @Param('projectID') projectID) {
+    return this.service.findOne(+uuid, projectID);
   }
 
   @Put(':uuid')
-  async update(@Param('uuid') uuid: string, @Body() updateDto: UpdateDto) {
+  async update(
+    @Param('uuid') uuid: string,
+    @Body() updateDto: UpdateDto,
+    @Param('projectID') projectID,
+  ) {
     this.JSON_FIELDS.forEach((field) => {
       if (updateDto[field]) {
         updateDto[field] = JSON.stringify(updateDto[field]);
       }
     });
     await this.service.update(+uuid, updateDto);
-    return await this.findOne(uuid);
+    return await this.findOne(uuid, projectID);
   }
 
   @Delete()

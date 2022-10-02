@@ -30,8 +30,8 @@ export class ApiTestHistoryService {
     return await this.repository.find({ where: query });
   }
 
-  async findOne(uuid: number): Promise<ApiTestHistory> {
-    return await this.repository.findOne({ where: { uuid } });
+  async findOne(uuid: number, projectID: number): Promise<ApiTestHistory> {
+    return await this.repository.findOne({ where: { uuid, projectID } });
   }
 
   async update(id: number, updateDto: UpdateDto) {

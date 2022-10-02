@@ -98,10 +98,21 @@ export class WorkspaceController {
     return this.workspaceService.delete(id);
   }
 
-  @Get()
+  @Get('list')
   @ApiOperation({ summary: '获取空间列表' })
   list(@User() user: IUser): Promise<WorkspaceEntity[]> {
     return this.workspaceService.list(user.userId);
+  }
+
+  @Get(':workspaceID')
+  @ApiOperation({ summary: '获取空间信息' })
+  async info(@Param('workspaceID') id): Promise<WorkspaceEntity> {
+    const workspace = await this.workspaceService.findOne({
+      where: { id },
+      relations: ['projects'],
+    });
+
+    return workspace;
   }
 
   @Get(':workspaceID/member/list')

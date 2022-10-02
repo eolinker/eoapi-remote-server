@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
@@ -26,12 +26,12 @@ export class EnvironmentService {
       .execute();
   }
 
-  async findAll(query: Partial<QueryDto>) {
-    return await this.repository.find({ where: query });
+  async findAll(options: FindManyOptions<Environment>) {
+    return await this.repository.find(options);
   }
 
-  async findOne(uuid: number): Promise<Environment> {
-    return await this.repository.findOne({ where: { uuid } });
+  async findOne(options: FindOneOptions<Environment>): Promise<Environment> {
+    return await this.repository.findOne(options);
   }
 
   async update(id: number, updateDto: UpdateDto) {

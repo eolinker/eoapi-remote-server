@@ -25,9 +25,9 @@ export class ApiGroupController {
   constructor(private readonly service: ApiGroupService) {}
 
   @Post()
-  async create(@Body() createDto: CreateDto) {
-    const data = await this.service.create(createDto);
-    return await this.findOne(data.uuid);
+  async create(@Body() createDto: CreateDto, @Param('projectID') projectID) {
+    const { uuid } = await this.service.create({ ...createDto, projectID });
+    return await this.findOne(uuid, projectID);
   }
 
   @Post('batch')
@@ -36,13 +36,16 @@ export class ApiGroupController {
   }
 
   @Get()
-  async findAll(@Query() query: QueryDto) {
-    return this.service.findAll(query);
+  async findAll(@Query() query: QueryDto, @Param('projectID') projectID) {
+    return this.service.findAll({ ...query, projectID });
   }
 
   @Get(':uuid')
-  async findOne(@Param('uuid', ParseIntPipe) uuid: number) {
-    return this.service.findOne(uuid);
+  async findOne(
+    @Param('uuid', ParseIntPipe) uuid: number,
+    @Param('projectID') projectID,
+  ) {
+    return this.service.findOne({ where: { uuid, projectID } });
   }
   @Put('batch')
   async batchUpdate(@Body() updateDtos: Array<UpdateDto>) {
@@ -65,11 +68,12 @@ export class ApiGroupController {
   @Put(':uuid')
   async update(
     @Param('uuid', ParseIntPipe) uuid: number,
+    @Param('projectID') projectID,
     @Body() updateDto: UpdateDto,
   ) {
     const data = await this.service.update(+uuid, updateDto);
     if (data) {
-      return await this.findOne(uuid);
+      return await this.findOne(uuid, projectID);
     }
 
     return new NotFoundException('修改失败！分组不存在');

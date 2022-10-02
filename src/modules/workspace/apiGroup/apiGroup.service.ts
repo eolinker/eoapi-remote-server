@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
@@ -33,8 +33,8 @@ export class ApiGroupService {
   async findByIds(ids: number[]) {
     return await this.repository.findByIds(ids);
   }
-  async findOne(uuid: number): Promise<ApiGroup> {
-    return await this.repository.findOne({ where: { uuid } });
+  async findOne(options: FindOneOptions<ApiGroup>): Promise<ApiGroup> {
+    return await this.repository.findOne(options);
   }
 
   async update(id: number, updateDto: UpdateDto) {

@@ -58,9 +58,8 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    const workspaceID = request?.params?.workspaceID;
-
-    if (workspaceID) {
+    const workspaceID = Number(request?.params?.workspaceID);
+    if (!Number.isNaN(workspaceID)) {
       const hasWorkspaceAuth = await this.userService.findOneBy({
         id: request.currentUser.userId,
         workspaces: {

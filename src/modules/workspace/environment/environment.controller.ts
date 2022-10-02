@@ -29,27 +29,31 @@ export class EnvironmentController {
   constructor(private readonly service: EnvironmentService) {}
 
   @Post()
-  async create(@Body() createDto: CreateDto) {
+  async create(@Body() createDto: CreateDto, @Param('projectID') projectID) {
     this.JSON_FIELDS.forEach((field) => {
       if (createDto[field]) {
         createDto[field] = JSON.stringify(createDto[field]);
       }
     });
-    const data = await this.service.create(createDto);
+    const data = await this.service.create({ ...createDto, projectID });
     if (data && data.uuid) {
-      return await this.findOne(`${data.uuid}`);
+      return await this.findOne(data.uuid, projectID);
     }
 
     return this.NOT_FOUND;
   }
 
   @Post('batch')
-  async batchCreate(@Body() createDto: Array<CreateDto>) {
+  async batchCreate(
+    @Body() createDto: Array<CreateDto>,
+    @Param('projectID') projectID,
+  ) {
     createDto.map((val) => {
       this.JSON_FIELDS.forEach((field) => {
         if (val[field]) {
           val[field] = JSON.stringify(val[field]);
         }
+        val['projectID'] = projectID;
       });
       return val;
     });
@@ -57,17 +61,21 @@ export class EnvironmentController {
   }
 
   @Get()
-  async findAll(@Query() query: QueryDto) {
-    return this.service.findAll(query);
+  async findAll(@Query() query: QueryDto, @Param('projectID') projectID) {
+    return this.service.findAll({ where: { ...query, projectID } });
   }
 
   @Get(':uuid')
-  async findOne(@Param('uuid') uuid: string) {
-    return this.service.findOne(+uuid);
+  async findOne(@Param('uuid') uuid, @Param('projectID') projectID) {
+    return this.service.findOne({ where: { uuid, projectID } });
   }
 
   @Put(':uuid')
-  async update(@Param('uuid') uuid: string, @Body() updateDto: UpdateDto) {
+  async update(
+    @Param('uuid') uuid: string,
+    @Param('projectID') projectID,
+    @Body() updateDto: UpdateDto,
+  ) {
     this.JSON_FIELDS.forEach((field) => {
       if (updateDto[field]) {
         updateDto[field] = JSON.stringify(updateDto[field]);
@@ -75,7 +83,7 @@ export class EnvironmentController {
     });
     const data = await this.service.update(+uuid, updateDto);
     if (data) {
-      return await this.findOne(uuid);
+      return await this.findOne(uuid, projectID);
     }
 
     return this.NOT_FOUND;

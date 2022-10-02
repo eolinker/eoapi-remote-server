@@ -107,7 +107,9 @@ export class ProjectService {
       const apiData = await this.apiDataService.findAll({ projectID: uuid });
       const apiGroup = await this.apiGroupService.findAll({ projectID: uuid });
       const enviroments = await this.environmentService.findAll({
-        projectID: uuid,
+        where: {
+          projectID: uuid,
+        },
       });
       return {
         collections: this.exportCollects(apiGroup, apiData),
