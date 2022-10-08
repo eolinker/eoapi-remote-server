@@ -31,6 +31,8 @@ import { IUser, User } from '@/common/decorators/user.decorator';
 import { UserEntity } from '@/entities/user.entity';
 import { Collections } from '@/modules/workspace/project/dto/import.dto';
 import { ProjectService } from '@/modules/workspace/project/project.service';
+import { sampleApiData } from '@/modules/workspace/apiData/samples/sample.api.data';
+import { ApiDataService } from '@/modules/workspace/apiData/apiData.service';
 
 @ApiBearerAuth()
 @ApiTags('workspace')
@@ -39,6 +41,7 @@ export class WorkspaceController {
   constructor(
     private readonly workspaceService: WorkspaceService,
     private readonly projectService: ProjectService,
+    private readonly apiDataService: ApiDataService,
   ) {}
 
   @Post()
@@ -48,7 +51,19 @@ export class WorkspaceController {
     @User() user: IUser,
     @Body() createDto: CreateWorkspaceDto,
   ): Promise<WorkspaceEntity> {
-    return this.workspaceService.create(user.userId, createDto);
+    const workspace = await this.workspaceService.create(
+      user.userId,
+      createDto,
+    );
+    const project = workspace.projects.at(0);
+    this.apiDataService.batchCreate(
+      sampleApiData.map((item) => {
+        Reflect.deleteProperty(item, 'uuid');
+        Reflect.deleteProperty(item, 'uniqueID');
+        return { ...item, projectID: project.uuid };
+      }),
+    );
+    return workspace;
   }
 
   @Post('upload')

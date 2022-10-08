@@ -6,7 +6,7 @@ export class ApiTestHistory extends FictitiousBase {
   @Column({ default: 0 })
   projectID: number;
 
-  @Column()
+  @Column({ nullable: true })
   apiDataID: number;
 
   @Column({ type: 'simple-json' })
