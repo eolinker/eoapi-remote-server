@@ -9,6 +9,11 @@ import { ApiException } from '../exceptions/api.exception';
 import { ResOp } from '../class/res.class';
 import { isDev } from '@/utils';
 
+const errorTips = {
+  401: '未登录',
+  403: '拒绝访问',
+} as const;
+
 /**
  * 异常接管，统一异常返回数据
  */

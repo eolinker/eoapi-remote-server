@@ -37,7 +37,7 @@ export class JwtAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = request.headers['authorization'] as string;
     if (isEmpty(token)) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('请先登录');
     }
     try {
       // 挂载对象到当前请求上
@@ -48,14 +48,14 @@ export class JwtAuthGuard implements CanActivate {
         select: ['passwordVersion'],
       });
       if (!isExit || passwordVersion !== request.currentUser.pv) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException('您的密码已更新，请重新登录');
       }
     } catch (e) {
       // 无法通过token校验
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('token已失效，请重新登录');
     }
     if (isEmpty(request.currentUser)) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('当前用户不存在');
     }
 
     const workspaceID = Number(request?.params?.workspaceID);
@@ -67,7 +67,7 @@ export class JwtAuthGuard implements CanActivate {
         },
       });
       if (!hasWorkspaceAuth) {
-        throw new ForbiddenException();
+        throw new ForbiddenException('没有该空间访问权限');
       }
     }
 

@@ -49,7 +49,7 @@ export class AuthService implements OnModuleInit {
     );
 
     if (!userEntity) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('用户不存在');
     }
 
     return this.loginUser(userEntity);
@@ -76,7 +76,7 @@ export class AuthService implements OnModuleInit {
       !authEntity ||
       authEntity.refreshTokenExpiresAt < new Date().getTime()
     ) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('token已失效，请重新登录');
     }
     return this.loginUser(
       {

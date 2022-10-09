@@ -46,8 +46,24 @@ export class MockService {
     return await this.repository.findOne(options);
   }
 
+  isMatchUrl(apiData: ApiData, pathReg) {
+    if (Array.isArray(apiData.restParams) && apiData.restParams.length > 0) {
+      const restMap = apiData.restParams.reduce(
+        (p, c) => ((p[c.name] = c.example), p),
+        {},
+      );
+      const uri = apiData.uri.replace(
+        /\{(.+?)\}/g,
+        (match, p) => restMap[p] ?? match,
+      );
+      console.log('restMap', restMap, apiData.uri, uri);
+      return pathReg.test(uri);
+    }
+    return false;
+  }
+
   async findMock(projectID: number, mockID: number, request: Request) {
-    const { path, method, query, body, protocol } = request;
+    const { path, method, params, body, protocol } = request;
     // const pathName = path.replace(`/mock/${projectID}`, '');
     // const pathReg = new RegExp(`/?${pathName}/?`);
 
@@ -61,14 +77,16 @@ export class MockService {
         return mock.response;
       }
     }
-
+    const pathReg = new RegExp(`^/?${params[0]}/?$`);
     const apiData = await this.apiDataService.findOne({
       where: {
+        protocol,
         uuid: mock.apiDataID,
+        method: method.toLocaleUpperCase(),
       },
     });
 
-    if (!apiData) {
+    if (!apiData || this.isMatchUrl(apiData, pathReg)) {
       return new NotFoundException(
         '没有匹配到该mock，请检查请求方法或路径是否正确。',
       );
