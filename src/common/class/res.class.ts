@@ -1,7 +1,10 @@
+import { version } from '../../../package.json';
+
 export class ResOp {
   readonly data: any;
   readonly statusCode: number;
   readonly message: string;
+  readonly version = version;
 
   constructor(code: number, data?: any, message = 'success') {
     this.statusCode = code;
