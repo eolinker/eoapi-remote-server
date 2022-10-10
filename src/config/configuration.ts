@@ -18,7 +18,7 @@ export const getConfiguration = () => ({
     synchronize: false,
     logging: false,
     timezone: '+08:00', // 东八区
-    migrations: ['dist/migrations/**/*.js'],
+    migrations: ['dist/src/migrations/**/*.js'],
     migrationsRun: true,
     cli: {
       migrationsDir: 'src/migrations',
