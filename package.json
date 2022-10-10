@@ -12,7 +12,7 @@
     "start": "cross-env NODE_ENV=development nest start",
     "start:dev": "rimraf dist && cross-env NODE_ENV=development nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "cross-env NODE_ENV=production node dist/main.js",
+    "start:prod": "cross-env NODE_ENV=production node dist/src/main.js",
     "migration:create": "npx typeorm-ts-node-commonjs migration:create ./src/migrations/create-table",
     "migration:generate": "npx typeorm-ts-node-commonjs migration:generate ./src/migrations/update-table -d ./src/config/data-source.ts",
     "migration:run": "npm run build&&npx typeorm-ts-node-commonjs migration:run -d ./src/config/data-source.ts",
