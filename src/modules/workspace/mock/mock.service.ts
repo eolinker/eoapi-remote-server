@@ -125,7 +125,7 @@ export class MockService {
       description: '系统默认mock',
       apiDataID: apiData.uuid,
       projectID: apiData.projectID,
-      response: '',
+      response: apiData.responseBody || '[]',
       createWay: 'system',
     };
   }

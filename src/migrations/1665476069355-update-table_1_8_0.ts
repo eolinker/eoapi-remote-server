@@ -1,12 +1,12 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class updateTable1801665469454457 implements MigrationInterface {
-    name = 'updateTable1801665469454457'
+export class updateTable1801665476069355 implements MigrationInterface {
+    name = 'updateTable1801665476069355'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE \`api_test_history\` CHANGE \`apiDataID\` \`apiDataID\` int NULL`);
         await queryRunner.query(`ALTER TABLE \`api_test_history\` DROP COLUMN \`general\``);
-        await queryRunner.query(`ALTER TABLE \`api_test_history\` ADD \`general\` json NOT NULL`);
+        await queryRunner.query(`ALTER TABLE \`api_test_history\` ADD \`general\` json NULL`);
         await queryRunner.query(`ALTER TABLE \`api_test_history\` DROP COLUMN \`request\``);
         await queryRunner.query(`ALTER TABLE \`api_test_history\` ADD \`request\` json NOT NULL`);
         await queryRunner.query(`ALTER TABLE \`api_test_history\` DROP COLUMN \`response\``);

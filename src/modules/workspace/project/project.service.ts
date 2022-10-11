@@ -154,8 +154,8 @@ export class ProjectService {
         } else {
           await this.apiDataService.create({
             ...curr,
-            requestBody: JSON.stringify(curr.requestBody || []),
-            responseBody: JSON.stringify(curr.responseBody || []),
+            requestBody: curr.requestBody || [],
+            responseBody: curr.responseBody || [],
             projectID,
             groupID: parentID,
           });

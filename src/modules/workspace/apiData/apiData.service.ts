@@ -30,31 +30,23 @@ export class ApiDataService {
     return await this.repository.findByIds(ids);
   }
   async batchCreate(createDto: Array<CreateDto>) {
-    return this.repository
+    const result = await this.repository
       .createQueryBuilder()
       .insert()
       .into(ApiData)
       .values(createDto)
       .execute();
+
+    const apiDatas = await this.repository.find({ where: result.identifiers });
+    const mockList = apiDatas.map((item) =>
+      this.mockService.createSystemMockDTO(item),
+    );
+    this.mockService.batchCreate(mockList);
+    return result;
   }
 
   async findAll(query: Partial<QueryDto>) {
-    const apiData = await this.repository.find({ where: query });
-    const mockApiDataIds = (
-      await this.mockRepository.find({
-        where: { apiDataID: In(apiData.map((n) => n.uuid)) },
-      })
-    ).map((n) => n.apiDataID);
-
-    const noDefaultMockApiDatas = apiData
-      .filter((n) => !mockApiDataIds.includes(n.uuid))
-      .map((apiData) => this.mockService.createSystemMockDTO(apiData));
-
-    if (noDefaultMockApiDatas.length) {
-      await this.mockService.batchCreate(noDefaultMockApiDatas);
-    }
-
-    return apiData;
+    return this.repository.find({ where: query });
   }
 
   async findOne(options: FindOneOptions<ApiData>): Promise<ApiData> {

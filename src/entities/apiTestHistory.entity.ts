@@ -1,4 +1,4 @@
-import { Column, Entity, TableColumnOptions } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { FictitiousBase } from './base.entity';
 
 @Entity({ name: 'api_test_history' })
