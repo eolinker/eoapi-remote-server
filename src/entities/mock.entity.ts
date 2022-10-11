@@ -9,7 +9,7 @@ export class Mock extends Base {
   @Column()
   apiDataID: number;
 
-  @Column({ type: 'simple-json' })
+  @Column({ type: 'json' })
   response: string;
 
   @Column()
