@@ -19,6 +19,7 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
+import { Public } from '@/common/decorators/public.decorator';
 
 @ApiTags('Mock')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/mock`)
@@ -46,12 +47,14 @@ export class MockController {
     return this.service.findOne({ where: { uuid, projectID } });
   }
 
-  @All(':projectID/**')
+  @All(':mockID/**')
+  @Public()
   async findMock(
-    @Param('projectID') projectID: string,
+    @Param('projectID', ParseIntPipe) projectID: number,
+    @Param('mockID', ParseIntPipe) mockID: number,
     @Req() request: Request,
   ) {
-    return this.service.findMock(projectID, request);
+    return this.service.findMock(projectID, mockID, request);
   }
 
   @Put(':uuid')

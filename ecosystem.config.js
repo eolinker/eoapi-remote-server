@@ -1,7 +1,7 @@
 // https://pm2.keymetrics.io/docs/usage/docker-pm2-nodejs/
 module.exports = [
   {
-    script: 'dist/main.js',
+    script: 'dist/src/main.js',
     name: 'eoapi-remote-server',
     exec_mode: 'cluster',
     instances: 2,

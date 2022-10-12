@@ -117,7 +117,7 @@ export class UserService implements OnModuleInit {
           isFirstLogin: false,
         };
       } else {
-        throw new ForbiddenException('密码错误');
+        throw new ForbiddenException('账号或密码有误');
       }
     } else {
       const other = await this.validateUser(userDto);

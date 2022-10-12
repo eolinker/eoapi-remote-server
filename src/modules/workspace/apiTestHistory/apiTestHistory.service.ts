@@ -14,6 +14,8 @@ export class ApiTestHistoryService {
   ) {}
 
   async create(createDto: CreateDto) {
+    createDto.general ??= '{}';
+    createDto.apiDataID ??= -1;
     return await this.repository.save(createDto);
   }
 

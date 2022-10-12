@@ -1,23 +1,28 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ModuleRef } from '@nestjs/core';
 import { Repository, FindOneOptions } from 'typeorm';
 import { ApiData } from 'src/entities/apiData.entity';
 import { Request } from 'express';
 import { tree2obj } from 'src/utils';
-import { CreateDto as ApiDataCreateDto } from '../apiData/dto/create.dto';
 import { CreateDto, CreateWay } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { Mock } from '@/entities/mock.entity';
+import { ApiDataService } from '@/modules/workspace/apiData/apiData.service';
 
 @Injectable()
 export class MockService {
+  private apiDataService: ApiDataService;
   constructor(
     @InjectRepository(Mock)
     private readonly repository: Repository<Mock>,
-    @InjectRepository(ApiData)
-    private readonly apiDataRepository: Repository<ApiData>,
+    private moduleRef: ModuleRef,
   ) {}
+
+  onModuleInit() {
+    this.apiDataService = this.moduleRef.get(ApiDataService, { strict: false });
+  }
 
   async create(createDto: CreateDto, createWay: CreateWay = 'custom') {
     createDto.createWay = createWay;
@@ -41,60 +46,68 @@ export class MockService {
     return await this.repository.findOne(options);
   }
 
-  async findMock(projectID: string, request: Request) {
-    const { path, method, query, body, protocol } = request;
-    const pathName = path.replace(`/mock/${projectID}`, '');
-    const pathReg = new RegExp(`/?${pathName}/?`);
+  isMatchUrl(apiData: ApiData, pathReg) {
+    if (Array.isArray(apiData.restParams) && apiData.restParams.length > 0) {
+      const restMap = apiData.restParams.reduce(
+        (p, c) => ((p[c.name] = c.example), p),
+        {},
+      );
+      const uri = apiData.uri.replace(
+        /\{(.+?)\}/g,
+        (match, p) => restMap[p] ?? match,
+      );
+      console.log('restMap', restMap, apiData.uri, uri);
+      return pathReg.test(uri);
+    }
+    return false;
+  }
 
-    if (Number.isNaN(+query.mockID)) {
-      const apiDataList = await this.apiDataRepository
-        .createQueryBuilder('api_data')
-        .where('api_data.projectID = :projectID', {
-          projectID: Number(projectID.replace('eo-', '')),
-        })
-        // .andWhere('api_data.uri = :uri', { uri: pathName })
-        .andWhere('api_data.method = :method', {
-          method: method.toLocaleUpperCase(),
-        })
-        .andWhere('api_data.protocol = :protocol', { protocol })
-        .getMany();
+  async findMock(projectID: number, mockID: number, request: Request) {
+    const { path, method, params, body, protocol } = request;
+    // const pathName = path.replace(`/mock/${projectID}`, '');
+    // const pathReg = new RegExp(`/?${pathName}/?`);
 
-      const apiData = apiDataList.find((n) => {
-        let uri = n.uri.trim();
-        if (Array.isArray(n.restParams) && n.restParams.length > 0) {
-          const restMap = n.restParams.reduce(
-            (p, c) => ((p[c.name] = c.example), p),
-            {},
-          );
-          uri = uri.replace(/\{(.+?)\}/g, (match, p) => restMap[p] ?? match);
-          // console.log('restMap', restMap, n.uri, uri);
-        }
-        return n.method === method && pathReg.test(uri);
-      });
-
-      if (!apiData) {
-        return new NotFoundException(
-          '没有匹配到该mock，请检查请求方法或路径是否正确。',
-        );
+    const mock = await this.repository.findOne({
+      where: { uuid: mockID },
+    });
+    if (mock.createWay === 'custom') {
+      try {
+        return JSON.parse(mock.response);
+      } catch (error) {
+        return mock.response;
       }
-      console.log('apiData', apiData);
-      if (apiData.responseBodyType === 'raw') {
-        return apiData.responseBody;
-      } else if (apiData.responseBodyType === 'json') {
-        return JSON.stringify(
-          tree2obj([].concat(apiData.responseBody), {
-            key: 'name',
-            valueKey: 'description',
-          }),
-        );
-      } else {
-        return '{}';
-      }
-    } else {
-      const mock = await this.repository.findOne({
-        where: { uuid: Number(query.mockID) },
-      });
-      return mock?.response || '{}';
+    }
+    const pathReg = new RegExp(`^/?${params[0]}/?$`);
+    const apiData = await this.apiDataService.findOne({
+      where: {
+        protocol,
+        uuid: mock.apiDataID,
+        method: method.toLocaleUpperCase(),
+      },
+    });
+
+    if (!apiData || this.isMatchUrl(apiData, pathReg)) {
+      return new NotFoundException(
+        '没有匹配到该mock，请检查请求方法或路径是否正确。',
+      );
+    }
+
+    let result = '';
+
+    if (apiData.responseBodyType === 'raw') {
+      result = apiData.responseBody;
+    } else if (apiData.responseBodyType === 'json') {
+      result = JSON.stringify(
+        tree2obj([].concat(apiData.responseBody), {
+          key: 'name',
+          valueKey: 'description',
+        }),
+      );
+    }
+    try {
+      return JSON.parse(result);
+    } catch (error) {
+      return result;
     }
   }
 
@@ -112,7 +125,7 @@ export class MockService {
       description: '系统默认mock',
       apiDataID: apiData.uuid,
       projectID: apiData.projectID,
-      response: '',
+      response: apiData.responseBody || '[]',
       createWay: 'system',
     };
   }

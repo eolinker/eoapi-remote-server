@@ -31,7 +31,7 @@ export class ApiDataController {
   constructor(private readonly service: ApiDataService) {}
   filterItem(item: any = {}, projectID) {
     this.JSON_FIELDS.forEach((field) => {
-      item[field] = item[field] ? JSON.stringify(item[field]) : '{}';
+      item[field] = item[field] ? JSON.stringify(item[field]) : '[]';
       item.projectID = projectID;
     });
     return item;
