@@ -63,4 +63,12 @@ export class ApiDataService {
   async remove(id: number) {
     return await this.repository.delete(id);
   }
+  async removeByGroupIDs(groupIDs = []) {
+    this.repository
+      .createQueryBuilder()
+      .delete()
+      .from(ApiData)
+      .where('groupID IN (:...groupIDs)', { groupIDs })
+      .execute();
+  }
 }

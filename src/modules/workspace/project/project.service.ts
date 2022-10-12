@@ -101,7 +101,7 @@ export class ProjectService {
       .concat(apiDataFilters);
   }
 
-  async export(workspaceID: number, uuid: number) {
+  async exportCollections(workspaceID: number, uuid: number) {
     const project = await this.findOne(workspaceID, uuid);
     if (project) {
       const apiData = await this.apiDataService.findAll({ projectID: uuid });
@@ -177,5 +177,26 @@ export class ProjectService {
       }
       return prev;
     }, errors);
+  }
+
+  async getProjectCollection(projectID: number) {
+    const groups = await this.apiGroupService.findAll({ projectID });
+    const apis = await this.apiDataService.findAll({ projectID });
+
+    return {
+      groups,
+      apis,
+    };
+  }
+
+  async projectExport(projectID: number) {
+    return {
+      environment: await this.environmentService.findAll({
+        where: { projectID },
+      }),
+      group: await this.apiGroupService.findAll({ projectID }),
+      project: await this.repository.findOne({ where: { uuid: projectID } }),
+      apiData: await this.apiDataService.findAll({ projectID }),
+    };
   }
 }
