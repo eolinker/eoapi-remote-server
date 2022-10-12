@@ -94,12 +94,26 @@ export class ProjectController {
     };
   }
 
-  @Get(':uuid/export')
+  @Get(':uuid/export/collections')
   async export(
     @Param('uuid') uuid: string,
     @Param('workspaceID', ParseIntPipe) workspaceID,
   ) {
     // console.log('uuid', uuid, importDto);
-    return this.service.export(workspaceID, Number(uuid));
+    return this.service.exportCollections(workspaceID, Number(uuid));
+  }
+
+  @Get(':uuid/export')
+  async projectExport(
+    @Param('uuid') uuid: string,
+    @Param('workspaceID', ParseIntPipe) workspaceID,
+  ) {
+    // console.log('uuid', uuid, importDto);
+    return this.service.projectExport(Number(uuid));
+  }
+
+  @Get(':uuid/collections')
+  async getProjectCollection(@Param('uuid', ParseIntPipe) uuid: number) {
+    return this.service.getProjectCollection(uuid);
   }
 }

@@ -5,12 +5,14 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { ApiGroup } from '@/entities/apiGroup.entity';
+import { ApiDataService } from '@/modules/workspace/apiData/apiData.service';
 
 @Injectable()
 export class ApiGroupService {
   constructor(
     @InjectRepository(ApiGroup)
     private readonly repository: Repository<ApiGroup>,
+    private apiDataService: ApiDataService,
   ) {}
 
   async create(createDto: CreateDto) {
@@ -43,7 +45,9 @@ export class ApiGroupService {
   async bulkUpdate(updateDto: Array<UpdateDto>) {
     return await this.repository.save(updateDto);
   }
-  async remove(id: number) {
-    return await this.repository.delete(id);
+  async remove(ids: number[]) {
+    const deleteResult = await this.repository.delete(ids);
+    this.apiDataService.removeByGroupIDs(ids);
+    return deleteResult;
   }
 }
