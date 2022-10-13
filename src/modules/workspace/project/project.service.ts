@@ -179,7 +179,7 @@ export class ProjectService {
     }, errors);
   }
 
-  async getProjectCollection(projectID: number) {
+  async getProjectCollections(projectID: number) {
     const groups = await this.apiGroupService.findAll({ projectID });
     const apis = await this.apiDataService.findAll({ projectID });
 

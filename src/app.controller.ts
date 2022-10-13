@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { version } from '../package.json';
 import { AppService } from './app.service';
 import { Public } from '@/common/decorators/public.decorator';
 
@@ -15,6 +16,6 @@ export class AppController {
   @Get('system/status')
   @Public()
   status() {
-    return 'success';
+    return `v${version}`;
   }
 }
