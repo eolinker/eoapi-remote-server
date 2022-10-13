@@ -40,7 +40,8 @@ export class ApiGroupService {
   }
 
   async update(id: number, updateDto: UpdateDto) {
-    return await this.repository.update(id, updateDto);
+    await this.repository.update(id, updateDto);
+    return this.repository.findOneBy({ uuid: id });
   }
   async bulkUpdate(updateDto: Array<UpdateDto>) {
     return await this.repository.save(updateDto);

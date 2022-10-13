@@ -139,6 +139,16 @@ export class ProjectService {
     });
   }
 
+  getJSONString(target: any) {
+    try {
+      return typeof JSON.parse(target) === 'object'
+        ? target
+        : JSON.stringify(target);
+    } catch (error) {
+      return JSON.stringify(target);
+    }
+  }
+
   async importCollects(
     collections: Child[],
     projectID: number,
@@ -154,8 +164,8 @@ export class ProjectService {
         } else {
           await this.apiDataService.create({
             ...curr,
-            requestBody: curr.requestBody || [],
-            responseBody: curr.responseBody || [],
+            requestBody: this.getJSONString(curr.requestBody || []),
+            responseBody: this.getJSONString(curr.responseBody || []),
             projectID,
             groupID: parentID,
           });
