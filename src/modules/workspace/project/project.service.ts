@@ -141,9 +141,13 @@ export class ProjectService {
 
   getJSONString(target: any) {
     try {
-      return typeof JSON.parse(target) === 'object'
-        ? target
-        : JSON.stringify(target);
+      if (typeof target === 'object') {
+        return target;
+      } else if (typeof JSON.parse(target) === 'object') {
+        return JSON.parse(target);
+      } else {
+        return JSON.stringify(target);
+      }
     } catch (error) {
       return JSON.stringify(target);
     }
