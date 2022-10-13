@@ -31,8 +31,13 @@ export class ApiGroupController {
   }
 
   @Post('batch')
-  async batchCreate(@Body() createDto: Array<CreateDto>) {
-    return this.service.batchCreate(createDto);
+  async batchCreate(
+    @Param('projectID') projectID,
+    @Body() createDto: Array<CreateDto>,
+  ) {
+    return this.service.batchCreate(
+      createDto.map((n) => ({ ...n, projectID })),
+    );
   }
 
   @Get()
@@ -48,13 +53,17 @@ export class ApiGroupController {
     return this.service.findOne({ where: { uuid, projectID } });
   }
   @Put('batch')
-  async batchUpdate(@Body() updateDtos: Array<UpdateDto>) {
+  async batchUpdate(
+    @Param('projectID') projectID,
+    @Body() updateDtos: Array<UpdateDto>,
+  ) {
     const ids = updateDtos.map((val) => val.uuid);
     const array = await this.service.findByIds(ids);
     const newArr = array.map((el) => {
       const item = updateDtos.find((val) => val.uuid == el.uuid);
       return {
         ...el,
+        projectID,
         parentID: item.parentID,
         weight: item.weight,
       };
@@ -71,7 +80,7 @@ export class ApiGroupController {
     @Param('projectID') projectID,
     @Body() updateDto: UpdateDto,
   ) {
-    const data = await this.service.update(+uuid, updateDto);
+    const data = await this.service.update(+uuid, { ...updateDto, projectID });
     if (data) {
       return await this.findOne(uuid, projectID);
     }
@@ -80,8 +89,8 @@ export class ApiGroupController {
   }
 
   @Delete()
-  async remove(@Query(ValidateQueryPipe) query) {
-    const data = await this.service.remove(query.uuids);
+  async remove(@Param('projectID') projectID, @Query(ValidateQueryPipe) query) {
+    const data = await this.service.remove(query.uuids, projectID);
     if (data && data.affected > 0) {
       return data;
     }

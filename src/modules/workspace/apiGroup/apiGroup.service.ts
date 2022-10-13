@@ -40,13 +40,21 @@ export class ApiGroupService {
   }
 
   async update(id: number, updateDto: UpdateDto) {
-    return await this.repository.update(id, updateDto);
+    await this.repository.update(id, updateDto);
+    return this.repository.findOneBy({ uuid: id });
   }
   async bulkUpdate(updateDto: Array<UpdateDto>) {
     return await this.repository.save(updateDto);
   }
-  async remove(ids: number[]) {
-    const deleteResult = await this.repository.delete(ids);
+  async remove(ids: number[], projectID: number) {
+    const deleteResult = await this.repository
+      .createQueryBuilder()
+      .delete()
+      .from(ApiGroup)
+      .where('uuid IN (:...ids)', { ids })
+      .andWhere('projectID = :projectID', { projectID })
+      .execute();
+
     this.apiDataService.removeByGroupIDs(ids);
     return deleteResult;
   }

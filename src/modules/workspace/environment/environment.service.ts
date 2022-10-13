@@ -38,7 +38,13 @@ export class EnvironmentService {
     return await this.repository.update(id, updateDto);
   }
 
-  async remove(id: number) {
-    return await this.repository.delete(id);
+  async remove(uuid: number, projectID: number) {
+    return this.repository
+      .createQueryBuilder()
+      .delete()
+      .from(Environment)
+      .where('uuid = :uuid', { uuid })
+      .andWhere('projectID = :projectID', { projectID })
+      .execute();
   }
 }

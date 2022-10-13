@@ -139,6 +139,20 @@ export class ProjectService {
     });
   }
 
+  getJSONString(target: any) {
+    try {
+      if (typeof target === 'object') {
+        return target;
+      } else if (typeof JSON.parse(target) === 'object') {
+        return JSON.parse(target);
+      } else {
+        return JSON.stringify(target);
+      }
+    } catch (error) {
+      return JSON.stringify(target);
+    }
+  }
+
   async importCollects(
     collections: Child[],
     projectID: number,
@@ -154,8 +168,8 @@ export class ProjectService {
         } else {
           await this.apiDataService.create({
             ...curr,
-            requestBody: curr.requestBody || [],
-            responseBody: curr.responseBody || [],
+            requestBody: this.getJSONString(curr.requestBody || []),
+            responseBody: this.getJSONString(curr.responseBody || []),
             projectID,
             groupID: parentID,
           });
@@ -179,7 +193,7 @@ export class ProjectService {
     }, errors);
   }
 
-  async getProjectCollection(projectID: number) {
+  async getProjectCollections(projectID: number) {
     const groups = await this.apiGroupService.findAll({ projectID });
     const apis = await this.apiDataService.findAll({ projectID });
 

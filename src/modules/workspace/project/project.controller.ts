@@ -113,7 +113,7 @@ export class ProjectController {
   }
 
   @Get(':uuid/collections')
-  async getProjectCollection(@Param('uuid', ParseIntPipe) uuid: number) {
-    return this.service.getProjectCollection(uuid);
+  async getProjectCollections(@Param('uuid', ParseIntPipe) uuid: number) {
+    return this.service.getProjectCollections(uuid);
   }
 }

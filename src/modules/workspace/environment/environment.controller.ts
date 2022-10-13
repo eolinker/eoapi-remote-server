@@ -79,6 +79,7 @@ export class EnvironmentController {
     this.JSON_FIELDS.forEach((field) => {
       if (updateDto[field]) {
         updateDto[field] = JSON.stringify(updateDto[field]);
+        updateDto.projectID = projectID;
       }
     });
     const data = await this.service.update(+uuid, updateDto);
@@ -90,7 +91,7 @@ export class EnvironmentController {
   }
 
   @Delete(':uuid')
-  async remove(@Param('uuid') uuid: string) {
-    return this.service.remove(+uuid);
+  async remove(@Param('uuid') uuid: string, @Param('projectID') projectID) {
+    return this.service.remove(+uuid, projectID);
   }
 }
