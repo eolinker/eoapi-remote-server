@@ -23,7 +23,6 @@ import { EnvironmentService } from '@/modules/workspace/environment/environment.
 import { ApiGroupService } from '@/modules/workspace/apiGroup/apiGroup.service';
 import { ApiGroupController } from '@/modules/workspace/apiGroup/apiGroup.controller';
 import { UserModule } from '@/modules/user/user.module';
-import { AuthModule } from '@/modules/auth/auth.module';
 
 const commonProviders = [
   WorkspaceService,
@@ -47,7 +46,6 @@ const commonProviders = [
       Environment,
     ]),
     UserModule,
-    AuthModule,
   ],
   controllers: [
     WorkspaceController,

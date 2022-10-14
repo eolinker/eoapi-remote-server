@@ -211,4 +211,8 @@ export class UserService implements OnModuleInit {
       isFirstLogin: false,
     });
   }
+
+  updateUser(user: UserEntity) {
+    return this.userRepository.save(user);
+  }
 }
