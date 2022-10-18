@@ -4,6 +4,7 @@ import { IsEmail, IsMobilePhone, IsString } from 'class-validator';
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { WorkspaceEntity } from './workspace.entity';
 import { TimestampBase } from './base.entity';
+import { Project } from './project.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends TimestampBase {
@@ -46,4 +47,7 @@ export class UserEntity extends TimestampBase {
   @Exclude()
   @ManyToMany(() => WorkspaceEntity, (workspace) => workspace.users)
   workspaces: WorkspaceEntity[];
+
+  @ManyToMany(() => Project, (project) => project.users)
+  projects: Project[];
 }

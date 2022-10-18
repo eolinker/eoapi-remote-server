@@ -36,15 +36,25 @@ export class WorkspaceService implements OnModuleInit {
     createWorkspaceDto: CreateWorkspaceDto,
     project?: ProjectCreateDto & Project,
   ): Promise<WorkspaceEntity> {
-    const creator = await this.userService.findOneBy({ id: creatorID });
-    project ??= await this.projectService.create({
+    const creator = await this.userService.findOne({
+      where: {
+        id: creatorID,
+      },
+      relations: {
+        projects: true,
+      },
+    });
+    project ??= await this.projectService.save({
       name: '默认项目',
       description: createWorkspaceDto.title + '默认项目',
     });
+
+    creator.projects = (creator?.projects || []).concat(project);
+
     return this.workspaceRepository.save({
       ...createWorkspaceDto,
       creatorID,
-      users: [creator],
+      users: [await this.userService.updateUser(creator)],
       projects: [project],
     });
   }
@@ -97,12 +107,14 @@ export class WorkspaceService implements OnModuleInit {
       where: { id: workspaceId },
       relations: {
         users: true,
+        projects: true,
       },
     });
     const users = await this.userService.find({
       where: { id: In(userIDs) },
       relations: {
         workspaces: true,
+        projects: true,
       },
     });
     users.forEach((user) => {
@@ -110,6 +122,8 @@ export class WorkspaceService implements OnModuleInit {
         ...workspace,
         users: [],
       });
+      user.projects.push(...workspace.projects);
+      this.userService.updateUser(user);
     });
     workspace.users.push(...users);
     return this.workspaceRepository.save(workspace);

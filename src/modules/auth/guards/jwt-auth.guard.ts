@@ -12,6 +12,7 @@ import { IS_PUBLIC_KEY } from '@/common/decorators/public.decorator';
 import { AuthService } from '@/modules/auth/auth.service';
 import { IUser } from '@/common/decorators/user.decorator';
 import { UserService } from '@/modules/user/user.service';
+import { ProjectService } from '@/modules/workspace/project/project.service';
 
 /**
  * admin perm check guard
@@ -23,6 +24,7 @@ export class JwtAuthGuard implements CanActivate {
     private jwtService: JwtService,
     private authService: AuthService,
     private userService: UserService,
+    private projectService: ProjectService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -59,15 +61,32 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     const workspaceID = Number(request?.params?.workspaceID);
+    const projectID = Number(request?.params?.projectID);
     if (!Number.isNaN(workspaceID)) {
       const hasWorkspaceAuth = await this.userService.findOneBy({
         id: request.currentUser.userId,
         workspaces: {
           id: workspaceID,
         },
+        ...(Number.isNaN(projectID)
+          ? {}
+          : {
+              projects: {
+                uuid: projectID,
+              },
+            }),
       });
       if (!hasWorkspaceAuth) {
         throw new ForbiddenException('没有该空间访问权限');
+      }
+    }
+    if (!Number.isNaN(projectID)) {
+      const hasProjectAuth = await this.projectService.findOne(
+        workspaceID,
+        projectID,
+      );
+      if (!hasProjectAuth) {
+        throw new ForbiddenException('没有该项目访问权限');
       }
     }
 

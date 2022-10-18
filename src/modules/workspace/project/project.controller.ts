@@ -45,31 +45,31 @@ export class ProjectController {
     return this.service.findAll(query, workspaceID);
   }
 
-  @Get(':uuid')
+  @Get(':projectID')
   async findOne(
-    @Param('uuid', ParseIntPipe) uuid,
+    @Param('projectID', ParseIntPipe) projectID,
     @Param('workspaceID', ParseIntPipe) workspaceID,
   ) {
-    return this.service.findOne(workspaceID, uuid);
+    return this.service.findOne(workspaceID, projectID);
   }
 
-  @Put(':uuid')
+  @Put(':projectID')
   async update(
-    @Param('uuid') uuid: string,
+    @Param('projectID') projectID: string,
     @Param('workspaceID', ParseIntPipe) workspaceID,
     @Body() updateDto: UpdateDto,
   ) {
-    const data = await this.service.update(+uuid, updateDto);
+    const data = await this.service.update(+projectID, updateDto);
     if (data) {
-      return await this.findOne(workspaceID, uuid);
+      return await this.findOne(workspaceID, projectID);
     }
 
     return new NotFoundException('更新失败！项目不存在');
   }
 
-  @Delete(':uuid')
-  async remove(@Param('uuid') uuid: string) {
-    const data = await this.service.remove(+uuid);
+  @Delete(':projectID')
+  async remove(@Param('projectID') projectID: string) {
+    const data = await this.service.remove(+projectID);
     if (data && data.affected > 0) {
       return data;
     }
@@ -77,16 +77,16 @@ export class ProjectController {
     return new NotFoundException('删除失败！项目不存在');
   }
 
-  @Put(':uuid/import')
+  @Put(':projectID/import')
   async import(
-    @Param('uuid') uuid: string,
+    @Param('projectID') projectID: string,
     @Param('workspaceID', ParseIntPipe) workspaceID,
     @Body() importDto: ImportDto,
   ) {
-    // console.log('uuid', uuid, importDto);
+    // console.log('projectID', projectID, importDto);
     const data = await this.service.import(
       workspaceID,
-      Number(uuid),
+      Number(projectID),
       importDto,
     );
     return {
@@ -94,26 +94,28 @@ export class ProjectController {
     };
   }
 
-  @Get(':uuid/export/collections')
+  @Get(':projectID/export/collections')
   async export(
-    @Param('uuid') uuid: string,
+    @Param('projectID') projectID: string,
     @Param('workspaceID', ParseIntPipe) workspaceID,
   ) {
-    // console.log('uuid', uuid, importDto);
-    return this.service.exportCollections(workspaceID, Number(uuid));
+    // console.log('projectID', projectID, importDto);
+    return this.service.exportCollections(workspaceID, Number(projectID));
   }
 
-  @Get(':uuid/export')
+  @Get(':projectID/export')
   async projectExport(
-    @Param('uuid') uuid: string,
+    @Param('projectID') projectID: string,
     @Param('workspaceID', ParseIntPipe) workspaceID,
   ) {
-    // console.log('uuid', uuid, importDto);
-    return this.service.projectExport(Number(uuid));
+    // console.log('projectID', projectID, importDto);
+    return this.service.projectExport(Number(projectID));
   }
 
-  @Get(':uuid/collections')
-  async getProjectCollections(@Param('uuid', ParseIntPipe) uuid: number) {
-    return this.service.getProjectCollections(uuid);
+  @Get(':projectID/collections')
+  async getProjectCollections(
+    @Param('projectID', ParseIntPipe) projectID: number,
+  ) {
+    return this.service.getProjectCollections(projectID);
   }
 }

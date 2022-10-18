@@ -4,7 +4,7 @@ services:
   eoapi-remote-server:
     # build: 从当前路径构建镜像
     build: .
-    image: eoapi/eoapi-remote-server:1.8.1
+    image: eoapi/eoapi-remote-server:1.8.2
     container_name: eoapi-remote-server
     restart: always
     env_file:

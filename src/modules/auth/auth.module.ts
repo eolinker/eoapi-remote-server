@@ -9,6 +9,7 @@ import { UserModule } from '@/modules/user/user.module';
 import { AuthService } from '@/modules/auth/auth.service';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { AuthEntity } from '@/entities/auth.entity';
+import { WorkspaceModule } from '@/modules/workspace/workspace.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthEntity } from '@/entities/auth.entity';
     PassportModule,
     ConfigModule,
     UserModule,
+    WorkspaceModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

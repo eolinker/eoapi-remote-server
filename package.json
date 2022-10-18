@@ -1,6 +1,6 @@
 {
   "name": "eoapi-remote-server",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "description": "Storage api data in remote server",
   "author": "eoapi",
   "private": true,
@@ -16,7 +16,7 @@
     "migration:create": "npx typeorm-ts-node-commonjs migration:create ./src/migrations/create-table",
     "migration:generate": "node ./scripts/migration-generate.js",
     "migration:run": "npm run build&&npx typeorm-ts-node-commonjs migration:run -d ./src/config/data-source.ts",
-    "migration:revert": "npm run typeorm migration:revert",
+    "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d ./src/config/data-source.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "typeorm": "npx typeorm-ts-node-commonjs",
     "test": "jest",
