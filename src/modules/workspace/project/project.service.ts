@@ -131,14 +131,14 @@ export class ProjectService {
     enviroments.forEach((item) => {
       const env = {
         ...item,
-        projectID,
         parameters: item.parameters as unknown as string,
       };
       const result = parseAndCheckEnv(env);
       if (!result.validate) {
-        errors.enviroments.push(item);
+        errors.enviroments.push(result);
       } else {
-        this.environmentService.create(env);
+        result.data.projectID = projectID;
+        this.environmentService.create(result.data);
       }
     });
   }
