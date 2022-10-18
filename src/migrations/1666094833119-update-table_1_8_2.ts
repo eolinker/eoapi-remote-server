@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class updateTable1831666088812948 implements MigrationInterface {
-    name = 'updateTable1831666088812948'
+export class updateTable1821666094833119 implements MigrationInterface {
+    name = 'updateTable1821666094833119'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE \`api_test_history\` DROP COLUMN \`createBy\``);
