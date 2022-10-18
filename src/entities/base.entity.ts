@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   PrimaryGeneratedColumn,
@@ -20,7 +21,28 @@ export abstract class TimestampBase {
   updatedAt: Date;
 }
 
-export abstract class FictitiousBase extends TimestampBase {
+export abstract class OperatorBase extends TimestampBase {
+  @Column({ update: false })
+  @ApiProperty()
+  createBy!: string;
+
+  @Column()
+  @ApiProperty()
+  updateBy!: string;
+
+  /**
+   * 以下两个事件需要创建一个新的实例时才会执行
+   * mapper.save(Object.assign(this.mapper.create(), entity)) -> 执行
+   * mapper.save(entity)) -> 不执行
+   * [实体监听器和订阅者](https://typeorm.bootcss.com/listeners-and-subscribers)
+   */
+  @BeforeUpdate()
+  updateUpdateBy() {
+    // console.log('before-update....');
+  }
+}
+
+export abstract class FictitiousBase extends OperatorBase {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   uuid: number;

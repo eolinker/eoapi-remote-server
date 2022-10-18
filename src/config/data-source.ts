@@ -4,4 +4,4 @@ import { DataSource } from 'typeorm';
 import { getConfiguration } from './configuration';
 dotenv.config();
 
-export const AppDataSource = new DataSource(getConfiguration().database);
+export default new DataSource(getConfiguration().database);
