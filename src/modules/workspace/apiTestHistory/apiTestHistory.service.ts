@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
@@ -28,7 +28,11 @@ export class ApiTestHistoryService {
       .execute();
   }
 
-  async findAll(query: QueryDto) {
+  async findAll(
+    query:
+      | FindOptionsWhere<ApiTestHistory>
+      | FindOptionsWhere<ApiTestHistory>[],
+  ) {
     return await this.repository.find({ where: query });
   }
 

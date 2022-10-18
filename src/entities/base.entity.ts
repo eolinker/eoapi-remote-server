@@ -22,13 +22,17 @@ export abstract class TimestampBase {
 }
 
 export abstract class OperatorBase extends TimestampBase {
+  @PrimaryGeneratedColumn()
+  @ApiProperty()
+  uuid: number;
+
   @Column({ update: false })
   @ApiProperty()
-  createBy!: string;
+  createBy!: number;
 
   @Column()
   @ApiProperty()
-  updateBy!: string;
+  updateBy!: number;
 
   /**
    * 以下两个事件需要创建一个新的实例时才会执行
@@ -36,10 +40,10 @@ export abstract class OperatorBase extends TimestampBase {
    * mapper.save(entity)) -> 不执行
    * [实体监听器和订阅者](https://typeorm.bootcss.com/listeners-and-subscribers)
    */
-  @BeforeUpdate()
-  updateUpdateBy() {
-    // console.log('before-update....');
-  }
+  // @BeforeUpdate()
+  // updateUpdateBy() {
+  //   // console.log('before-update....');
+  // }
 }
 
 export abstract class FictitiousBase extends TimestampBase {

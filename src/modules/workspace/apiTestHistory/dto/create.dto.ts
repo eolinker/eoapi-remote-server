@@ -8,4 +8,6 @@ export class CreateDto {
   request: string;
   response: string;
   weight: number;
+  createBy: number;
+  updateBy: number;
 }
