@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { ApiGroupService } from '../apiGroup/apiGroup.service';
 import { ApiDataService } from '../apiData/apiData.service';
 import { EnvironmentService } from '../environment/environment.service';
@@ -29,6 +29,10 @@ export class ProjectService {
 
   async create(createDto: CreateDto) {
     return await this.repository.save(createDto);
+  }
+
+  async save(project: DeepPartial<Project>) {
+    return await this.repository.save(project);
   }
 
   async batchCreate(createDto: Array<CreateDto>) {

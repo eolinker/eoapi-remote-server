@@ -48,8 +48,6 @@ export class UserEntity extends TimestampBase {
   @ManyToMany(() => WorkspaceEntity, (workspace) => workspace.users)
   workspaces: WorkspaceEntity[];
 
-  @ApiHideProperty()
-  @Exclude()
   @ManyToMany(() => Project, (project) => project.users)
   projects: Project[];
 }

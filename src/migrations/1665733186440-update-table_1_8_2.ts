@@ -23,10 +23,12 @@ export class updateTable1821665733186440 implements MigrationInterface {
 
     const values = workspaces.map((item) => [item.workspaceId, item.userId]);
     console.log('values', values);
-    await queryRunner.query(
-      `INSERT INTO project_users_user (projectUuid, userId) VALUES ?`,
-      [values],
-    );
+    if (values.length) {
+      await queryRunner.query(
+        `INSERT INTO project_users_user (projectUuid, userId) VALUES ?`,
+        [values],
+      );
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

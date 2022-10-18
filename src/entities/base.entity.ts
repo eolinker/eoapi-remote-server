@@ -42,7 +42,7 @@ export abstract class OperatorBase extends TimestampBase {
   }
 }
 
-export abstract class FictitiousBase extends OperatorBase {
+export abstract class FictitiousBase extends TimestampBase {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   uuid: number;

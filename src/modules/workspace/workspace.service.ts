@@ -12,23 +12,16 @@ import { UserService } from '@/modules/user/user.service';
 import { ProjectService } from '@/modules/workspace/project/project.service';
 import { Project } from '@/entities/project.entity';
 import { CreateDto as ProjectCreateDto } from '@/modules/workspace/project/dto/create.dto';
-import { PublicService } from '@/shared/services/publicService';
-import { getAppDataSource } from '@/config/configuration';
 
 @Injectable()
-export class WorkspaceService
-  extends PublicService<WorkspaceEntity>
-  implements OnModuleInit
-{
+export class WorkspaceService implements OnModuleInit {
   private userService: UserService;
   constructor(
     private moduleRef: ModuleRef,
     @InjectRepository(WorkspaceEntity)
     private workspaceRepository: Repository<WorkspaceEntity>,
     private projectService: ProjectService,
-  ) {
-    super(getAppDataSource().getRepository(WorkspaceEntity));
-  }
+  ) {}
 
   onModuleInit() {
     this.userService = this.moduleRef.get(UserService, { strict: false });
@@ -43,16 +36,20 @@ export class WorkspaceService
     createWorkspaceDto: CreateWorkspaceDto,
     project?: ProjectCreateDto & Project,
   ): Promise<WorkspaceEntity> {
-    const creator = await this.userService.findOneBy({
-      id: creatorID,
-      projects: true,
+    const creator = await this.userService.findOne({
+      where: {
+        id: creatorID,
+      },
+      relations: {
+        projects: true,
+      },
     });
-    project ??= await this.projectService.create({
+    project ??= await this.projectService.save({
       name: '默认项目',
       description: createWorkspaceDto.title + '默认项目',
     });
-    console.log('creator', creator);
-    creator.projects.push(project);
+
+    creator.projects = (creator?.projects || []).concat(project);
 
     return this.workspaceRepository.save({
       ...createWorkspaceDto,
