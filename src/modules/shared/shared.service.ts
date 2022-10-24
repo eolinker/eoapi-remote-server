@@ -11,7 +11,8 @@ export class SharedService {
   ) {}
 
   async createShared(projectID: number) {
-    return this.sharedEntityRepository.save({ projectID });
+    const shared = await this.findOneBy({ projectID });
+    return shared ?? this.sharedEntityRepository.save({ projectID });
   }
 
   async deleteShared(uniqueID: string, projectID: number) {
