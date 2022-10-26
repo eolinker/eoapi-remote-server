@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtService } from '@nestjs/jwt';
-import { SharedController } from './shared.controller';
-import { SharedService } from './shared.service';
+import { SharedDocsController } from './shared-docs.controller';
+import { SharedDocsService } from './shared-docs.service';
 import { WorkspaceModule } from '@/modules/workspace/workspace.module';
 import { SharedEntity } from '@/entities/shared.entity';
-import { AuthModule } from '@/modules/auth/auth.module';
 import { UserModule } from '@/modules/user/user.module';
 
 @Module({
@@ -14,8 +12,8 @@ import { UserModule } from '@/modules/user/user.module';
     WorkspaceModule,
     UserModule,
   ],
-  controllers: [SharedController],
-  providers: [SharedService],
-  exports: [SharedService],
+  controllers: [SharedDocsController],
+  providers: [SharedDocsService],
+  exports: [SharedDocsService],
 })
-export class ShareModule {}
+export class ShareDocsModule {}

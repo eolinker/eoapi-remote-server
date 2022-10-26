@@ -16,6 +16,6 @@ export class AppController {
   @Get('system/status')
   @Public()
   status() {
-    return `v${version}`;
+    return version;
   }
 }

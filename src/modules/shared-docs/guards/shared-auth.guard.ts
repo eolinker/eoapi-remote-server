@@ -7,7 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '@/common/decorators/public.decorator';
 import { ProjectService } from '@/modules/workspace/project/project.service';
-import { SharedService } from '@/modules/shared/shared.service';
+import { SharedDocsService } from '@/modules/shared-docs/shared-docs.service';
 
 /**
  * admin perm check guard
@@ -16,7 +16,7 @@ import { SharedService } from '@/modules/shared/shared.service';
 export class SharedAuthGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private sharedService: SharedService,
+    private sharedService: SharedDocsService,
     private projectService: ProjectService,
   ) {}
 

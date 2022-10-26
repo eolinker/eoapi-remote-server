@@ -5,7 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 // 引入数据库的及配置文件
 import { AuthModule } from './modules/auth/auth.module';
-import { ShareModule as ShareModuleDocs } from './modules/shared/shared.module';
+import { ShareDocsModule } from './modules/shared-docs/shared-docs.module';
 import { getConfiguration } from './config/configuration';
 import { UserModule } from '@/modules/user/user.module';
 import { WorkspaceModule } from '@/modules/workspace/workspace.module';
@@ -38,7 +38,7 @@ console.log('process.env.NODE_ENV', `.env.${process.env.NODE_ENV}`);
     SharedModule,
     AuthModule, // 认证
     UserModule,
-    ShareModuleDocs,
+    ShareDocsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

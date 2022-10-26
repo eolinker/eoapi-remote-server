@@ -3,10 +3,13 @@ version: '3'
 services:
   eoapi-remote-server:
     # build: 从当前路径构建镜像
-    build: .
-    image: eoapi/eoapi-remote-server:1.8.2
+    # build: .
+    image: eolinker/eoapi-remote-server:1.9.0
     container_name: eoapi-remote-server
-    restart: always
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
     env_file:
       - .env
     extra_hosts:
@@ -22,7 +25,10 @@ services:
   mysql:
     image: mysql:latest
     container_name: eoapi-mysql
-    restart: always
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci #设置utf8字符集
     env_file:
       - .env
@@ -30,6 +36,35 @@ services:
       - '${MYSQL_PORT}:3306'
     volumes:
       - ./sample/mysql/:/var/lib/mysql/ # ./sample/mysql/路径可以替换成自己的路径
+    networks:
+      - eoapi_net
+
+  eoapi:
+    image: eolinker/eoapi:1.9.0
+    container_name: eoapi
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '8000:80'
+    networks:
+      - eoapi_net
+
+  eoapi-test-server:
+    image: eolinker/eoapi-test-server:1.9.0
+    container_name: eoapi-test-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '4201:4201'
+      - '4202:4202'
     networks:
       - eoapi_net
 
