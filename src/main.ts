@@ -10,6 +10,9 @@ import { ValidationPipe } from '@/pipe/validation.pipe';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
+
+  app.setGlobalPrefix(process.env.EOAPI_API_PREFIX || '/api');
+
   app.use(bodyParser.json({ limit: '50mb' }));
   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 

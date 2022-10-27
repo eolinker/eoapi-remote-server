@@ -49,7 +49,7 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:
-      - '8000:80'
+      - '3002:80'
     networks:
       - eoapi_net
 
@@ -63,8 +63,8 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:
-      - '4201:4201'
-      - '4202:4202'
+      - '42011:4201'
+      - '42022:4202'
     networks:
       - eoapi_net
 
