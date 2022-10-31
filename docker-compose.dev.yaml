@@ -60,8 +60,8 @@ services:
       - eoapi_net
 
   eoapi:
-    image: eolinker/eoapi:1.9.0
-    container_name: eoapi
+    image: eolinker/eoapi:1.9.0-dev
+    container_name: eoapi:1.9.0-dev
     deploy:
       restart_policy:
         condition: on-failure
@@ -76,8 +76,8 @@ services:
       - eoapi_net
 
   eoapi-test-server:
-    image: eolinker/eoapi-test-server:1.9.0
-    container_name: eoapi-test-server
+    image: eolinker/eoapi-test-server:1.9.0-dev
+    container_name: eoapi-test-server:1.9.0-dev
     deploy:
       restart_policy:
         condition: on-failure

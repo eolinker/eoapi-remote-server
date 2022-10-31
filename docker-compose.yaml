@@ -14,7 +14,7 @@ services:
       # 服务配置
       EOAPI_SERVER_PORT: 3000
       EOAPI_API_PREFIX: /api
-      MYSQL_HOST: host.docker.internal # 数据库地址
+      MYSQL_HOST: mysql # 数据库地址
       TZ: Asia/Shanghai
       # 数据库配置
       MYSQL_PORT: 33066 # 数据库端口号
