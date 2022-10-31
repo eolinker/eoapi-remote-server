@@ -15,7 +15,7 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:
-      - '${EOAPI_SERVER_PORT}:3001'
+      - '3001:3001'
     networks:
       - eoapi_net
 
