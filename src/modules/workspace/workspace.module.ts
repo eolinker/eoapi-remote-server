@@ -23,6 +23,9 @@ import { EnvironmentService } from '@/modules/workspace/environment/environment.
 import { ApiGroupService } from '@/modules/workspace/apiGroup/apiGroup.service';
 import { ApiGroupController } from '@/modules/workspace/apiGroup/apiGroup.controller';
 import { UserModule } from '@/modules/user/user.module';
+import { SharedController } from '@/modules/workspace/shared/shared.controller';
+import { SharedService } from '@/modules/workspace/shared/shared.service';
+import { SharedEntity } from '@/entities/shared.entity';
 
 const commonProviders = [
   WorkspaceService,
@@ -32,6 +35,7 @@ const commonProviders = [
   ProjectService,
   MockService,
   EnvironmentService,
+  SharedService,
 ];
 @Module({
   imports: [
@@ -44,6 +48,7 @@ const commonProviders = [
       ApiTestHistory,
       ApiGroup,
       Environment,
+      SharedEntity,
     ]),
     UserModule,
   ],
@@ -55,6 +60,7 @@ const commonProviders = [
     ApiTestHistoryController,
     MockController,
     ProjectController,
+    SharedController,
   ],
   providers: [...commonProviders],
   exports: [...commonProviders],

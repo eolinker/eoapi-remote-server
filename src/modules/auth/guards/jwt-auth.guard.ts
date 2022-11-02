@@ -53,6 +53,7 @@ export class JwtAuthGuard implements CanActivate {
         throw new UnauthorizedException('您的密码已更新，请重新登录');
       }
     } catch (e) {
+      console.log('e', e);
       // 无法通过token校验
       throw new UnauthorizedException('token已失效，请重新登录');
     }
@@ -60,8 +61,12 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException('当前用户不存在');
     }
 
-    const workspaceID = Number(request?.params?.workspaceID);
-    const projectID = Number(request?.params?.projectID);
+    const workspaceID = Number(
+      request?.params?.workspaceID || request.headers['x-workspace-id'],
+    );
+    const projectID = Number(
+      request?.params?.projectID || request.headers['x-project-id'],
+    );
     if (!Number.isNaN(workspaceID)) {
       const hasWorkspaceAuth = await this.userService.findOneBy({
         id: request.currentUser.userId,
