@@ -43,7 +43,7 @@ export class UserEntity extends TimestampBase {
   @ApiProperty({ example: 'url', description: '用户头像' })
   avatar: string;
 
-  @Column({ type: 'timestamp', default: new Date() })
+  @Column({ type: 'timestamp', nullable: true, default: new Date() })
   @ApiProperty({ description: '最后登录时间' })
   lastLoginTime: Date;
 
