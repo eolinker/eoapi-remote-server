@@ -4,6 +4,9 @@ export class createTable1652758382828 implements MigrationInterface {
   name = 'createTable1652758382828';
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
+      `create database eoapi default character set utf8mb4 collate utf8mb4_general_ci`,
+    );
+    await queryRunner.query(
       `CREATE TABLE \`api_data\` (\`uuid\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`description\` varchar(255) NULL, \`createdAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`updatedAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE NOW(), \`uniqueID\` varchar(36) NOT NULL, \`projectID\` int NOT NULL DEFAULT '0', \`groupID\` int NOT NULL DEFAULT '0', \`uri\` varchar(255) NOT NULL, \`protocol\` varchar(255) NOT NULL, \`method\` varchar(255) NOT NULL, \`requestBodyType\` varchar(255) NOT NULL, \`requestHeaders\` json NOT NULL, \`requestBodyJsonType\` varchar(255) NOT NULL, \`requestBody\` json NOT NULL, \`queryParams\` json NOT NULL, \`restParams\` json NOT NULL, \`responseHeaders\` json NOT NULL, \`responseBody\` json NOT NULL, \`responseBodyType\` varchar(255) NOT NULL, \`responseBodyJsonType\` varchar(255) NOT NULL, \`weight\` int NOT NULL DEFAULT '0', PRIMARY KEY (\`uuid\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
