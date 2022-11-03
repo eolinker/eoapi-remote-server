@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class updateTable1911667468271904 implements MigrationInterface {
-    name = 'updateTable1911667468271904'
+export class updateTable1911667469358917 implements MigrationInterface {
+    name = 'updateTable1911667469358917'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE \`user\` ADD \`lastLoginTime\` timestamp NULL DEFAULT Thu Nov 03 2022 17:37:57 GMT+0800 (中国标准时间)`);
+        await queryRunner.query(`ALTER TABLE \`user\` ADD \`lastLoginTime\` timestamp NULL`);
         await queryRunner.query(`ALTER TABLE \`api_group\` ADD \`projectUuid\` int NULL`);
         await queryRunner.query(`ALTER TABLE \`environment\` ADD \`projectUuid\` int NULL`);
         await queryRunner.query(`ALTER TABLE \`api_test_history\` ADD \`projectUuid\` int NULL`);
