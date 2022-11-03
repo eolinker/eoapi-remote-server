@@ -3,7 +3,7 @@ name: Build Latest Image
 on:
   push:
     branches:
-      - 'release/1.9.1'
+      - 'main'
 
 jobs:
   docker:
