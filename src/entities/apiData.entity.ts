@@ -1,5 +1,8 @@
-import { Column, Entity, Generated } from 'typeorm';
+import { Column, Entity, Generated, ManyToOne, OneToMany } from 'typeorm';
+import { Exclude } from 'class-transformer';
 import { Base } from './base.entity';
+import { Project } from './project.entity';
+import { Mock } from './mock.entity';
 
 @Entity({ name: 'api_data' })
 export class ApiData extends Base {
@@ -54,4 +57,14 @@ export class ApiData extends Base {
 
   @Column({ default: 0 })
   weight: number;
+
+  @Exclude()
+  @ManyToOne(() => Project, (project) => project.apiData, {
+    onDelete: 'CASCADE',
+  })
+  project: Project;
+
+  @Exclude()
+  @OneToMany(() => Mock, (mock) => mock.apiData)
+  mock: Mock[];
 }

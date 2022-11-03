@@ -119,6 +119,10 @@ export class AuthService implements OnModuleInit {
       })
       .save();
 
+    userEntity.lastLoginTime = new Date();
+
+    this.userService.updateUser(userEntity);
+
     return result;
   }
 }

@@ -1,4 +1,6 @@
-import { Column, Entity } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { Column, Entity, ManyToOne } from 'typeorm';
+import { ApiData } from './apiData.entity';
 import { Base } from './base.entity';
 
 @Entity({ name: 'mock' })
@@ -14,4 +16,10 @@ export class Mock extends Base {
 
   @Column()
   createWay: string;
+
+  @Exclude()
+  @ManyToOne(() => ApiData, (apiData) => apiData.mock, {
+    onDelete: 'CASCADE',
+  })
+  apiData: ApiData;
 }

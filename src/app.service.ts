@@ -23,18 +23,28 @@ export class AppService {
         const mock = await this.mockService.findOne({
           where: { uuid: Number(mockID) },
         });
+        if (mock === null) {
+          return {
+            statusCode: 404,
+            response: {
+              message: `mockID为${mockID}的mock不存在`,
+            },
+          };
+        }
         const apiData = await this.apiDataService.findOne({
           where: { uuid: Number(mock.apiDataID) },
         });
+        if (apiData === null) {
+          return { statusCode: 404 };
+        }
         if (mock?.createWay === 'system') {
-          console.log('apiData.responseBody', apiData.responseBody);
           return this.matchApiData(apiData, req);
         } else {
           const result = await this.matchApiData(apiData, req);
-          mock.response =
-            result.statusCode === 404
-              ? result
-              : mock?.response ?? this.generateResponse(apiData.responseBody);
+          if (result.statusCode === 404) {
+            return result;
+          }
+          mock.response ??= this.generateResponse(apiData.responseBody);
         }
         return mock;
       } catch (error) {

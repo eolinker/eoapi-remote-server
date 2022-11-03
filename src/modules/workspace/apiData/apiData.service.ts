@@ -6,20 +6,23 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { ApiData } from '@/entities/apiData.entity';
-import { Mock } from '@/entities/mock.entity';
+import { Project } from '@/entities/project.entity';
 
 @Injectable()
 export class ApiDataService {
   constructor(
     @InjectRepository(ApiData)
     private readonly repository: Repository<ApiData>,
-    @InjectRepository(Mock)
-    private readonly mockRepository: Repository<Mock>,
+    @InjectRepository(Project)
+    private readonly projectRepository: Repository<Project>,
     private readonly mockService: MockService,
   ) {}
 
   async create(createDto: CreateDto) {
-    const apiData = await this.repository.save(createDto);
+    const project = await this.projectRepository.findOneBy({
+      uuid: createDto.projectID,
+    });
+    const apiData = await this.repository.save({ ...createDto, project });
     await this.mockService.create(
       this.mockService.createSystemMockDTO(apiData),
       'system',

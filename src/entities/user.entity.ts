@@ -43,6 +43,10 @@ export class UserEntity extends TimestampBase {
   @ApiProperty({ example: 'url', description: '用户头像' })
   avatar: string;
 
+  @Column({ type: 'timestamp' })
+  @ApiProperty({ description: '最后登录时间' })
+  lastLoginTime: Date;
+
   @ApiHideProperty()
   @Exclude()
   @ManyToMany(() => WorkspaceEntity, (workspace) => workspace.users)

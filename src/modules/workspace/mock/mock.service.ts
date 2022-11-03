@@ -17,6 +17,8 @@ export class MockService {
   constructor(
     @InjectRepository(Mock)
     private readonly repository: Repository<Mock>,
+    @InjectRepository(ApiData)
+    private readonly apiDataRepository: Repository<ApiData>,
     private moduleRef: ModuleRef,
   ) {}
 
@@ -25,8 +27,11 @@ export class MockService {
   }
 
   async create(createDto: CreateDto, createWay: CreateWay = 'custom') {
+    const apiData = await this.apiDataRepository.findOneBy({
+      uuid: createDto.apiDataID,
+    });
     createDto.createWay = createWay;
-    return await this.repository.save(createDto);
+    return await this.repository.save({ ...createDto, apiData });
   }
 
   async batchCreate(createDto: Array<CreateDto>) {

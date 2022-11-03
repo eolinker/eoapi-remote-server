@@ -60,7 +60,7 @@ export class WorkspaceController {
       sampleApiData.map((item) => {
         Reflect.deleteProperty(item, 'uuid');
         Reflect.deleteProperty(item, 'uniqueID');
-        return { ...item, projectID: project.uuid };
+        return { ...item, projectID: project.uuid, project };
       }),
     );
     return workspace;

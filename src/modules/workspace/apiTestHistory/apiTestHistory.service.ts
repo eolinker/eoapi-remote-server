@@ -5,18 +5,24 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { ApiTestHistory } from '@/entities/apiTestHistory.entity';
+import { Project } from '@/entities/project.entity';
 
 @Injectable()
 export class ApiTestHistoryService {
   constructor(
     @InjectRepository(ApiTestHistory)
     private readonly repository: Repository<ApiTestHistory>,
+    @InjectRepository(Project)
+    private readonly projectRepository: Repository<Project>,
   ) {}
 
   async create(createDto: CreateDto) {
+    const project = await this.projectRepository.findOneBy({
+      uuid: createDto.projectID,
+    });
     createDto.general ??= '{}';
     createDto.apiDataID ??= -1;
-    return await this.repository.save(createDto);
+    return await this.repository.save({ ...createDto, project });
   }
 
   async batchCreate(createDto: Array<CreateDto>) {
