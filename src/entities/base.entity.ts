@@ -53,7 +53,7 @@ export abstract class FictitiousBase extends TimestampBase {
 }
 
 export abstract class Base extends FictitiousBase {
-  @Column()
+  @Column({ length: '500' })
   @ApiProperty()
   name: string;
 
