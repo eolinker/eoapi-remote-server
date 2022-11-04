@@ -1,7 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { version } from '../package.json';
 import { AppService } from './app.service';
 import { Public } from '@/common/decorators/public.decorator';
+import { MockMatchDto } from '@/app.dto';
 
 @Controller()
 export class AppController {
@@ -17,5 +18,11 @@ export class AppController {
   @Public()
   status() {
     return version;
+  }
+
+  @Post('mock/match')
+  @Public()
+  mockMatch(@Body() body: MockMatchDto) {
+    return this.appService.mockMatch(body);
   }
 }

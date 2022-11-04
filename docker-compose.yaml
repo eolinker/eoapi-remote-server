@@ -3,7 +3,7 @@ version: '3'
 services:
   eoapi-remote-server:
     # build: 从当前路径构建镜像
-    # build: .
+    build: .
     image: eolinker/eoapi-remote-server:latest
     container_name: eoapi-remote-server
     deploy:
@@ -15,7 +15,7 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:
-      - 3000:3000
+      - '${EOAPI_SERVER_PORT}:3000'
     # 当前服务启动之前先要把depends_on指定的服务启动起来才行
     depends_on:
       - mysql
@@ -33,7 +33,7 @@ services:
     env_file:
       - .env
     ports:
-      - 33066:3306
+      - '${MYSQL_PORT}:3306'
     volumes:
       - ./sample/mysql/:/var/lib/mysql/ # ./sample/mysql/路径可以替换成自己的路径
     networks:

@@ -1,4 +1,6 @@
-import { Column, Entity } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { Column, Entity, ManyToOne } from 'typeorm';
+import { Project } from './project.entity';
 import { Base } from './base.entity';
 
 @Entity({ name: 'environment' })
@@ -11,4 +13,10 @@ export class Environment extends Base {
 
   @Column({ type: 'json', nullable: true })
   parameters: string;
+
+  @Exclude()
+  @ManyToOne(() => Project, (project) => project.environment, {
+    onDelete: 'CASCADE',
+  })
+  project: Project;
 }
