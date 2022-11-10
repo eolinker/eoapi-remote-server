@@ -12,6 +12,9 @@ services:
         max_attempts: 10
     env_file:
       - .env
+    environment:
+      # 先从.env找MYSQL_ROOT_PASSWORD，找不到使用后面的默认值
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD-123456a.}
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:

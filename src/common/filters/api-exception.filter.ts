@@ -6,7 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ApiException } from '../exceptions/api.exception';
-import { ResOp } from '../class/res.class';
+import { ResponseDto } from '../class/res.class';
 import { isDev } from '@/utils';
 
 const errorTips = {
@@ -41,7 +41,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
     message =
       exception instanceof HttpException ? exception.message : `${exception}`;
     // }
-    const result = new ResOp(code, null, message);
+    const result = new ResponseDto(code, null, message);
     response.status(status).send(result);
   }
 }

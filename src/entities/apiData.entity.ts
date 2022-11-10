@@ -1,3 +1,4 @@
+import { ApiHideProperty } from '@nestjs/swagger';
 import { Column, Entity, Generated, ManyToOne, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Base } from './base.entity';
@@ -58,12 +59,14 @@ export class ApiData extends Base {
   @Column({ default: 0 })
   weight: number;
 
+  @ApiHideProperty()
   @Exclude()
   @ManyToOne(() => Project, (project) => project.apiData, {
     onDelete: 'CASCADE',
   })
   project: Project;
 
+  @ApiHideProperty()
   @Exclude()
   @OneToMany(() => Mock, (mock) => mock.apiData)
   mock: Mock[];

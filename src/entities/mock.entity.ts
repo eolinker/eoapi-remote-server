@@ -1,3 +1,4 @@
+import { ApiHideProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { ApiData } from './apiData.entity';
@@ -17,6 +18,7 @@ export class Mock extends Base {
   @Column()
   createWay: string;
 
+  @ApiHideProperty()
   @Exclude()
   @ManyToOne(() => ApiData, (apiData) => apiData.mock, {
     onDelete: 'CASCADE',

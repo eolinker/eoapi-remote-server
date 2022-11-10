@@ -1,3 +1,4 @@
+import { ApiHideProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { Project } from './project.entity';
@@ -20,6 +21,7 @@ export class ApiTestHistory extends OperatorBase {
   @Column({ type: 'json' })
   response: string;
 
+  @ApiHideProperty()
   @Exclude()
   @ManyToOne(() => Project, (project) => project.apiTestHistory, {
     onDelete: 'CASCADE',

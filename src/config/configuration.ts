@@ -1,10 +1,4 @@
-import { DataSource, DataSourceOptions } from 'typeorm';
-
-export let appDataSource: DataSource;
-
-export const getAppDataSource = (): DataSource => {
-  return appDataSource;
-};
+import { DataSourceOptions } from 'typeorm';
 
 export const getConfiguration = () => {
   const config = {
@@ -40,8 +34,7 @@ export const getConfiguration = () => {
       version: process.env.SWAGGER_VERSION,
     },
   };
-  appDataSource = new DataSource(config.database);
-  // appDataSource.initialize();
+
   return config;
 };
 

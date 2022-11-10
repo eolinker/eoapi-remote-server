@@ -10,11 +10,14 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ValidateQueryPipe } from 'src/pipe/query.pipe';
+import { InsertResult } from 'typeorm';
 import { ApiDataService } from './apiData.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
+import { ApiOkResponseData } from '@/common/class/res.class';
+import { ApiData } from '@/entities/apiData.entity';
 
 @ApiTags('apiData')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/api_data`)
@@ -36,12 +39,15 @@ export class ApiDataController {
     });
     return item;
   }
+
+  @ApiOkResponseData(ApiData)
   @Post()
   async create(@Body() createDto: CreateDto, @Param('projectID') projectID) {
     createDto = this.filterItem(createDto, projectID);
     return this.service.create({ ...createDto, projectID });
   }
 
+  @ApiOkResponseData(InsertResult)
   @Post('batch')
   async batchCreate(
     @Body() createDto: Array<CreateDto>,
@@ -53,15 +59,19 @@ export class ApiDataController {
     return this.service.batchCreate(createDto);
   }
 
+  @ApiOkResponseData(ApiData, 'array')
   @Get()
   async findAll(@Param('projectID') projectID, @Query() query: QueryDto) {
     return this.service.findAll({ ...query, projectID });
   }
 
+  @ApiOkResponseData(ApiData)
   @Get(':uuid')
   async findOne(@Param('uuid') uuid, @Param('projectID') projectID) {
     return this.service.findOne({ where: { uuid, projectID } });
   }
+
+  @ApiOkResponseData(ApiData, 'array')
   @Put('batch')
   async batchUpdate(
     @Body() updateDtos: Array<UpdateDto>,
@@ -82,6 +92,8 @@ export class ApiDataController {
     });
     return this.service.bulkUpdate(newArr);
   }
+
+  @ApiOkResponseData(ApiData)
   @Put(':uuid')
   async update(
     @Param('uuid') uuid: string,
