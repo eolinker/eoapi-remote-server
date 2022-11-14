@@ -16,7 +16,10 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
-import { ApiOkResponseData } from '@/common/class/res.class';
+import {
+  ApiCreatedResponseData,
+  ApiOkResponseData,
+} from '@/common/class/res.class';
 import { ApiData } from '@/entities/apiData.entity';
 
 @ApiTags('apiData')
@@ -40,14 +43,14 @@ export class ApiDataController {
     return item;
   }
 
-  @ApiOkResponseData(ApiData)
+  @ApiCreatedResponseData(ApiData)
   @Post()
   async create(@Body() createDto: CreateDto, @Param('projectID') projectID) {
     createDto = this.filterItem(createDto, projectID);
     return this.service.create({ ...createDto, projectID });
   }
 
-  @ApiOkResponseData(InsertResult)
+  @ApiCreatedResponseData(InsertResult)
   @Post('batch')
   async batchCreate(
     @Body() createDto: Array<CreateDto>,

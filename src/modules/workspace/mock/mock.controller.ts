@@ -1,26 +1,25 @@
 import {
   Controller,
   Get,
-  Req,
   Post,
   Body,
   Put,
   Param,
   Delete,
   Query,
-  All,
   BadRequestException,
   ParseIntPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
 import { MockService } from './mock.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
-import { Public } from '@/common/decorators/public.decorator';
-import { ApiOkResponseData } from '@/common/class/res.class';
+import {
+  ApiCreatedResponseData,
+  ApiOkResponseData,
+} from '@/common/class/res.class';
 import { Mock } from '@/entities/mock.entity';
 
 @ApiTags('Mock')
@@ -28,14 +27,14 @@ import { Mock } from '@/entities/mock.entity';
 export class MockController {
   constructor(private readonly service: MockService) {}
 
-  @ApiOkResponseData(Mock)
+  @ApiCreatedResponseData(Mock)
   @Post()
   async create(@Body() createDto: CreateDto, @Param('projectID') projectID) {
     const data = await this.service.create({ ...createDto, projectID });
     return this.findOne(data.uuid, projectID);
   }
 
-  @ApiOkResponseData()
+  @ApiCreatedResponseData()
   @Post('batch')
   async batchCreate(@Body() createDto: Array<CreateDto>) {
     return this.service.batchCreate(createDto);

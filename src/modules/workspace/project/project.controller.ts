@@ -17,7 +17,10 @@ import { UpdateDto } from './dto/update.dto';
 import { CollectionsDto, QueryDto } from './dto/query.dto';
 import { ImportDto } from './dto/import.dto';
 import { WORKSPACE_ID_PREFIX } from '@/common/contants/prefix.contants';
-import { ApiOkResponseData } from '@/common/class/res.class';
+import {
+  ApiCreatedResponseData,
+  ApiOkResponseData,
+} from '@/common/class/res.class';
 import { Project } from '@/entities/project.entity';
 import {
   ExportProjectResultDto,
@@ -29,7 +32,7 @@ import {
 export class ProjectController {
   constructor(private readonly service: ProjectService) {}
 
-  @ApiOkResponseData(Project)
+  @ApiCreatedResponseData(Project)
   @Post()
   async create(
     @Param('workspaceID', ParseIntPipe) workspaceID,
@@ -39,7 +42,7 @@ export class ProjectController {
     return this.findOne(workspaceID, `${data.uuid}`);
   }
 
-  @ApiOkResponseData()
+  @ApiCreatedResponseData()
   @Post('batch')
   async batchCreate(@Body() createDto: Array<CreateDto>) {
     return this.service.batchCreate(createDto);

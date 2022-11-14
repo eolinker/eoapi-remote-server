@@ -33,7 +33,10 @@ import { Collections } from '@/modules/workspace/project/dto/import.dto';
 import { ProjectService } from '@/modules/workspace/project/project.service';
 import { sampleApiData } from '@/modules/workspace/apiData/samples/sample.api.data';
 import { ApiDataService } from '@/modules/workspace/apiData/apiData.service';
-import { ApiOkResponseData } from '@/common/class/res.class';
+import {
+  ApiCreatedResponseData,
+  ApiOkResponseData,
+} from '@/common/class/res.class';
 
 @ApiBearerAuth()
 @ApiTags('workspace')
@@ -47,7 +50,7 @@ export class WorkspaceController {
 
   @Post()
   @ApiOperation({ summary: '创建空间' })
-  @ApiOkResponseData(WorkspaceEntity)
+  @ApiCreatedResponseData(WorkspaceEntity)
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async create(
     @User() user: IUser,
@@ -68,7 +71,7 @@ export class WorkspaceController {
     return workspace;
   }
 
-  @ApiOkResponseData()
+  @ApiCreatedResponseData()
   @Post('upload')
   @ApiOperation({ summary: '导入本地数据并创建空间' })
   async importLocalData(@User() user: IUser, @Body() collections: Collections) {
@@ -157,7 +160,7 @@ export class WorkspaceController {
     return this.workspaceService.getMemberList(id, username);
   }
 
-  @ApiOkResponseData(WorkspaceEntity)
+  @ApiCreatedResponseData(WorkspaceEntity)
   @Post(':workspaceID/member/add')
   @ApiOperation({ summary: '添加空间成员' })
   async memberAdd(

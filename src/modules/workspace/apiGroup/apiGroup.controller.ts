@@ -18,7 +18,10 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
-import { ApiOkResponseData } from '@/common/class/res.class';
+import {
+  ApiCreatedResponseData,
+  ApiOkResponseData,
+} from '@/common/class/res.class';
 import { ApiGroup } from '@/entities/apiGroup.entity';
 
 @ApiTags('apiGroup')
@@ -26,14 +29,14 @@ import { ApiGroup } from '@/entities/apiGroup.entity';
 export class ApiGroupController {
   constructor(private readonly service: ApiGroupService) {}
 
-  @ApiOkResponseData(ApiGroup)
+  @ApiCreatedResponseData(ApiGroup)
   @Post()
   async create(@Body() createDto: CreateDto, @Param('projectID') projectID) {
     const { uuid } = await this.service.create({ ...createDto, projectID });
     return await this.findOne(uuid, projectID);
   }
 
-  @ApiOkResponseData()
+  @ApiCreatedResponseData()
   @Post('batch')
   async batchCreate(
     @Param('projectID') projectID,

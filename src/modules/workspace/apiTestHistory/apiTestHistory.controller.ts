@@ -16,7 +16,10 @@ import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
 import { IUser, User } from '@/common/decorators/user.decorator';
-import { ApiOkResponseData } from '@/common/class/res.class';
+import {
+  ApiCreatedResponseData,
+  ApiOkResponseData,
+} from '@/common/class/res.class';
 import { ApiTestHistory } from '@/entities/apiTestHistory.entity';
 
 @ApiTags('apiTestHistory')
@@ -26,7 +29,7 @@ export class ApiTestHistoryController {
 
   constructor(private readonly service: ApiTestHistoryService) {}
 
-  @ApiOkResponseData(ApiTestHistory)
+  @ApiCreatedResponseData(ApiTestHistory)
   @Post()
   async create(
     @Body() createDto: CreateDto,
@@ -42,7 +45,7 @@ export class ApiTestHistoryController {
     return await this.findOne(`${data.uuid}`, projectID);
   }
 
-  @ApiOkResponseData()
+  @ApiCreatedResponseData()
   @Post('batch')
   async batchCreate(@Body() createDto: Array<CreateDto>, @User() user: IUser) {
     createDto.map((val) => {

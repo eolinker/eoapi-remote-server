@@ -14,7 +14,10 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
-import { ApiOkResponseData } from '@/common/class/res.class';
+import {
+  ApiCreatedResponseData,
+  ApiOkResponseData,
+} from '@/common/class/res.class';
 import { Environment } from '@/entities/environment.entity';
 
 @ApiTags('Environment')
@@ -30,7 +33,7 @@ export class EnvironmentController {
 
   constructor(private readonly service: EnvironmentService) {}
 
-  @ApiOkResponseData(Environment)
+  @ApiCreatedResponseData(Environment)
   @Post()
   async create(@Body() createDto: CreateDto, @Param('projectID') projectID) {
     this.JSON_FIELDS.forEach((field) => {
@@ -46,7 +49,7 @@ export class EnvironmentController {
     return this.NOT_FOUND;
   }
 
-  @ApiOkResponseData()
+  @ApiCreatedResponseData()
   @Post('batch')
   async batchCreate(
     @Body() createDto: Array<CreateDto>,

@@ -5,7 +5,10 @@ import { Public } from '@/common/decorators/public.decorator';
 import { LoginInfoDto } from '@/modules/auth/dto/login.dto';
 import { LoginToken } from '@/modules/auth/auth.class';
 import { JwtLogoutDto, JwtRefreshTokenDto } from '@/modules/auth/dto';
-import { ApiOkResponseData } from '@/common/class/res.class';
+import {
+  ApiCreatedResponseData,
+  ApiOkResponseData,
+} from '@/common/class/res.class';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -15,8 +18,7 @@ export class AuthController {
   @ApiOperation({
     summary: '用户登录/注册',
   })
-  @ApiOkResponseData(LoginToken)
-  @ApiOkResponseData(LoginToken, 'object', { status: 201 })
+  @ApiCreatedResponseData(LoginToken)
   @Public()
   @Post('login')
   async login(@Body() userLoginDto: LoginInfoDto) {
@@ -35,6 +37,7 @@ export class AuthController {
   @ApiOperation({
     summary: '用户登出',
   })
+  @ApiCreatedResponseData()
   @Post('logout')
   public async logout(@Body() dto: JwtLogoutDto): Promise<boolean> {
     await this.authService.delete(dto);
