@@ -33,6 +33,10 @@ import { Collections } from '@/modules/workspace/project/dto/import.dto';
 import { ProjectService } from '@/modules/workspace/project/project.service';
 import { sampleApiData } from '@/modules/workspace/apiData/samples/sample.api.data';
 import { ApiDataService } from '@/modules/workspace/apiData/apiData.service';
+import {
+  ApiCreatedResponseData,
+  ApiOkResponseData,
+} from '@/common/class/res.class';
 
 @ApiBearerAuth()
 @ApiTags('workspace')
@@ -46,6 +50,7 @@ export class WorkspaceController {
 
   @Post()
   @ApiOperation({ summary: '创建空间' })
+  @ApiCreatedResponseData(WorkspaceEntity)
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async create(
     @User() user: IUser,
@@ -66,6 +71,7 @@ export class WorkspaceController {
     return workspace;
   }
 
+  @ApiCreatedResponseData()
   @Post('upload')
   @ApiOperation({ summary: '导入本地数据并创建空间' })
   async importLocalData(@User() user: IUser, @Body() collections: Collections) {
@@ -87,6 +93,7 @@ export class WorkspaceController {
     }
   }
 
+  @ApiOkResponseData(WorkspaceEntity)
   @Put(':workspaceID')
   @ApiOperation({ summary: '修改空间名称' })
   async update(
@@ -96,6 +103,7 @@ export class WorkspaceController {
     return this.workspaceService.update(id, updateDto);
   }
 
+  @ApiOkResponseData()
   @Delete(':workspaceID')
   @ApiOperation({ summary: '删除空间' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -113,12 +121,14 @@ export class WorkspaceController {
     return this.workspaceService.delete(id);
   }
 
+  @ApiOkResponseData(WorkspaceEntity, 'array')
   @Get('list')
   @ApiOperation({ summary: '获取空间列表' })
   list(@User() user: IUser): Promise<WorkspaceEntity[]> {
     return this.workspaceService.list(user.userId);
   }
 
+  @ApiOkResponseData(WorkspaceEntity)
   @Get(':workspaceID')
   @ApiOperation({ summary: '获取空间信息' })
   async info(@Param('workspaceID') id): Promise<WorkspaceEntity> {
@@ -130,12 +140,14 @@ export class WorkspaceController {
     return workspace;
   }
 
+  @ApiOkResponseData(WorkspaceUser, 'array')
   @Get(':workspaceID/member/list')
   @ApiOperation({ summary: '获取空间成员列表' })
   async getMemberList(@Param('workspaceID') id): Promise<WorkspaceUser[]> {
     return this.workspaceService.getMemberList(id);
   }
 
+  @ApiOkResponseData(WorkspaceUser, 'array')
   @Get(':workspaceID/member/list/:username')
   @ApiOperation({ summary: '搜索空间成员' })
   @ApiResponse({
@@ -148,6 +160,7 @@ export class WorkspaceController {
     return this.workspaceService.getMemberList(id, username);
   }
 
+  @ApiCreatedResponseData(WorkspaceEntity)
   @Post(':workspaceID/member/add')
   @ApiOperation({ summary: '添加空间成员' })
   async memberAdd(
@@ -162,6 +175,7 @@ export class WorkspaceController {
     return this.workspaceService.addMembers(id, createCatDto.userIDs);
   }
 
+  @ApiOkResponseData(WorkspaceEntity)
   @Delete(':workspaceID/member/remove')
   @ApiOperation({ summary: '移除空间成员' })
   async memberRemove(

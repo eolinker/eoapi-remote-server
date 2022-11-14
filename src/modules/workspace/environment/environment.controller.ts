@@ -14,6 +14,11 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
+import {
+  ApiCreatedResponseData,
+  ApiOkResponseData,
+} from '@/common/class/res.class';
+import { Environment } from '@/entities/environment.entity';
 
 @ApiTags('Environment')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/environment`)
@@ -28,6 +33,7 @@ export class EnvironmentController {
 
   constructor(private readonly service: EnvironmentService) {}
 
+  @ApiCreatedResponseData(Environment)
   @Post()
   async create(@Body() createDto: CreateDto, @Param('projectID') projectID) {
     this.JSON_FIELDS.forEach((field) => {
@@ -43,6 +49,7 @@ export class EnvironmentController {
     return this.NOT_FOUND;
   }
 
+  @ApiCreatedResponseData()
   @Post('batch')
   async batchCreate(
     @Body() createDto: Array<CreateDto>,
@@ -60,16 +67,19 @@ export class EnvironmentController {
     return this.service.batchCreate(createDto);
   }
 
+  @ApiOkResponseData(Environment, 'array')
   @Get()
   async findAll(@Query() query: QueryDto, @Param('projectID') projectID) {
     return this.service.findAll({ where: { ...query, projectID } });
   }
 
+  @ApiOkResponseData(Environment)
   @Get(':uuid')
   async findOne(@Param('uuid') uuid, @Param('projectID') projectID) {
     return this.service.findOne({ where: { uuid, projectID } });
   }
 
+  @ApiOkResponseData(Environment)
   @Put(':uuid')
   async update(
     @Param('uuid') uuid: string,
@@ -89,7 +99,7 @@ export class EnvironmentController {
 
     return this.NOT_FOUND;
   }
-
+  @ApiOkResponseData()
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string, @Param('projectID') projectID) {
     return this.service.remove(+uuid, projectID);

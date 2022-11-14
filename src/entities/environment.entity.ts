@@ -1,3 +1,4 @@
+import { ApiHideProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { Project } from './project.entity';
@@ -14,6 +15,7 @@ export class Environment extends Base {
   @Column({ type: 'json', nullable: true })
   parameters: string;
 
+  @ApiHideProperty()
   @Exclude()
   @ManyToOne(() => Project, (project) => project.environment, {
     onDelete: 'CASCADE',

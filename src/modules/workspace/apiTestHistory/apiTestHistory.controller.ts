@@ -16,6 +16,11 @@ import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
 import { IUser, User } from '@/common/decorators/user.decorator';
+import {
+  ApiCreatedResponseData,
+  ApiOkResponseData,
+} from '@/common/class/res.class';
+import { ApiTestHistory } from '@/entities/apiTestHistory.entity';
 
 @ApiTags('apiTestHistory')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/api_test_history`)
@@ -24,6 +29,7 @@ export class ApiTestHistoryController {
 
   constructor(private readonly service: ApiTestHistoryService) {}
 
+  @ApiCreatedResponseData(ApiTestHistory)
   @Post()
   async create(
     @Body() createDto: CreateDto,
@@ -39,6 +45,7 @@ export class ApiTestHistoryController {
     return await this.findOne(`${data.uuid}`, projectID);
   }
 
+  @ApiCreatedResponseData()
   @Post('batch')
   async batchCreate(@Body() createDto: Array<CreateDto>, @User() user: IUser) {
     createDto.map((val) => {
@@ -54,6 +61,7 @@ export class ApiTestHistoryController {
     return this.service.batchCreate(createDto);
   }
 
+  @ApiOkResponseData(ApiTestHistory, 'array')
   @Get()
   async findAll(
     @Query() query: QueryDto,
@@ -66,11 +74,13 @@ export class ApiTestHistoryController {
     ]);
   }
 
+  @ApiOkResponseData(ApiTestHistory)
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string, @Param('projectID') projectID) {
     return this.service.findOne(+uuid, projectID);
   }
 
+  @ApiOkResponseData(ApiTestHistory)
   @Put(':uuid')
   async update(
     @Param('uuid') uuid: string,
@@ -83,9 +93,10 @@ export class ApiTestHistoryController {
       }
     });
     await this.service.update(+uuid, updateDto);
-    return await this.findOne(uuid, projectID);
+    return this.findOne(uuid, projectID);
   }
 
+  @ApiOkResponseData()
   @Delete()
   async remove(@Query(ValidateQueryPipe) query) {
     return await this.service.remove(query.uuids);

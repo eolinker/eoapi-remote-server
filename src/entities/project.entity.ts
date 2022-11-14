@@ -24,27 +24,27 @@ export class Project extends Base {
   @JoinTable()
   users: UserEntity[];
 
-  @ApiProperty({ description: '当前项目下的 apiData' })
+  @ApiHideProperty()
   @Exclude()
   @OneToMany(() => ApiData, (apiData) => apiData.project)
   apiData: ApiData[];
 
-  @ApiProperty({ description: '当前项目下的 apiGroup' })
+  @ApiHideProperty()
   @Exclude()
   @OneToMany(() => ApiGroup, (apiGroup) => apiGroup.project)
   apiGroup: ApiGroup[];
 
-  @ApiProperty({ description: '当前项目下的 apiTestHistory' })
+  @ApiHideProperty()
   @Exclude()
   @OneToMany(() => ApiTestHistory, (apiTestHistory) => apiTestHistory.project)
   apiTestHistory: ApiGroup[];
 
-  @ApiProperty({ description: '当前项目下的 environment' })
+  @ApiHideProperty()
   @Exclude()
   @OneToMany(() => Environment, (environment) => environment.project)
   environment: Environment[];
 
-  @ApiProperty({ description: '当前项目下的 shared' })
+  @ApiHideProperty()
   @Exclude()
   @OneToMany(() => SharedEntity, (shared) => shared.project)
   shared: SharedEntity[];

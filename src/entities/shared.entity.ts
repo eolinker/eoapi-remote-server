@@ -1,3 +1,4 @@
+import { ApiHideProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Column, Entity, Generated, ManyToOne } from 'typeorm';
 import { Project } from './project.entity';
@@ -12,6 +13,7 @@ export class SharedEntity extends FictitiousBase {
   @Column()
   projectID: number;
 
+  @ApiHideProperty()
   @Exclude()
   @ManyToOne(() => Project, (project) => project.shared, {
     onDelete: 'CASCADE',

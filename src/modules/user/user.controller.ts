@@ -13,6 +13,7 @@ import { UpdateUserInfoDto, UpdateUserPasswordDto } from './user.dto';
 import { UserEntity } from '@/entities/user.entity';
 import { IUser, User } from '@/common/decorators/user.decorator';
 import { LoginToken } from '@/modules/auth/auth.class';
+import { ApiOkResponseData } from '@/common/class/res.class';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -21,6 +22,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: '查看个人信息' })
+  @ApiOkResponseData(UserEntity)
   @Get('profile')
   @UseInterceptors(ClassSerializerInterceptor)
   public getUserProfile(@User() user: IUser): Promise<UserEntity> {
@@ -28,6 +30,7 @@ export class UserController {
   }
 
   @Put('profile')
+  @ApiOkResponseData(UserEntity)
   @ApiOperation({ summary: '更新个人资料' })
   async updateUserProfile(
     @User() user: IUser,
@@ -38,6 +41,7 @@ export class UserController {
 
   @Put('password')
   @ApiOperation({ summary: '更改个人密码' })
+  @ApiOkResponseData(LoginToken)
   async updateUserPassword(
     @User() user: IUser,
     @Body() updateUserDto: UpdateUserPasswordDto,
@@ -47,6 +51,7 @@ export class UserController {
 
   @Get(':username')
   @ApiOperation({ summary: '搜索用户' })
+  @ApiOkResponseData(UserEntity, 'array')
   findOne(@Param('username') username: string) {
     return this.userService.searchUsers(username);
   }

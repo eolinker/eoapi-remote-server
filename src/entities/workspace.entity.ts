@@ -32,7 +32,7 @@ export class WorkspaceEntity extends TimestampBase {
   @JoinTable()
   users: UserEntity[];
 
-  @ApiProperty({ description: '当前空间下的所有项目' })
+  @ApiHideProperty()
   @OneToMany(() => Project, (project) => project.workspace)
   projects: Project[];
 }

@@ -1,10 +1,4 @@
-import { DataSource, DataSourceOptions } from 'typeorm';
-
-export let appDataSource: DataSource;
-
-export const getAppDataSource = (): DataSource => {
-  return appDataSource;
-};
+import { DataSourceOptions } from 'typeorm';
 
 export const getConfiguration = () => {
   const config = {
@@ -18,7 +12,7 @@ export const getConfiguration = () => {
       host: process.env.MYSQL_HOST,
       port: Number.parseInt(process.env.MYSQL_PORT, 10),
       username: process.env.MYSQL_USERNAME,
-      password: process.env.MYSQL_ROOT_PASSWORD,
+      password: process.env.MYSQL_PASSWORD || process.env.MYSQL_ROOT_PASSWORD,
       database: process.env.MYSQL_DATABASE,
       entities: [__dirname + '/../**/entities/*.entity.{ts,js}'],
       autoLoadEntities: true,
@@ -40,8 +34,7 @@ export const getConfiguration = () => {
       version: process.env.SWAGGER_VERSION,
     },
   };
-  appDataSource = new DataSource(config.database);
-  // appDataSource.initialize();
+
   return config;
 };
 
