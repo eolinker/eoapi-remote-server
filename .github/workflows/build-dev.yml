@@ -3,7 +3,7 @@ name: Build Dev Image
 on:
   push:
     branches:
-      - 'release/1.9.1'
+      - 'dev'
 
 jobs:
   docker:
@@ -23,6 +23,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: eolinker/eoapi-remote-server:1.9.1
+          tags: eolinker/eoapi-remote-server:dev
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
