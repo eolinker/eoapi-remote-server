@@ -6,7 +6,8 @@ FROM node:lts-alpine as builder
 
 ENV PROJECT_DIR=/eoapi-remote-server \
     MYSQL_HOST=mysql \
-    MYSQL_PORT=3306
+    MYSQL_PORT=3306 \
+    EOAPI_SERVER_PORT=3000
 
 # WORKDIR指令用于设置Dockerfile中的RUN、CMD和ENTRYPOINT指令执行命令的工作目录(默认为/目录)，该指令在Dockerfile文件中可以出现多次，
 # 如果使用相对路径则为相对于WORKDIR上一次的值，
@@ -40,7 +41,7 @@ RUN chmod +x ./wait-for-it.sh \
 # RUN yarn cache clean
 
 # 容器对外暴露的端口号
-EXPOSE 3000
+EXPOSE $EOAPI_SERVER_PORT
 
 # 容器启动时执行的命令，类似npm run start
 # CMD ["yarn", "start:prod"]
