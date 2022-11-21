@@ -3,8 +3,8 @@ version: '3'
 services:
   eoapi-remote-server:
     # build: 从当前路径构建镜像
-    build: .
-    image: eolinker/eoapi-remote-server:latest
+    # build: .
+    image: eolinker/eoapi-remote-server:dev
     container_name: eoapi-remote-server
     deploy:
       restart_policy:
@@ -45,6 +45,8 @@ services:
         max_attempts: 3
     extra_hosts:
       - 'host.docker.internal:host-gateway'
+    env_file:
+      - .env
     ports:
       - '${EOAPI_WEB_SERVER_POST}:80'
     # volumes:
@@ -59,6 +61,8 @@ services:
       restart_policy:
         condition: on-failure
         max_attempts: 3
+    env_file:
+      - .env
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:
