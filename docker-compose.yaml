@@ -30,7 +30,7 @@ services:
       - .env
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci #设置utf8字符集
     ports:
-      - '${MYSQL_PORT}:3306'
+      - '33066:3306'
     volumes:
       - ./sample/mysql/:/var/lib/mysql/ # ./sample/mysql/路径可以替换成自己的路径
     networks:
