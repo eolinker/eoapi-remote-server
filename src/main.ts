@@ -26,7 +26,7 @@ async function bootstrap() {
   await app.listen(process.env.EOAPI_SERVER_PORT, '0.0.0.0');
   const serverUrl = await app.getUrl();
   Logger.log(`api服务已经启动,请访问: ${serverUrl}`);
-  Logger.log(`API文档已生成,请访问: ${serverUrl}/${process.env.SWAGGER_PATH}/`);
+  // Logger.log(`API文档已生成,请访问: ${serverUrl}/${process.env.SWAGGER_PATH}/`);
 }
 
 bootstrap();
