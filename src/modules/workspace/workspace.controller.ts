@@ -81,7 +81,7 @@ export class WorkspaceController {
     const exportResult = await this.projectService.import(
       workspace.id,
       workspace.projects.at(0).uuid,
-      collections,
+      { groupID: 0, data: collections },
     );
     if (typeof exportResult === 'string') {
       return new Error(exportResult);
