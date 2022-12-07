@@ -68,15 +68,16 @@ export class ProjectService {
   }
 
   async import(workspaceID: number, uuid: number, importDto: ImportDto) {
+    importDto.groupID ??= 0;
     const group = this.apiGroupService.findOne({
-      where: { uuid: importDto.groupID || 0 },
+      where: { uuid: importDto.groupID },
     });
     if (!group) {
       return `导入失败，id为${importDto.groupID}的分组不存在`;
     }
     const project = await this.findOne(workspaceID, uuid);
     if (project) {
-      const { collections, enviroments } = importDto.data;
+      const { collections, enviroments } = importDto;
       const data = {
         errors: {
           apiData: [],
@@ -90,12 +91,7 @@ export class ProjectService {
         },
       };
       this.importEnv(enviroments, uuid, data);
-      return this.importCollects(
-        collections,
-        uuid,
-        importDto.groupID || 0,
-        data,
-      );
+      return this.importCollects(collections, uuid, importDto.groupID, data);
     }
     return '导入失败，项目不存在';
   }

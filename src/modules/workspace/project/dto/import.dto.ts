@@ -1,9 +1,7 @@
 export class ImportDto {
   groupID: number;
-  data: {
-    collections: Child[];
-    enviroments: Environment[];
-  };
+  collections: Child[];
+  enviroments: Environment[];
 }
 
 export type Child =
