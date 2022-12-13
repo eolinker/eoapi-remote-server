@@ -7,15 +7,9 @@ import { EnvironmentService } from '../environment/environment.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
-import { Child, Collections, Environment, ImportDto } from './dto/import.dto';
+import { Child, Environment, ImportDto, ImportResult } from './dto/import.dto';
 import { parseAndCheckApiData, parseAndCheckEnv } from './validate';
 import { Project } from '@/entities/project.entity';
-
-type Errors = {
-  apiData: any[];
-  group: any[];
-  enviroments: any[];
-};
 
 @Injectable()
 export class ProjectService {
@@ -73,17 +67,31 @@ export class ProjectService {
     return await this.repository.delete(id);
   }
 
-  async import(workspaceID: number, uuid: number, importDto: Collections) {
+  async import(workspaceID: number, uuid: number, importDto: ImportDto) {
+    importDto.groupID ??= 0;
+    const group = this.apiGroupService.findOne({
+      where: { uuid: importDto.groupID },
+    });
+    if (!group) {
+      return `导入失败，id为${importDto.groupID}的分组不存在`;
+    }
     const project = await this.findOne(workspaceID, uuid);
     if (project) {
       const { collections, enviroments } = importDto;
-      const errors = {
-        apiData: [],
-        group: [],
-        enviroments: [],
+      const data = {
+        errors: {
+          apiData: [],
+          group: [],
+          enviroments: [],
+        },
+        successes: {
+          apiData: [],
+          group: [],
+          enviroments: [],
+        },
       };
-      this.importEnv(enviroments, uuid, errors);
-      return this.importCollects(collections, uuid, 0, errors);
+      this.importEnv(enviroments, uuid, data);
+      return this.importCollects(collections, uuid, importDto.groupID, data);
     }
     return '导入失败，项目不存在';
   }
@@ -126,21 +134,26 @@ export class ProjectService {
   async importEnv(
     enviroments: Environment[] = [],
     projectID: number,
-    errors: Errors,
+    importResult: ImportResult,
   ) {
-    enviroments.forEach((item) => {
+    const promiseTask = enviroments.map(async (item) => {
       const env = {
         ...item,
         parameters: item.parameters as unknown as string,
       };
       const result = parseAndCheckEnv(env);
       if (!result.validate) {
-        errors.enviroments.push(result);
+        importResult.errors.enviroments.push(result);
       } else {
         result.data.projectID = projectID;
-        this.environmentService.create(result.data);
+        const env = await this.environmentService.create(result.data);
+        importResult.successes.enviroments.push({
+          name: env.name,
+          uuid: env.uuid,
+        });
       }
     });
+    await Promise.allSettled(promiseTask);
   }
 
   getJSONString(target: any) {
@@ -161,8 +174,8 @@ export class ProjectService {
     collections: Child[],
     projectID: number,
     parentID = 0,
-    errors: Errors,
-  ): Promise<Errors> {
+    importResult: ImportResult,
+  ): Promise<ImportResult> {
     return collections.reduce(async (prev: any, curr: any) => {
       Reflect.deleteProperty(curr, 'uuid');
       if (curr.uri || curr.method || curr.protocol) {
@@ -170,12 +183,17 @@ export class ProjectService {
         if (!result.validate) {
           (await prev).apiData.push(curr.name || curr.uri);
         } else {
-          await this.apiDataService.create({
+          const apiData = await this.apiDataService.create({
             ...curr,
             requestBody: this.getJSONString(curr.requestBody || []),
             responseBody: this.getJSONString(curr.responseBody || []),
             projectID,
             groupID: parentID,
+          });
+          importResult.successes.apiData.push({
+            uri: apiData.uri,
+            name: apiData.name,
+            uuid: apiData.uuid,
           });
         }
       } else {
@@ -183,18 +201,27 @@ export class ProjectService {
           delete curr.children;
           (await prev).group.push(curr);
         } else {
-          const { uuid } = await this.apiGroupService.create({
+          const group = await this.apiGroupService.create({
             ...curr,
             projectID,
             parentID,
           });
+          importResult.successes.group.push({
+            name: group.name,
+            uuid: group.uuid,
+          });
           if (Array.isArray(curr.children) && curr.children.length) {
-            await this.importCollects(curr.children, projectID, uuid, errors);
+            await this.importCollects(
+              curr.children,
+              projectID,
+              group.uuid,
+              importResult,
+            );
           }
         }
       }
       return prev;
-    }, errors);
+    }, importResult);
   }
 
   async getProjectCollections(projectID: number) {

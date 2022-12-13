@@ -98,14 +98,7 @@ export class ProjectController {
     @Body() importDto: ImportDto,
   ) {
     // console.log('projectID', projectID, importDto);
-    const data = await this.service.import(
-      workspaceID,
-      Number(projectID),
-      importDto,
-    );
-    return {
-      errors: data,
-    };
+    return this.service.import(workspaceID, Number(projectID), importDto);
   }
 
   @ApiOkResponseData(ExportCollectionsResultDto)
