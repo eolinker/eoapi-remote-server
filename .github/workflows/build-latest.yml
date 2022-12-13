@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*.*.*'
 
+env:
+  VERSION: ${{ github.ref_name }}
+
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -23,6 +26,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: eolinker/eoapi-remote-server:latest
+          tags: eolinker/eoapi-remote-server:latest,eolinker/eoapi-remote-server:${ VERSION##*v }
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
