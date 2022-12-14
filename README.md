@@ -1,6 +1,8 @@
 # eoapi-remote-server
 
-Eoapi 远程数据源后端服务，部署后即可通过公共数据源实现简单团队协作
+Eoapi 远程数据源后端服务，部署后即可通过公共数据源实现简单团队协作。
+
+如果你的数据不需要共享，也可以仅下载客户端单机使用。
 
 ## 部署
 请访问 [部署文档](https://docs.eoapi.io/docs/storage.html)
