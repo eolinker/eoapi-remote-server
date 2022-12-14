@@ -38,7 +38,7 @@ export class ProjectController {
     @Param('workspaceID', ParseIntPipe) workspaceID,
     @Body() createDto: CreateDto,
   ) {
-    const data = await this.service.create(createDto);
+    const data = await this.service.create(createDto, workspaceID);
     return this.findOne(workspaceID, `${data.uuid}`);
   }
 

@@ -10,19 +10,34 @@ import { QueryDto } from './dto/query.dto';
 import { Child, Environment, ImportDto, ImportResult } from './dto/import.dto';
 import { parseAndCheckApiData, parseAndCheckEnv } from './validate';
 import { Project } from '@/entities/project.entity';
+import { WorkspaceEntity } from '@/entities/workspace.entity';
 
 @Injectable()
 export class ProjectService {
   constructor(
     @InjectRepository(Project)
     private readonly repository: Repository<Project>,
+    @InjectRepository(WorkspaceEntity)
+    private workspaceRepository: Repository<WorkspaceEntity>,
     private readonly apiDataService: ApiDataService,
     private readonly apiGroupService: ApiGroupService,
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  async create(createDto: CreateDto) {
-    return await this.repository.save(createDto);
+  async create(createDto: CreateDto, workspaceID: number) {
+    const workspace = await this.workspaceRepository.findOne({
+      where: {
+        id: workspaceID,
+      },
+      relations: {
+        users: true,
+      },
+    });
+    return await this.repository.save({
+      ...createDto,
+      workspace,
+      users: workspace.users,
+    });
   }
 
   async save(project: DeepPartial<Project>) {
