@@ -1,4 +1,5 @@
 export class ImportDto {
+  groupID: number;
   collections: Child[];
   enviroments: Environment[];
 }
@@ -284,3 +285,16 @@ export interface ApiData {
    */
   responseBodyJsonType?: JsonRootType | string;
 }
+
+export type ImportResult = {
+  errors: {
+    apiData: any[];
+    group: any[];
+    enviroments: any[];
+  };
+  successes: {
+    apiData: any[];
+    group: any[];
+    enviroments: any[];
+  };
+};

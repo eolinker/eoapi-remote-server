@@ -29,7 +29,10 @@ import {
 import { WorkspaceEntity } from '@/entities/workspace.entity';
 import { IUser, User } from '@/common/decorators/user.decorator';
 import { UserEntity } from '@/entities/user.entity';
-import { Collections } from '@/modules/workspace/project/dto/import.dto';
+import {
+  Collections,
+  ImportDto,
+} from '@/modules/workspace/project/dto/import.dto';
 import { ProjectService } from '@/modules/workspace/project/project.service';
 import { sampleApiData } from '@/modules/workspace/apiData/samples/sample.api.data';
 import { ApiDataService } from '@/modules/workspace/apiData/apiData.service';
@@ -74,14 +77,14 @@ export class WorkspaceController {
   @ApiCreatedResponseData()
   @Post('upload')
   @ApiOperation({ summary: '导入本地数据并创建空间' })
-  async importLocalData(@User() user: IUser, @Body() collections: Collections) {
+  async importLocalData(@User() user: IUser, @Body() importDto: ImportDto) {
     const workspace = await this.workspaceService.create(user.userId, {
       title: '默认空间',
     });
     const exportResult = await this.projectService.import(
       workspace.id,
       workspace.projects.at(0).uuid,
-      collections,
+      importDto,
     );
     if (typeof exportResult === 'string') {
       return new Error(exportResult);

@@ -1,9 +1,12 @@
 name: Build Latest Image
 
 on:
-  push:
-    branches:
-      - 'main'
+  release:
+    types:
+      - "published"
+
+env:
+  VERSION: ${{ github.ref_name }}
 
 jobs:
   docker:
@@ -21,8 +24,9 @@ jobs:
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v3
+         run: echo "tag=${ VERSION##*v }" >> $GITHUB_OUTPUT
         with:
           push: true
-          tags: eolinker/eoapi-remote-server:latest
+          tags: eolinker/eoapi-remote-server:latest,eolinker/eoapi-remote-server:${{ steps.vars.outputs.tag }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

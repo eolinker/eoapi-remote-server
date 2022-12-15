@@ -19,6 +19,7 @@ export class ApiDataService {
   ) {}
 
   async create(createDto: CreateDto) {
+    Reflect.deleteProperty(createDto, 'uuid');
     const project = await this.projectRepository.findOneBy({
       uuid: createDto.projectID,
     });
