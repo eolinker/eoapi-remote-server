@@ -126,8 +126,8 @@ export class WorkspaceService implements OnModuleInit {
         userID: item.id,
         workspaceID: workspaceId,
       });
-      const roleName = await this.roleRepo.findOneBy({ id: userRole.roleID });
-      Reflect.set(item, 'roleName', roleName);
+      const role = await this.roleRepo.findOneBy({ id: userRole.roleID });
+      Reflect.set(item, 'roleName', role.name);
     }
 
     return result as WorkspaceUser[];
@@ -191,8 +191,9 @@ export class WorkspaceService implements OnModuleInit {
     return this.workspaceRepository.save(workspace);
   }
 
-  async setMemberRole(dto: SetRoleDto) {
+  async setMemberRole(workspaceID: number, dto: SetRoleDto) {
     const userRole = await this.workspaceUserRoleRepo.findOneBy({
+      workspaceID,
       userID: dto.memberID,
     });
     userRole.roleID = dto.roleID;
@@ -219,5 +220,12 @@ export class WorkspaceService implements OnModuleInit {
       permissions: permissions.map((n) => n.name),
       role,
     };
+  }
+
+  async hasWorkspaceAuth(workspaceID: number, userID: number) {
+    return this.workspaceUserRoleRepo.findOneBy({
+      workspaceID,
+      userID,
+    });
   }
 }

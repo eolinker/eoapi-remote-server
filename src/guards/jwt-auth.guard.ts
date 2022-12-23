@@ -14,6 +14,7 @@ import { AuthService } from '@/modules/auth/auth.service';
 import { IUser } from '@/common/decorators/user.decorator';
 import { UserService } from '@/modules/user/user.service';
 import { ProjectService } from '@/modules/workspace/project/project.service';
+import { WorkspaceService } from '@/modules/workspace/workspace.service';
 
 /**
  * admin perm check guard
@@ -26,6 +27,7 @@ export class JwtAuthGuard implements CanActivate {
     private authService: AuthService,
     private userService: UserService,
     private projectService: ProjectService,
+    private workspaceService: WorkspaceService,
     private readonly config: ConfigService,
   ) {}
 
@@ -65,34 +67,28 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException('当前用户不存在');
     }
 
+    const userID = request.currentUser.userId;
+
     const workspaceID = Number(
       request?.params?.workspaceID || request.headers['x-workspace-id'],
     );
     const projectID = Number(
       request?.params?.projectID || request.headers['x-project-id'],
     );
-    if (!Number.isNaN(workspaceID)) {
-      const hasWorkspaceAuth = await this.userService.findOneBy({
-        id: request.currentUser.userId,
-        workspaces: {
-          id: workspaceID,
-        },
-        ...(Number.isNaN(projectID)
-          ? {}
-          : {
-              projects: {
-                uuid: projectID,
-              },
-            }),
-      });
+    if (Number(workspaceID) > 0) {
+      const hasWorkspaceAuth = await this.workspaceService.hasWorkspaceAuth(
+        workspaceID,
+        userID,
+      );
       if (!hasWorkspaceAuth) {
         throw new ForbiddenException('没有该空间访问权限');
       }
     }
-    if (!Number.isNaN(projectID)) {
-      const hasProjectAuth = await this.projectService.findOne(
+    if (Number(projectID) > 0) {
+      const hasProjectAuth = await this.projectService.hasProjectAuth(
         workspaceID,
         projectID,
+        userID,
       );
       if (!hasProjectAuth) {
         throw new ForbiddenException('没有该项目访问权限');

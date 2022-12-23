@@ -219,8 +219,8 @@ export class WorkspaceController {
 
   @Post(':workspaceID/member/setRole')
   @ApiOperation({ summary: '设置空间成员角色' })
-  async setMemberRole(@Body() dto: SetRoleDto) {
-    return this.workspaceService.setMemberRole(dto);
+  async setMemberRole(@Param('workspaceID') id, @Body() dto: SetRoleDto) {
+    return this.workspaceService.setMemberRole(id, dto);
   }
 
   @Get(':workspaceID/roles')
