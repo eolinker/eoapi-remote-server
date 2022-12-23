@@ -124,7 +124,14 @@ export class updateTable11101671725826115 implements MigrationInterface {
         },
       );
       // project editor 没有删除或更新项目操作
-      if (!['update:project', 'delete:project'].some((n) => n === name)) {
+      if (
+        ![
+          'update:project',
+          'delete:project',
+          'update:project:member',
+          'delete:project:member',
+        ].some((n) => n === name)
+      ) {
         await queryRunner.manager.insert<RolePermissionEntity>(
           'role_permission',
           {
