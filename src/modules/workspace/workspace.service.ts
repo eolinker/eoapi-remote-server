@@ -73,11 +73,11 @@ export class WorkspaceService implements OnModuleInit {
       description: createWorkspaceDto.title + 'My project',
     });
 
-    this.projectUserRoleRepo.save({
-      projectID: project.uuid,
-      userID: creator.id,
-      roleID: RoleEnum.ProjectOwnerRoleID,
-    });
+    // this.projectUserRoleRepo.save({
+    //   projectID: project.uuid,
+    //   userID: creator.id,
+    //   roleID: RoleEnum.ProjectOwnerRoleID,
+    // })
 
     creator.projects = (creator?.projects || []).concat(project);
 

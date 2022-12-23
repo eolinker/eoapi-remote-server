@@ -82,15 +82,20 @@ export class ProjectService implements OnModuleInit {
 
   async getMemberList(
     projectID: number,
+    workspaceID: number,
     username = '',
   ): Promise<WorkspaceUser[]> {
-    const userRoles = await this.projectUserRoleRepo.find({
+    const pUserRoles = await this.projectUserRoleRepo.find({
       where: { projectID },
     });
-    console.log('userRoles', userRoles, projectID);
+
+    const wUserRoles = await this.workspaceUserRoleRepo.find({
+      where: { workspaceID, roleID: RoleEnum.WorkspaceOwnerRoleID },
+    });
+
     const users = await this.userService.find({
       where: {
-        id: In(userRoles.map((n) => n.userID)),
+        id: In([...pUserRoles, ...wUserRoles].map((n) => n.userID)),
         username: Like(`%${username}%`),
       },
     });
