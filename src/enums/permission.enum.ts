@@ -1,4 +1,4 @@
-export enum Permission {
+export enum PermissionEnum {
   /** workspace */
   UPDATE_WORKSPACE = 'update:workspace',
   DELETE_WORKSPACE = 'delete:workspace',

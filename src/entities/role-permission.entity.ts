@@ -2,7 +2,7 @@ import { Column, Entity } from 'typeorm';
 import { BaseEntity } from './base.new.entity';
 
 @Entity({ name: 'role_permission' })
-export class RolePermission extends BaseEntity {
+export class RolePermissionEntity extends BaseEntity {
   @Column({ type: 'int', name: 'role_id', unsigned: true, comment: '角色ID' })
   roleID: number;
 

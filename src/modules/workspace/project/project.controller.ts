@@ -10,11 +10,12 @@ import {
   ParseIntPipe,
   NotFoundException,
   UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ProjectService } from './project.service';
 import { CreateDto } from './dto/create.dto';
-import { UpdateDto } from './dto/update.dto';
+import { SetRoleDto, UpdateDto } from './dto/update.dto';
 import { CollectionsDto, QueryDto } from './dto/query.dto';
 import { ImportDto } from './dto/import.dto';
 import { WORKSPACE_ID_PREFIX } from '@/common/contants/prefix.contants';
@@ -28,6 +29,12 @@ import {
   ExportCollectionsResultDto,
 } from '@/modules/workspace/project/dto/export.dto';
 import { RolesGuard } from '@/guards';
+import { IUser, User } from '@/common/decorators/user.decorator';
+import {
+  WorkspaceMemberAddDto,
+  WorkspaceMemberRemoveDto,
+} from '@/modules/workspace/workspace.dto';
+import { RoleEntity } from '@/entities/role.entity';
 
 @ApiTags('Project')
 @Controller(`${WORKSPACE_ID_PREFIX}/project`)
@@ -127,5 +134,52 @@ export class ProjectController {
     @Param('projectID', ParseIntPipe) projectID: number,
   ) {
     return this.service.getProjectCollections(projectID);
+  }
+
+  @ApiCreatedResponseData(Project)
+  @Post(':projectID/member/add')
+  @ApiOperation({ summary: '添加项目成员' })
+  async memberAdd(
+    @User() user: IUser,
+    @Param('projectID') projectID,
+    @Body() addMemberDto: WorkspaceMemberAddDto,
+  ) {
+    return this.service.memberAdd(projectID, addMemberDto);
+  }
+
+  @ApiOkResponseData(Project)
+  @Delete(':projectID/member/remove')
+  @ApiOperation({ summary: '移除项目成员' })
+  async memberRemove(
+    @User() user: IUser,
+    @Param('projectID') id,
+    @Body() createCatDto: WorkspaceMemberRemoveDto,
+  ) {
+    return '' as any;
+  }
+
+  @ApiOkResponseData(Project)
+  @Post(':projectID/member/leave')
+  @ApiOperation({ summary: '项目成员主动退出' })
+  async memberLeave(@User() user: IUser, @Param('projectID') id) {
+    return '' as any;
+  }
+
+  @Post(':projectID/member/setRole')
+  @ApiOperation({ summary: '设置项目成员角色' })
+  async setMemberRole(@User() user: IUser, @Body() dto: SetRoleDto) {
+    return '' as any;
+  }
+
+  @Get(':workspaceID/roles')
+  @ApiOperation({ summary: '获取当前项目角色列表' })
+  async getRoles(): Promise<RoleEntity[]> {
+    return [];
+  }
+
+  @Get(':projectID/permissions')
+  @ApiOperation({ summary: '获取当前项目权限' })
+  async getPermission(): Promise<string[]> {
+    return [];
   }
 }

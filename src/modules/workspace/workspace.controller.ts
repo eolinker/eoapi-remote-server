@@ -22,6 +22,8 @@ import { DeleteResult } from 'typeorm';
 import { WorkspaceService } from './workspace.service';
 import {
   CreateWorkspaceDto,
+  RolePermissionDto,
+  SetRoleDto,
   UpdateWorkspaceDto,
   WorkspaceMemberAddDto,
   WorkspaceMemberRemoveDto,
@@ -39,6 +41,8 @@ import {
   ApiOkResponseData,
 } from '@/common/class/res.class';
 import { RolesGuard } from '@/guards';
+import { RoleEntity } from '@/entities/role.entity';
+import { PermissionEntity } from '@/entities/permission.entity';
 
 @ApiBearerAuth()
 @ApiTags('workspace')
@@ -197,5 +201,41 @@ export class WorkspaceController {
       throw new ForbiddenException('空间创建者不能移除自己');
     }
     return this.workspaceService.removeMembers(id, createCatDto.userIDs);
+  }
+
+  @ApiOkResponseData(WorkspaceEntity)
+  @Post(':workspaceID/member/leave')
+  @ApiOperation({ summary: '空间成员主动退出' })
+  async memberLeave(
+    @User() user: IUser,
+    @Param('workspaceID') id,
+  ): Promise<WorkspaceEntity> {
+    const workspace = await this.workspaceService.findOne({ where: { id } });
+    if (!workspace) {
+      throw new UnauthorizedException('空间不存在');
+    }
+    return this.workspaceService.removeMembers(id, [user.userId]);
+  }
+
+  @Post(':workspaceID/member/setRole')
+  @ApiOperation({ summary: '设置空间成员角色' })
+  async setMemberRole(@Body() dto: SetRoleDto) {
+    return this.workspaceService.setMemberRole(dto);
+  }
+
+  @Get(':workspaceID/roles')
+  @ApiOperation({ summary: '获取当前空间角色列表' })
+  async getRoles(): Promise<RoleEntity[]> {
+    return [];
+  }
+
+  @ApiOkResponseData(RolePermissionDto)
+  @Get(':workspaceID/rolePermission')
+  @ApiOperation({ summary: '获取当前用户在空间的角色和权限' })
+  async getRolePermission(
+    @User() user: IUser,
+    @Param('workspaceID') workspaceID,
+  ): Promise<RolePermissionDto> {
+    return this.workspaceService.getRolePermission(user.userId, workspaceID);
   }
 }

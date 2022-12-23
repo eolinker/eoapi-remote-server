@@ -1,6 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayNotEmpty, IsArray, IsString, MinLength } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsInt,
+  IsString,
+  Max,
+  Min,
+  MinLength,
+} from 'class-validator';
+import { RoleEnum } from '@/enums/role.enum';
 import { UserEntity } from '@/entities/user.entity';
+import { RoleEntity } from '@/entities/role.entity';
 
 export class CreateWorkspaceDto {
   @ApiProperty({ description: '空间名称' })
@@ -31,4 +41,17 @@ export class WorkspaceUser extends UserEntity {
   @MinLength(1)
   @IsString()
   readonly roleName: string = 'member';
+}
+export class SetRoleDto {
+  @IsInt()
+  @Min(RoleEnum.WorkspaceOwnerRoleID)
+  @Max(RoleEnum.WorkspaceEditorRoleID)
+  roleID: number;
+
+  memberID: number;
+}
+
+export class RolePermissionDto {
+  permissions: string[];
+  role: RoleEntity;
 }

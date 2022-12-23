@@ -32,6 +32,10 @@ import { SharedEntity } from '@/entities/shared.entity';
 import { AuthEntity } from '@/entities/auth.entity';
 import { AuthService } from '@/modules/auth/auth.service';
 import { JwtStrategy } from '@/guards/jwt.strategy';
+import { RolePermissionEntity } from '@/entities/role-permission.entity';
+import { PermissionEntity } from '@/entities/permission.entity';
+import { RoleEntity } from '@/entities/role.entity';
+import { ProjectUserRoleEntity } from '@/entities/project-user-role.entity';
 
 const commonProviders = [
   WorkspaceService,
@@ -51,6 +55,10 @@ const commonProviders = [
     TypeOrmModule.forFeature([
       WorkspaceEntity,
       WorkspaceUserRoleEntity,
+      ProjectUserRoleEntity,
+      RoleEntity,
+      RolePermissionEntity,
+      PermissionEntity,
       UserEntity,
       Project,
       ApiData,

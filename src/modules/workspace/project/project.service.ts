@@ -11,6 +11,8 @@ import { Child, Environment, ImportDto, ImportResult } from './dto/import.dto';
 import { parseAndCheckApiData, parseAndCheckEnv } from './validate';
 import { Project } from '@/entities/project.entity';
 import { WorkspaceEntity } from '@/entities/workspace.entity';
+import { WorkspaceMemberAddDto } from '@/modules/workspace/workspace.dto';
+import { ProjectUserRoleEntity } from '@/entities/project-user-role.entity';
 
 @Injectable()
 export class ProjectService {
@@ -19,11 +21,18 @@ export class ProjectService {
     private readonly repository: Repository<Project>,
     @InjectRepository(WorkspaceEntity)
     private workspaceRepository: Repository<WorkspaceEntity>,
-
+    @InjectRepository(ProjectUserRoleEntity)
+    private readonly projectUserRoleRepo: Repository<ProjectUserRoleEntity>,
     private readonly apiDataService: ApiDataService,
     private readonly apiGroupService: ApiGroupService,
     private readonly environmentService: EnvironmentService,
   ) {}
+
+  async memberAdd(projectID: number, addMemberDto: WorkspaceMemberAddDto) {
+    return addMemberDto.userIDs.map((userID) => {
+      return this.projectUserRoleRepo.save({ projectID, userID });
+    });
+  }
 
   async create(createDto: CreateDto, workspaceID: number) {
     const workspace = await this.workspaceRepository.findOne({
