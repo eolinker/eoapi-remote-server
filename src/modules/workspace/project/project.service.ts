@@ -87,6 +87,7 @@ export class ProjectService implements OnModuleInit {
     const userRoles = await this.projectUserRoleRepo.find({
       where: { projectID },
     });
+    console.log('userRoles', userRoles, projectID);
     const users = await this.userService.find({
       where: {
         id: In(userRoles.map((n) => n.userID)),
