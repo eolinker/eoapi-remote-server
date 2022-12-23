@@ -110,7 +110,7 @@ export const sampleApiData = [
     method: 'GET',
     requestBodyType: 'raw',
     requestBodyJsonType: 'object',
-    requestBody: {},
+    requestBody: [],
     queryParams: [{ name: 'name', required: true, example: 'disease_h5' }],
     restParams: [],
     requestHeaders: [],
