@@ -93,19 +93,18 @@ export class ProjectService implements OnModuleInit {
       where: { workspaceID, roleID: RoleEnum.WorkspaceOwnerRoleID },
     });
 
+    const userRoles = [...pUserRoles, ...wUserRoles];
+
     const users = await this.userService.find({
       where: {
-        id: In([...pUserRoles, ...wUserRoles].map((n) => n.userID)),
+        id: In(userRoles.map((n) => n.userID)),
         username: Like(`%${username}%`),
       },
     });
 
     for (const item of users) {
-      const userRole = await this.projectUserRoleRepo.findOneBy({
-        userID: item.id,
-        projectID,
-      });
-      const role = await this.roleRepo.findOneBy({ id: userRole.roleID });
+      const target = userRoles.find((n) => n.userID === item.id);
+      const role = await this.roleRepo.findOneBy({ id: target.roleID });
       Reflect.set(item, 'role', role);
     }
 
