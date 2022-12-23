@@ -130,18 +130,6 @@ export class UserService implements OnModuleInit {
         password: this.utils.md5(userDto.password),
       });
       this.userRepository.update(user.id, { username: `user_${nanoid(10)}` });
-      if (user.id === 1) {
-        const defaultProject = await this.projectService.findOneBy(1);
-        if (defaultProject) {
-          this.workspaceService.create(
-            user.id,
-            {
-              title: '默认空间',
-            },
-            defaultProject,
-          );
-        }
-      }
 
       return {
         ...user,
