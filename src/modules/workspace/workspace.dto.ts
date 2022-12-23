@@ -40,7 +40,7 @@ export class WorkspaceUser extends UserEntity {
   @ApiProperty({ description: '成员身份' })
   @MinLength(1)
   @IsString()
-  readonly roleName: string = 'member';
+  readonly role: RoleEntity;
 }
 export class SetRoleDto {
   @IsInt()

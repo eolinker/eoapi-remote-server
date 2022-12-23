@@ -101,10 +101,9 @@ export class ProjectService implements OnModuleInit {
       });
       const role = await this.roleRepo.findOneBy({ id: userRole.roleID });
       Reflect.set(item, 'role', role);
-      Reflect.set(item, 'userID', item.id);
     }
 
-    return users as WorkspaceUser[];
+    return (users as WorkspaceUser[]).sort((a, b) => a.role.id - b.role.id);
   }
 
   async setProjectRole(projectID: number, dto: SetRoleDto) {
