@@ -37,6 +37,8 @@ import {
 } from '@/modules/workspace/workspace.dto';
 import { RoleEntity } from '@/entities/role.entity';
 import { UserEntity } from '@/entities/user.entity';
+import { Permissions } from '@/common/decorators/permission.decorator';
+import { PermissionEnum } from '@/enums/permission.enum';
 
 @ApiTags('Project')
 @Controller(`${WORKSPACE_ID_PREFIX}/project`)
@@ -70,6 +72,7 @@ export class ProjectController {
     return this.service.findAll(query, workspaceID);
   }
 
+  @Permissions(PermissionEnum.VIEW_PROJECT)
   @ApiOkResponseData(Project)
   @Get(':projectID')
   async findOne(
@@ -78,6 +81,8 @@ export class ProjectController {
   ) {
     return this.service.findOne(workspaceID, projectID);
   }
+
+  @Permissions(PermissionEnum.UPDATE_PROJECT)
   @ApiOkResponseData(Project)
   @Put(':projectID')
   async update(
@@ -92,6 +97,8 @@ export class ProjectController {
 
     return new NotFoundException('更新失败！项目不存在');
   }
+
+  @Permissions(PermissionEnum.DELETE_PROJECT)
   @ApiOkResponseData()
   @Delete(':projectID')
   async remove(@Param('projectID') projectID: string) {
@@ -159,6 +166,7 @@ export class ProjectController {
     return this.service.getMemberList(id, username);
   }
 
+  @Permissions(PermissionEnum.ADD_PROJECT_MEMBER)
   @ApiCreatedResponseData(Project)
   @Post(':projectID/member/add')
   @ApiOperation({ summary: '添加项目成员' })
@@ -170,6 +178,7 @@ export class ProjectController {
     return this.service.memberAdd(projectID, addMemberDto);
   }
 
+  @Permissions(PermissionEnum.DELETE_PROJECT__MEMBER)
   @ApiOkResponseData(Project)
   @Delete(':projectID/member/remove')
   @ApiOperation({ summary: '移除项目成员' })
@@ -201,8 +210,8 @@ export class ProjectController {
   }
 
   @ApiOkResponseData(RolePermissionDto)
-  @Get(':projectID/permissions')
-  @ApiOperation({ summary: '获取当前项目权限' })
+  @Get(':projectID/rolePermission')
+  @ApiOperation({ summary: '获取当前用户在项目的角色和权限' })
   async getPermission(
     @User() user: IUser,
     @Param('projectID') projectID,

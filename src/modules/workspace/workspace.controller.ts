@@ -42,7 +42,8 @@ import {
 } from '@/common/class/res.class';
 import { RolesGuard } from '@/guards';
 import { RoleEntity } from '@/entities/role.entity';
-import { PermissionEntity } from '@/entities/permission.entity';
+import { Permissions } from '@/common/decorators/permission.decorator';
+import { PermissionEnum } from '@/enums/permission.enum';
 
 @ApiBearerAuth()
 @ApiTags('workspace')
@@ -100,6 +101,7 @@ export class WorkspaceController {
     }
   }
 
+  @Permissions(PermissionEnum.UPDATE_WORKSPACE)
   @ApiOkResponseData(WorkspaceEntity)
   @Put(':workspaceID')
   @ApiOperation({ summary: '修改空间名称' })
@@ -110,6 +112,7 @@ export class WorkspaceController {
     return this.workspaceService.update(id, updateDto);
   }
 
+  @Permissions(PermissionEnum.DELETE_WORKSPACE)
   @ApiOkResponseData()
   @Delete(':workspaceID')
   @ApiOperation({ summary: '删除空间' })
@@ -167,6 +170,7 @@ export class WorkspaceController {
     return this.workspaceService.getMemberList(id, username);
   }
 
+  @Permissions(PermissionEnum.ADD_WORKSPACE_MEMBER)
   @ApiCreatedResponseData(WorkspaceEntity)
   @Post(':workspaceID/member/add')
   @ApiOperation({ summary: '添加空间成员' })
@@ -182,6 +186,7 @@ export class WorkspaceController {
     return this.workspaceService.addMembers(id, createCatDto.userIDs);
   }
 
+  @Permissions(PermissionEnum.DELETE_WORKSPACE__MEMBER)
   @ApiOkResponseData(WorkspaceEntity)
   @Delete(':workspaceID/member/remove')
   @ApiOperation({ summary: '移除空间成员' })
