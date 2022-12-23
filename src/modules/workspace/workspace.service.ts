@@ -127,7 +127,7 @@ export class WorkspaceService implements OnModuleInit {
         workspaceID: workspaceId,
       });
       const role = await this.roleRepo.findOneBy({ id: userRole.roleID });
-      Reflect.set(item, 'roleName', role.name);
+      Reflect.set(item, 'role', role);
     }
 
     return result as WorkspaceUser[];

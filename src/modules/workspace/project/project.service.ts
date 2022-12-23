@@ -100,7 +100,7 @@ export class ProjectService implements OnModuleInit {
         projectID,
       });
       const role = await this.roleRepo.findOneBy({ id: userRole.roleID });
-      Reflect.set(item, 'roleName', role.name);
+      Reflect.set(item, 'role', role);
     }
 
     return users as WorkspaceUser[];
