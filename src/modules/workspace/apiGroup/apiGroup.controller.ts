@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   NotFoundException,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ValidateQueryPipe } from 'src/pipe/query.pipe';
@@ -23,9 +24,11 @@ import {
   ApiOkResponseData,
 } from '@/common/class/res.class';
 import { ApiGroup } from '@/entities/apiGroup.entity';
+import { RolesGuard } from '@/guards';
 
 @ApiTags('apiGroup')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/group`)
+@UseGuards(RolesGuard)
 export class ApiGroupController {
   constructor(private readonly service: ApiGroupService) {}
 

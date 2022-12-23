@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { isEmpty } from 'lodash';
 import { IS_PUBLIC_KEY } from '@/common/decorators/public.decorator';
 import { AuthService } from '@/modules/auth/auth.service';
@@ -25,6 +26,7 @@ export class JwtAuthGuard implements CanActivate {
     private authService: AuthService,
     private userService: UserService,
     private projectService: ProjectService,
+    private readonly config: ConfigService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -43,17 +45,19 @@ export class JwtAuthGuard implements CanActivate {
     }
     try {
       // 挂载对象到当前请求上
-      request.currentUser = this.jwtService.verify<IUser>(token);
+      request.currentUser = this.jwtService.verify<IUser>(token, {
+        secret: this.config.get<string>('jwt.secret'),
+      });
       const isExit = await this.authService.findOne({ accessToken: token });
-      const { passwordVersion } = await this.userService.findOne({
+      const user = await this.userService.findOne({
         where: { id: request.currentUser.userId },
         select: ['passwordVersion'],
       });
-      if (!isExit || passwordVersion !== request.currentUser.pv) {
+      if (!isExit || user?.passwordVersion !== request.currentUser.pv) {
         throw new UnauthorizedException('您的密码已更新，请重新登录');
       }
     } catch (e) {
-      console.log('e', e);
+      console.log('JwtAuthGuard e', e);
       // 无法通过token校验
       throw new UnauthorizedException('token已失效，请重新登录');
     }

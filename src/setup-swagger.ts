@@ -13,7 +13,10 @@ export function setupSwagger(app: INestApplication): void {
   //   return;
   // }
 
-  const swaggerPath = configService.get<string>('swagger.path', '/swagger-api');
+  const swaggerPath = configService.get<string>(
+    'swagger.path',
+    '/swagger-docs',
+  );
   const swaggerConfig = new DocumentBuilder()
     .setTitle(configService.get<string>('swagger.title'))
     .setDescription(configService.get<string>('swagger.desc'))

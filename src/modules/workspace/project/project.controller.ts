@@ -9,8 +9,9 @@ import {
   Query,
   ParseIntPipe,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { ProjectService } from './project.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
@@ -26,9 +27,11 @@ import {
   ExportProjectResultDto,
   ExportCollectionsResultDto,
 } from '@/modules/workspace/project/dto/export.dto';
+import { RolesGuard } from '@/guards';
 
 @ApiTags('Project')
 @Controller(`${WORKSPACE_ID_PREFIX}/project`)
+@UseGuards(RolesGuard)
 export class ProjectController {
   constructor(private readonly service: ProjectService) {}
 

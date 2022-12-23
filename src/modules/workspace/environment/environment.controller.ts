@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { EnvironmentService } from './environment.service';
@@ -19,9 +20,11 @@ import {
   ApiOkResponseData,
 } from '@/common/class/res.class';
 import { Environment } from '@/entities/environment.entity';
+import { RolesGuard } from '@/guards';
 
 @ApiTags('Environment')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/environment`)
+@UseGuards(RolesGuard)
 export class EnvironmentController {
   private readonly NOT_FOUND = {
     statusCode: 201,

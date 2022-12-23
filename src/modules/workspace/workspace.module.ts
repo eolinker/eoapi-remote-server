@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { WorkspaceUserRoleEntity } from './../../entities/workspace-user-role.entity';
 import { WorkspaceController } from './workspace.controller';
 import { WorkspaceService } from './workspace.service';
 import { WorkspaceEntity } from '@/entities/workspace.entity';
@@ -26,6 +29,9 @@ import { UserModule } from '@/modules/user/user.module';
 import { SharedController } from '@/modules/workspace/shared/shared.controller';
 import { SharedService } from '@/modules/workspace/shared/shared.service';
 import { SharedEntity } from '@/entities/shared.entity';
+import { AuthEntity } from '@/entities/auth.entity';
+import { AuthService } from '@/modules/auth/auth.service';
+import { JwtStrategy } from '@/guards/jwt.strategy';
 
 const commonProviders = [
   WorkspaceService,
@@ -36,11 +42,15 @@ const commonProviders = [
   MockService,
   EnvironmentService,
   SharedService,
+  JwtService,
+  AuthService,
+  ConfigService,
 ];
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       WorkspaceEntity,
+      WorkspaceUserRoleEntity,
       UserEntity,
       Project,
       ApiData,
@@ -49,6 +59,7 @@ const commonProviders = [
       ApiGroup,
       Environment,
       SharedEntity,
+      AuthEntity,
     ]),
     UserModule,
   ],
@@ -62,7 +73,7 @@ const commonProviders = [
     ProjectController,
     SharedController,
   ],
-  providers: [...commonProviders],
+  providers: [...commonProviders, JwtStrategy],
   exports: [...commonProviders],
 })
 export class WorkspaceModule {}

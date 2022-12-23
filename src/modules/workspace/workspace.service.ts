@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ModuleRef } from '@nestjs/core';
+import { uniqBy } from 'lodash';
 import { DeleteResult, FindOneOptions, In, Like, Repository } from 'typeorm';
 import {
   CreateWorkspaceDto,
@@ -118,11 +119,11 @@ export class WorkspaceService implements OnModuleInit {
       },
     });
     users.forEach((user) => {
-      user.workspaces.push({
-        ...workspace,
-        users: [],
-      });
-      user.projects.push(...workspace.projects);
+      // user.workspaces.push({
+      //   ...workspace,
+      //   users: [],
+      // });
+      user.projects = uniqBy([...user.projects, ...workspace.projects], 'uuid');
       this.userService.updateUser(user);
     });
     workspace.users.push(...users);

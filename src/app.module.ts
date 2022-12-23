@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 // 引入数据库的及配置文件
@@ -10,6 +11,7 @@ import { getConfiguration } from './config/configuration';
 import { UserModule } from '@/modules/user/user.module';
 import { WorkspaceModule } from '@/modules/workspace/workspace.module';
 import { SharedModule } from '@/shared/shared.module';
+import { JwtAuthGuard } from '@/guards';
 
 console.log('process.env.NODE_ENV', `.env.${process.env.NODE_ENV}`);
 @Module({
@@ -33,7 +35,8 @@ console.log('process.env.NODE_ENV', `.env.${process.env.NODE_ENV}`);
         logging: configService.get('database.logging'),
         timezone: configService.get('database.timezone'), // 时区
       }),
-    }), // 数据库
+    }),
+    // 数据库
     WorkspaceModule,
     SharedModule,
     AuthModule, // 认证
@@ -41,6 +44,12 @@ console.log('process.env.NODE_ENV', `.env.${process.env.NODE_ENV}`);
     ShareDocsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

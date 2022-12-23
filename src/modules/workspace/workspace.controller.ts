@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -29,10 +30,7 @@ import {
 import { WorkspaceEntity } from '@/entities/workspace.entity';
 import { IUser, User } from '@/common/decorators/user.decorator';
 import { UserEntity } from '@/entities/user.entity';
-import {
-  Collections,
-  ImportDto,
-} from '@/modules/workspace/project/dto/import.dto';
+import { ImportDto } from '@/modules/workspace/project/dto/import.dto';
 import { ProjectService } from '@/modules/workspace/project/project.service';
 import { sampleApiData } from '@/modules/workspace/apiData/samples/sample.api.data';
 import { ApiDataService } from '@/modules/workspace/apiData/apiData.service';
@@ -40,10 +38,12 @@ import {
   ApiCreatedResponseData,
   ApiOkResponseData,
 } from '@/common/class/res.class';
+import { RolesGuard } from '@/guards';
 
 @ApiBearerAuth()
 @ApiTags('workspace')
 @Controller('workspace')
+@UseGuards(RolesGuard)
 export class WorkspaceController {
   constructor(
     private readonly workspaceService: WorkspaceService,

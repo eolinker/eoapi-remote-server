@@ -1,6 +1,4 @@
 import {
-  forwardRef,
-  Inject,
   Injectable,
   OnModuleInit,
   UnauthorizedException,
@@ -8,11 +6,11 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ModuleRef } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { DeleteResult, FindOptionsWhere, Repository } from 'typeorm';
 import { nanoid } from 'nanoid';
 import { LoginInfoDto } from '@/modules/auth/dto/login.dto';
 import { UserService } from '@/modules/user/user.service';
-import { UserEntity } from '@/entities/user.entity';
 import { AuthEntity } from '@/entities/auth.entity';
 import {
   accessTokenExpiresIn,
@@ -29,6 +27,7 @@ export class AuthService implements OnModuleInit {
     private readonly authEntityRepository: Repository<AuthEntity>,
     private readonly jwtService: JwtService,
     private moduleRef: ModuleRef,
+    private readonly config: ConfigService,
   ) {}
   onModuleInit() {
     this.userService = this.moduleRef.get(UserService, { strict: false });
@@ -105,7 +104,10 @@ export class AuthService implements OnModuleInit {
     const result = {
       accessToken: this.jwtService.sign(
         { userId: userEntity.id, pv: userEntity.passwordVersion },
-        { expiresIn: accessTokenExpiresIn / 1000 },
+        {
+          expiresIn: accessTokenExpiresIn / 1000,
+          secret: this.config.get<string>('jwt.secret'),
+        },
       ),
       refreshToken: nanoid(),
       accessTokenExpiresAt: date.getTime() + accessTokenExpiresIn,

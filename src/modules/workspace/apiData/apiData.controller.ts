@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ValidateQueryPipe } from 'src/pipe/query.pipe';
@@ -21,9 +22,11 @@ import {
   ApiOkResponseData,
 } from '@/common/class/res.class';
 import { ApiData } from '@/entities/apiData.entity';
+import { RolesGuard } from '@/guards';
 
 @ApiTags('apiData')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/api_data`)
+@UseGuards(RolesGuard)
 export class ApiDataController {
   private readonly JSON_FIELDS = [
     'requestHeaders',

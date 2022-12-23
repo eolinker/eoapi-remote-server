@@ -19,6 +19,7 @@ export class ProjectService {
     private readonly repository: Repository<Project>,
     @InjectRepository(WorkspaceEntity)
     private workspaceRepository: Repository<WorkspaceEntity>,
+
     private readonly apiDataService: ApiDataService,
     private readonly apiGroupService: ApiGroupService,
     private readonly environmentService: EnvironmentService,

@@ -1,12 +1,21 @@
-import { Controller, Get, Post, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SharedService } from './shared.service';
 import { WORKSPACE_PROJECT_PREFIX } from '@/common/contants/prefix.contants';
 import { ApiCreatedResponseData } from '@/common/class/res.class';
 import { SharedEntity } from '@/entities/shared.entity';
+import { RolesGuard } from '@/guards';
 
 @ApiTags('Shared')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/shared`)
+@UseGuards(RolesGuard)
 export class SharedController {
   constructor(private readonly sharedService: SharedService) {}
 
