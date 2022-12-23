@@ -1,9 +1,9 @@
 name: Build Latest Image
 
 on:
-  release:
-    types:
-      - "published"
+  push:
+  tags:
+    - 'v*.*.*'
 
 env:
   VERSION: ${{ github.ref_name }}
