@@ -128,6 +128,7 @@ export class updateTable11101671725826115 implements MigrationInterface {
         ![
           'update:project',
           'delete:project',
+          'add:project:member',
           'update:project:member',
           'delete:project:member',
         ].some((n) => n === name)
