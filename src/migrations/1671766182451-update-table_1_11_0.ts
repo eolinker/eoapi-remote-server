@@ -90,7 +90,14 @@ export class updateTable11101671725826115 implements MigrationInterface {
         },
       );
       // workspace editor 没有删除或移除操作
-      if (!['delete', 'remove'].some((n) => perm.name.includes(n))) {
+      if (
+        ![
+          'delete',
+          'remove',
+          'add:workspace:member',
+          'update:workspace:member',
+        ].some((n) => perm.name.includes(n))
+      ) {
         await queryRunner.manager.insert<RolePermissionEntity>(
           'role_permission',
           {
