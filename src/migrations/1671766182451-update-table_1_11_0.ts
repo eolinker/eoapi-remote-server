@@ -17,6 +17,9 @@ const workspaceOwnerPerms = [
   'view:project',
   'update:project',
   'delete:project',
+  'add:project:member',
+  'update:project:member',
+  'delete:project:member',
 ];
 
 export class updateTable11101671725826115 implements MigrationInterface {

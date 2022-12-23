@@ -14,6 +14,9 @@ export enum PermissionEnum {
   DELETE_PROJECT = 'delete:project',
   IMPORT_PROJECT = 'import:project',
   EXPORT_PROJECT = 'export:project',
+  ADD_PROJECT_MEMBER = 'add:project:member',
+  UPDATE_PROJECT_MEMBER = 'update:project:member',
+  DELETE_PROJECT__MEMBER = 'delete:project:member',
 
   /** apiGroup */
   VIEW_API_GROUP = 'view:apiGroup',
