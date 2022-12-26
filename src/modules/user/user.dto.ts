@@ -26,11 +26,6 @@ export class UpdateUserInfoDto extends PartialType(
 ) {}
 
 export class UpdateUserPasswordDto {
-  @ApiProperty({ description: '旧密码', required: false })
-  @MinLength(6)
-  @IsString()
-  readonly oldPassword: string;
-
   @ApiProperty({ description: '新密码', required: false })
   @MinLength(6)
   @IsString()
@@ -38,11 +33,6 @@ export class UpdateUserPasswordDto {
 }
 
 export class UserInfoValidator {
-  @ApiProperty({ description: '旧密码', required: false })
-  @MinLength(6)
-  @IsString()
-  readonly oldPassword: string;
-
   @ApiProperty({ description: '新密码', required: false })
   @MinLength(6)
   @IsString()

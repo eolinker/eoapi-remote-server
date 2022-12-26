@@ -82,11 +82,19 @@ export class ProjectService implements OnModuleInit {
 
   async getMemberList(
     projectID: number,
+    workspaceID: number,
     username = '',
   ): Promise<WorkspaceUser[]> {
-    const userRoles = await this.projectUserRoleRepo.find({
+    const pUserRoles = await this.projectUserRoleRepo.find({
       where: { projectID },
     });
+
+    const wUserRoles = await this.workspaceUserRoleRepo.find({
+      where: { workspaceID, roleID: RoleEnum.WorkspaceOwnerRoleID },
+    });
+
+    const userRoles = [...pUserRoles, ...wUserRoles];
+
     const users = await this.userService.find({
       where: {
         id: In(userRoles.map((n) => n.userID)),
@@ -95,11 +103,8 @@ export class ProjectService implements OnModuleInit {
     });
 
     for (const item of users) {
-      const userRole = await this.projectUserRoleRepo.findOneBy({
-        userID: item.id,
-        projectID,
-      });
-      const role = await this.roleRepo.findOneBy({ id: userRole.roleID });
+      const target = userRoles.find((n) => n.userID === item.id);
+      const role = await this.roleRepo.findOneBy({ id: target.roleID });
       Reflect.set(item, 'role', role);
     }
 
@@ -121,15 +126,18 @@ export class ProjectService implements OnModuleInit {
     projectID: number,
     workspaceID: number,
   ) {
-    const isWorkspaceOwner = await this.workspaceUserRoleRepo.findOneBy({
+    const workspaceOwner = await this.workspaceUserRoleRepo.findOneBy({
       userID,
       workspaceID,
     });
 
     // 如果是空间 owner，那么直接将项目 owner 的权限返回
-    if (isWorkspaceOwner) {
+    if (workspaceOwner) {
       const rolePerm = await this.rolePermissionRepo.findBy({
-        roleID: RoleEnum.ProjectOwnerRoleID,
+        roleID: In([
+          RoleEnum.WorkspaceOwnerRoleID,
+          RoleEnum.ProjectOwnerRoleID,
+        ]),
       });
       const permissions = await this.permissionRepo.findBy({
         id: In(rolePerm.map((n) => n.permissionID)),
@@ -138,7 +146,7 @@ export class ProjectService implements OnModuleInit {
       return {
         permissions: permissions.map((n) => n.name),
         role: await this.roleRepo.findOneBy({
-          id: RoleEnum.ProjectOwnerRoleID,
+          id: RoleEnum.WorkspaceOwnerRoleID,
         }),
       };
     }

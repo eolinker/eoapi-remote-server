@@ -149,8 +149,11 @@ export class ProjectController {
   @ApiOkResponseData(WorkspaceUser, 'array')
   @Get(':projectID/member/list')
   @ApiOperation({ summary: '获取项目成员列表' })
-  async getMemberList(@Param('projectID') projectID): Promise<WorkspaceUser[]> {
-    return this.service.getMemberList(projectID);
+  async getMemberList(
+    @Param('projectID', ParseIntPipe) projectID,
+    @Param('workspaceID', ParseIntPipe) workspaceID,
+  ): Promise<WorkspaceUser[]> {
+    return this.service.getMemberList(projectID, workspaceID);
   }
 
   @ApiOkResponseData(WorkspaceUser, 'array')
@@ -160,10 +163,11 @@ export class ProjectController {
     type: [UserEntity],
   })
   async searchMemberByName(
-    @Param('workspaceID') id,
+    @Param('projectID', ParseIntPipe) id,
+    @Param('workspaceID', ParseIntPipe) workspaceID,
     @Param('username') username,
   ): Promise<WorkspaceUser[]> {
-    return this.service.getMemberList(id, username);
+    return this.service.getMemberList(id, workspaceID, username);
   }
 
   @Permissions(PermissionEnum.ADD_PROJECT_MEMBER)

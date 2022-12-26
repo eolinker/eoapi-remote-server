@@ -20,14 +20,15 @@ export class RolesGuard implements CanActivate {
       [context.getHandler(), context.getClass()],
     );
     // 当前用户
-    const { currentUser, params } = context.switchToHttp().getRequest();
-    console.log('currentPerm', currentPerm, currentUser, params);
+    const { currentUser, params = {} } = context.switchToHttp().getRequest();
+    const userID = currentUser.userId;
+    // console.log('currentPerm', currentPerm, currentUser, params);
 
     if (!currentPerm) {
       return true;
     }
 
-    // const rolePermission = this.workspaceService.getRolePermission(currentUser);
+    // const rolePermission = this.workspaceService.getRolePermission(userID);
 
     return true;
     // return requiredRoles.some((role) => user.roles?.includes(role));

@@ -24,6 +24,7 @@ import { WorkspaceUserRoleEntity } from '@/entities/workspace-user-role.entity';
 import { RoleEnum } from '@/enums/role.enum';
 import { RoleEntity } from '@/entities/role.entity';
 import { RolePermissionEntity } from '@/entities/role-permission.entity';
+import { ProjectUserRoleEntity } from '@/entities/project-user-role.entity';
 
 @Injectable()
 export class WorkspaceService implements OnModuleInit {
@@ -34,6 +35,8 @@ export class WorkspaceService implements OnModuleInit {
     private workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(WorkspaceUserRoleEntity)
     private workspaceUserRoleRepo: Repository<WorkspaceUserRoleEntity>,
+    @InjectRepository(ProjectUserRoleEntity)
+    private projectUserRoleRepo: Repository<ProjectUserRoleEntity>,
     @InjectRepository(RoleEntity)
     private roleRepo: Repository<RoleEntity>,
     @InjectRepository(PermissionEntity)
@@ -69,6 +72,12 @@ export class WorkspaceService implements OnModuleInit {
       name: 'My project',
       description: createWorkspaceDto.title + 'My project',
     });
+
+    // this.projectUserRoleRepo.save({
+    //   projectID: project.uuid,
+    //   userID: creator.id,
+    //   roleID: RoleEnum.ProjectOwnerRoleID,
+    // })
 
     creator.projects = (creator?.projects || []).concat(project);
 
