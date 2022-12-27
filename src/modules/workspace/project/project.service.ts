@@ -12,6 +12,7 @@ import { Child, Environment, ImportDto, ImportResult } from './dto/import.dto';
 import { parseAndCheckApiData, parseAndCheckEnv } from './validate';
 import { Project } from '@/entities/project.entity';
 import { WorkspaceEntity } from '@/entities/workspace.entity';
+import packageJSON from 'package.json';
 import {
   WorkspaceMemberAddDto,
   WorkspaceMemberRemoveDto,
@@ -262,20 +263,20 @@ export class ProjectService implements OnModuleInit {
     }
     const project = await this.findOne(workspaceID, uuid);
     if (project) {
-      const { collections, enviroments } = importDto;
+      const { collections, environments } = importDto;
       const data = {
         errors: {
           apiData: [],
           group: [],
-          enviroments: [],
+          environments: [],
         },
         successes: {
           apiData: [],
           group: [],
-          enviroments: [],
+          environments: [],
         },
       };
-      this.importEnv(enviroments, uuid, data);
+      this.importEnv(environments, uuid, data);
       return this.importCollects(collections, uuid, importDto.groupID, data);
     }
     return '导入失败，项目不存在';
@@ -298,41 +299,43 @@ export class ProjectService implements OnModuleInit {
       .concat(apiDataFilters);
   }
 
-  async exportCollections(workspaceID: number, uuid: number) {
-    const project = await this.findOne(workspaceID, uuid);
+  async exportCollections(uuid: number) {
+    const project = await this.findOneBy(uuid);
     if (project) {
       const apiData = await this.apiDataService.findAll({ projectID: uuid });
       const apiGroup = await this.apiGroupService.findAll({ projectID: uuid });
-      const enviroments = await this.environmentService.findAll({
+      const environments = await this.environmentService.findAll({
         where: {
           projectID: uuid,
         },
       });
       return {
+        version: packageJSON.version,
+        project: project,
         collections: this.exportCollects(apiGroup, apiData),
-        enviroments,
+        environments,
       };
     }
     return '导出失败，项目不存在';
   }
 
   async importEnv(
-    enviroments: Environment[] = [],
+    environments: Environment[] = [],
     projectID: number,
     importResult: ImportResult,
   ) {
-    const promiseTask = enviroments.map(async (item) => {
+    const promiseTask = environments.map(async (item) => {
       const env = {
         ...item,
         parameters: item.parameters as unknown as string,
       };
       const result = parseAndCheckEnv(env);
       if (!result.validate) {
-        importResult.errors.enviroments.push(result);
+        importResult.errors.environments.push(result);
       } else {
         result.data.projectID = projectID;
         const env = await this.environmentService.create(result.data);
-        importResult.successes.enviroments.push({
+        importResult.successes.environments.push({
           name: env.name,
           uuid: env.uuid,
         });
@@ -416,17 +419,6 @@ export class ProjectService implements OnModuleInit {
     return {
       groups,
       apis,
-    };
-  }
-
-  async projectExport(projectID: number) {
-    return {
-      environment: await this.environmentService.findAll({
-        where: { projectID },
-      }),
-      group: await this.apiGroupService.findAll({ projectID }),
-      project: await this.repository.findOne({ where: { uuid: projectID } }),
-      apiData: await this.apiDataService.findAll({ projectID }),
     };
   }
 }

@@ -23,10 +23,7 @@ import {
   ApiOkResponseData,
 } from '@/common/class/res.class';
 import { Project } from '@/entities/project.entity';
-import {
-  ExportProjectResultDto,
-  ExportCollectionsResultDto,
-} from '@/modules/workspace/project/dto/export.dto';
+import { ExportProjectResultDto } from '@/modules/workspace/project/dto/export.dto';
 import { RolesGuard } from '@/guards';
 import { IUser, User } from '@/common/decorators/user.decorator';
 import {
@@ -121,21 +118,11 @@ export class ProjectController {
     return this.service.import(workspaceID, Number(projectID), importDto);
   }
 
-  @ApiOkResponseData(ExportCollectionsResultDto)
-  @Get(':projectID/export/collections')
-  async export(
-    @Param('projectID') projectID: string,
-    @Param('workspaceID', ParseIntPipe) workspaceID,
-  ) {
-    // console.log('projectID', projectID, importDto);
-    return this.service.exportCollections(workspaceID, Number(projectID));
-  }
-
   @ApiOkResponseData(ExportProjectResultDto)
   @Get(':projectID/export')
   async projectExport(@Param('projectID') projectID: string) {
     // console.log('projectID', projectID, importDto);
-    return this.service.projectExport(Number(projectID));
+    return this.service.exportCollections(Number(projectID));
   }
 
   @ApiOkResponseData(CollectionsDto)
