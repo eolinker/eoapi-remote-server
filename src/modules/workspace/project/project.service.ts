@@ -265,7 +265,7 @@ export class ProjectService implements OnModuleInit {
     if (project) {
       const { collections, environments } = importDto;
       const data = {
-        errors: {
+        error: {
           apiData: [],
           group: [],
           environments: [],
@@ -331,7 +331,7 @@ export class ProjectService implements OnModuleInit {
       };
       const result = parseAndCheckEnv(env);
       if (!result.validate) {
-        importResult.errors.environments.push(result);
+        importResult.error.environments.push(result);
       } else {
         result.data.projectID = projectID;
         const env = await this.environmentService.create(result.data);

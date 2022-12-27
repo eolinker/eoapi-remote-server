@@ -287,7 +287,7 @@ export interface ApiData {
 }
 
 export type ImportResult = {
-  errors: {
+  error: {
     apiData: any[];
     group: any[];
     environments: any[];
