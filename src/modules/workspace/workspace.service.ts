@@ -17,7 +17,6 @@ import {
 import { PermissionEntity } from '@/entities/permission.entity';
 import { WorkspaceEntity } from '@/entities/workspace.entity';
 import { UserService } from '@/modules/user/user.service';
-import { ProjectService } from '@/modules/workspace/project/project.service';
 import { Project } from '@/entities/project.entity';
 import { CreateDto as ProjectCreateDto } from '@/modules/workspace/project/dto/create.dto';
 import { WorkspaceUserRoleEntity } from '@/entities/workspace-user-role.entity';
@@ -43,7 +42,6 @@ export class WorkspaceService implements OnModuleInit {
     private permissionRepo: Repository<PermissionEntity>,
     @InjectRepository(RolePermissionEntity)
     private rolePermissionRepo: Repository<RolePermissionEntity>,
-    private projectService: ProjectService,
   ) {}
 
   onModuleInit() {
@@ -68,24 +66,16 @@ export class WorkspaceService implements OnModuleInit {
       },
     });
 
-    project ??= await this.projectService.save({
-      name: 'My project',
-      description: createWorkspaceDto.title + 'My project',
-    });
-
     // this.projectUserRoleRepo.save({
     //   projectID: project.uuid,
     //   userID: creator.id,
     //   roleID: RoleEnum.ProjectOwnerRoleID,
     // })
 
-    creator.projects = (creator?.projects || []).concat(project);
-
     const workspace = await this.workspaceRepository.save({
       ...createWorkspaceDto,
       creatorID,
       users: [await this.userService.updateUser(creator)],
-      projects: [project],
     });
     this.workspaceUserRoleRepo.save({
       workspaceID: workspace.id,

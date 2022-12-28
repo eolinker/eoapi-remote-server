@@ -51,7 +51,7 @@ export class ProjectController {
     @Body() createDto: CreateDto,
   ) {
     const data = await this.service.create(createDto, workspaceID, user.userId);
-    return this.findOne(workspaceID, `${data.uuid}`);
+    return await this.findOne(data.uuid, workspaceID);
   }
 
   @ApiCreatedResponseData()
@@ -76,7 +76,7 @@ export class ProjectController {
     @Param('projectID', ParseIntPipe) projectID,
     @Param('workspaceID', ParseIntPipe) workspaceID,
   ) {
-    return this.service.findOne(workspaceID, projectID);
+    return this.service.findOne(projectID, workspaceID);
   }
 
   @Permissions(PermissionEnum.UPDATE_PROJECT)
@@ -89,7 +89,7 @@ export class ProjectController {
   ) {
     const data = await this.service.update(+projectID, updateDto);
     if (data) {
-      return await this.findOne(workspaceID, projectID);
+      return await this.findOne(projectID, workspaceID);
     }
 
     return new NotFoundException('更新失败！项目不存在');

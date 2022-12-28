@@ -239,7 +239,7 @@ export class ProjectService implements OnModuleInit {
     });
   }
 
-  async findOne(workspaceID: number, uuid: number): Promise<Project> {
+  async findOne(uuid: number, workspaceID: number): Promise<Project> {
     return await this.repository.findOne({
       where: { uuid: Number(uuid), workspace: { id: workspaceID } },
     });
@@ -261,7 +261,7 @@ export class ProjectService implements OnModuleInit {
     if (!group) {
       return `导入失败，id为${importDto.groupID}的分组不存在`;
     }
-    const project = await this.findOne(workspaceID, uuid);
+    const project = await this.findOne(uuid, workspaceID);
     if (project) {
       const { collections, environments } = importDto;
       const data = {

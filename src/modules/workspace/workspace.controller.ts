@@ -34,7 +34,6 @@ import { IUser, User } from '@/common/decorators/user.decorator';
 import { UserEntity } from '@/entities/user.entity';
 import { ImportDto } from '@/modules/workspace/project/dto/import.dto';
 import { ProjectService } from '@/modules/workspace/project/project.service';
-import { sampleApiData } from '@/modules/workspace/apiData/samples/sample.api.data';
 import { ApiDataService } from '@/modules/workspace/apiData/apiData.service';
 import {
   ApiCreatedResponseData,
@@ -67,14 +66,6 @@ export class WorkspaceController {
     const workspace = await this.workspaceService.create(
       user.userId,
       createDto,
-    );
-    const project = workspace.projects.at(0);
-    this.apiDataService.batchCreate(
-      sampleApiData.map((item) => {
-        Reflect.deleteProperty(item, 'uuid');
-        Reflect.deleteProperty(item, 'uniqueID');
-        return { ...item, projectID: project.uuid, project };
-      }),
     );
     return workspace;
   }
