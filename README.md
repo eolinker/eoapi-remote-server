@@ -5,7 +5,7 @@ Eoapi 远程数据源后端服务，部署后即可通过公共数据源实现�
 如果你的数据不需要共享，也可以仅下载客户端单机使用。
 
 ## 部署
-请访问 [部署文档]([https://docs.eoapi.io/docs/storage.html](https://github.com/eolinker/eoapi-remote-server/wiki/%E4%BA%91%E7%AB%AF%E6%9C%8D%E5%8A%A1)
+请访问 [部署文档](https://github.com/eolinker/eoapi-remote-server/wiki/%E4%BA%91%E7%AB%AF%E6%9C%8D%E5%8A%A1)
 ## 开发
 Node.js 版本：^16
 
