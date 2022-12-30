@@ -6,14 +6,17 @@ export function setupSwagger(app: INestApplication): void {
   const configService: ConfigService = app.get(ConfigService);
 
   // 默认为启用
-  const enable = configService.get<boolean>('swagger.enable', true);
+  // const enable = configService.get<boolean>('swagger.enable', true);
 
   // 判断是否需要启用
-  if (!enable) {
-    return;
-  }
+  // if (!enable) {
+  //   return;
+  // }
 
-  const swaggerPath = configService.get<string>('swagger.path', '/swagger-api');
+  const swaggerPath = configService.get<string>(
+    'swagger.path',
+    '/swagger-docs',
+  );
   const swaggerConfig = new DocumentBuilder()
     .setTitle(configService.get<string>('swagger.title'))
     .setDescription(configService.get<string>('swagger.desc'))

@@ -1,28 +1,214 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository } from 'typeorm';
+import { ModuleRef } from '@nestjs/core';
+import { DeepPartial, In, Like, Repository } from 'typeorm';
 import { ApiGroupService } from '../apiGroup/apiGroup.service';
 import { ApiDataService } from '../apiData/apiData.service';
 import { EnvironmentService } from '../environment/environment.service';
 import { CreateDto } from './dto/create.dto';
-import { UpdateDto } from './dto/update.dto';
+import { SetRoleDto, UpdateDto } from './dto/update.dto';
 import { QueryDto } from './dto/query.dto';
 import { Child, Environment, ImportDto, ImportResult } from './dto/import.dto';
 import { parseAndCheckApiData, parseAndCheckEnv } from './validate';
 import { Project } from '@/entities/project.entity';
+import { WorkspaceEntity } from '@/entities/workspace.entity';
+import packageJSON from 'package.json';
+import {
+  WorkspaceMemberAddDto,
+  WorkspaceMemberRemoveDto,
+  WorkspaceUser,
+} from '@/modules/workspace/workspace.dto';
+import { ProjectUserRoleEntity } from '@/entities/project-user-role.entity';
+import { RoleEnum } from '@/enums/role.enum';
+import { RoleEntity } from '@/entities/role.entity';
+import { PermissionEntity } from '@/entities/permission.entity';
+import { RolePermissionEntity } from '@/entities/role-permission.entity';
+import { WorkspaceUserRoleEntity } from '@/entities/workspace-user-role.entity';
+import { UserService } from '@/modules/user/user.service';
 
 @Injectable()
-export class ProjectService {
+export class ProjectService implements OnModuleInit {
+  private userService: UserService;
   constructor(
+    private moduleRef: ModuleRef,
     @InjectRepository(Project)
     private readonly repository: Repository<Project>,
+    @InjectRepository(WorkspaceEntity)
+    private workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(ProjectUserRoleEntity)
+    private readonly projectUserRoleRepo: Repository<ProjectUserRoleEntity>,
+    @InjectRepository(RoleEntity)
+    private roleRepo: Repository<RoleEntity>,
+    @InjectRepository(PermissionEntity)
+    private permissionRepo: Repository<PermissionEntity>,
+    @InjectRepository(RolePermissionEntity)
+    private rolePermissionRepo: Repository<RolePermissionEntity>,
+    @InjectRepository(WorkspaceUserRoleEntity)
+    private workspaceUserRoleRepo: Repository<WorkspaceUserRoleEntity>,
     private readonly apiDataService: ApiDataService,
     private readonly apiGroupService: ApiGroupService,
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  async create(createDto: CreateDto) {
-    return await this.repository.save(createDto);
+  onModuleInit() {
+    this.userService = this.moduleRef.get(UserService, { strict: false });
+  }
+
+  async memberAdd(projectID: number, addMemberDto: WorkspaceMemberAddDto) {
+    return addMemberDto.userIDs.map((userID) => {
+      return this.projectUserRoleRepo.save({
+        projectID,
+        userID,
+        roleID: RoleEnum.ProjectEditorRoleID,
+      });
+    });
+  }
+
+  async memberRemove(
+    projectID: number,
+    createCatDto: WorkspaceMemberRemoveDto,
+  ) {
+    return this.projectUserRoleRepo.delete({
+      projectID,
+      userID: In(createCatDto.userIDs),
+    });
+  }
+
+  async memberLeave(userID: number, projectID: number) {
+    return this.projectUserRoleRepo.delete({
+      projectID,
+      userID,
+    });
+  }
+
+  async getMemberList(
+    projectID: number,
+    workspaceID: number,
+    username = '',
+  ): Promise<WorkspaceUser[]> {
+    const pUserRoles = await this.projectUserRoleRepo.find({
+      where: { projectID },
+    });
+
+    const wUserRoles = await this.workspaceUserRoleRepo.find({
+      where: { workspaceID, roleID: RoleEnum.WorkspaceOwnerRoleID },
+    });
+
+    const userRoles = [...pUserRoles, ...wUserRoles];
+
+    const users = await this.userService.find({
+      where: {
+        id: In(userRoles.map((n) => n.userID)),
+        username: Like(`%${username}%`),
+      },
+    });
+
+    for (const item of users) {
+      const target = userRoles.find((n) => n.userID === item.id);
+      const role = await this.roleRepo.findOneBy({ id: target.roleID });
+      Reflect.set(item, 'role', role);
+    }
+
+    return (users as WorkspaceUser[]).sort((a, b) => a.role.id - b.role.id);
+  }
+
+  async setProjectRole(projectID: number, dto: SetRoleDto) {
+    const projectUserRole = await this.projectUserRoleRepo.findOneBy({
+      projectID,
+      userID: dto.memberID,
+    });
+    projectUserRole.roleID = dto.roleID;
+
+    return this.projectUserRoleRepo.save(projectUserRole);
+  }
+
+  async getRolePermission(
+    userID: number,
+    projectID: number,
+    workspaceID: number,
+  ) {
+    const workspaceOwner = await this.workspaceUserRoleRepo.findOneBy({
+      userID,
+      workspaceID,
+    });
+
+    // 如果是空间 owner，那么直接将项目 owner 的权限返回
+    if (workspaceOwner) {
+      const rolePerm = await this.rolePermissionRepo.findBy({
+        roleID: In([
+          RoleEnum.WorkspaceOwnerRoleID,
+          RoleEnum.ProjectOwnerRoleID,
+        ]),
+      });
+      const permissions = await this.permissionRepo.findBy({
+        id: In(rolePerm.map((n) => n.permissionID)),
+      });
+
+      return {
+        permissions: permissions.map((n) => n.name),
+        role: await this.roleRepo.findOneBy({
+          id: RoleEnum.WorkspaceOwnerRoleID,
+        }),
+      };
+    }
+
+    const userRole = await this.projectUserRoleRepo.findOneBy({
+      userID,
+      projectID,
+    });
+    if (!userRole) {
+      throw new NotFoundException('获取失败！你不在该项目里');
+    }
+    const role = await this.roleRepo.findOneBy({ id: userRole.roleID });
+    const rolePerm = await this.rolePermissionRepo.findBy({
+      roleID: userRole.roleID,
+    });
+    const permissions = await this.permissionRepo.findBy({
+      id: In(rolePerm.map((n) => n.permissionID)),
+    });
+
+    return {
+      permissions: permissions.map((n) => n.name),
+      role,
+    };
+  }
+
+  async hasProjectAuth(workspaceID: number, projectID: number, userID: number) {
+    const isWorkspaceOwner = await this.workspaceUserRoleRepo.findOneBy({
+      userID,
+      workspaceID,
+    });
+    return (
+      isWorkspaceOwner ||
+      this.projectUserRoleRepo.findOneBy({
+        projectID,
+        userID,
+      })
+    );
+  }
+
+  async create(createDto: CreateDto, workspaceID: number, userID: number) {
+    const workspace = await this.workspaceRepository.findOne({
+      where: {
+        id: workspaceID,
+      },
+      relations: {
+        users: true,
+      },
+    });
+    const project = await this.repository.save({
+      ...createDto,
+      workspace,
+      users: workspace.users,
+    });
+
+    this.projectUserRoleRepo.save({
+      userID,
+      projectID: project.uuid,
+      roleID: RoleEnum.ProjectOwnerRoleID,
+    });
+
+    return project;
   }
 
   async save(project: DeepPartial<Project>) {
@@ -53,7 +239,7 @@ export class ProjectService {
     });
   }
 
-  async findOne(workspaceID: number, uuid: number): Promise<Project> {
+  async findOne(uuid: number, workspaceID: number): Promise<Project> {
     return await this.repository.findOne({
       where: { uuid: Number(uuid), workspace: { id: workspaceID } },
     });
@@ -75,22 +261,22 @@ export class ProjectService {
     if (!group) {
       return `导入失败，id为${importDto.groupID}的分组不存在`;
     }
-    const project = await this.findOne(workspaceID, uuid);
+    const project = await this.findOne(uuid, workspaceID);
     if (project) {
-      const { collections, enviroments } = importDto;
+      const { collections, environments } = importDto;
       const data = {
-        errors: {
+        error: {
           apiData: [],
           group: [],
-          enviroments: [],
+          environments: [],
         },
         successes: {
           apiData: [],
           group: [],
-          enviroments: [],
+          environments: [],
         },
       };
-      this.importEnv(enviroments, uuid, data);
+      this.importEnv(environments, uuid, data);
       return this.importCollects(collections, uuid, importDto.groupID, data);
     }
     return '导入失败，项目不存在';
@@ -113,41 +299,43 @@ export class ProjectService {
       .concat(apiDataFilters);
   }
 
-  async exportCollections(workspaceID: number, uuid: number) {
-    const project = await this.findOne(workspaceID, uuid);
+  async exportCollections(uuid: number) {
+    const project = await this.findOneBy(uuid);
     if (project) {
       const apiData = await this.apiDataService.findAll({ projectID: uuid });
       const apiGroup = await this.apiGroupService.findAll({ projectID: uuid });
-      const enviroments = await this.environmentService.findAll({
+      const environments = await this.environmentService.findAll({
         where: {
           projectID: uuid,
         },
       });
       return {
+        version: packageJSON.version,
+        project: project,
         collections: this.exportCollects(apiGroup, apiData),
-        enviroments,
+        environments,
       };
     }
     return '导出失败，项目不存在';
   }
 
   async importEnv(
-    enviroments: Environment[] = [],
+    environments: Environment[] = [],
     projectID: number,
     importResult: ImportResult,
   ) {
-    const promiseTask = enviroments.map(async (item) => {
+    const promiseTask = environments.map(async (item) => {
       const env = {
         ...item,
         parameters: item.parameters as unknown as string,
       };
       const result = parseAndCheckEnv(env);
       if (!result.validate) {
-        importResult.errors.enviroments.push(result);
+        importResult.error.environments.push(result);
       } else {
         result.data.projectID = projectID;
         const env = await this.environmentService.create(result.data);
-        importResult.successes.enviroments.push({
+        importResult.successes.environments.push({
           name: env.name,
           uuid: env.uuid,
         });
@@ -231,17 +419,6 @@ export class ProjectService {
     return {
       groups,
       apis,
-    };
-  }
-
-  async projectExport(projectID: number) {
-    return {
-      environment: await this.environmentService.findAll({
-        where: { projectID },
-      }),
-      group: await this.apiGroupService.findAll({ projectID }),
-      project: await this.repository.findOne({ where: { uuid: projectID } }),
-      apiData: await this.apiDataService.findAll({ projectID }),
     };
   }
 }

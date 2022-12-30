@@ -1,12 +1,17 @@
+此仓库已归档
+
 # eoapi-remote-server
 
 Eoapi 远程数据源后端服务，部署后即可通过公共数据源实现简单团队协作。
 
-如果你的数据不需要共享，也可以仅下载客户端单机使用。
+如果你的数据不需要共享，也可以仅下载 Eoapi 客户端单机使用。
 
 ## 部署
-请访问 [部署文档](https://docs.eoapi.io/docs/storage.html)
+
+请访问 [部署文档](https://github.com/eolinker/eoapi-remote-server/wiki/%E4%BA%91%E7%AB%AF%E6%9C%8D%E5%8A%A1)
+
 ## 开发
+
 Node.js 版本：^16
 
 如果想提高开发效率，可以安装 NestJS 官方提供的命令行 nestjs/cli 快速生成组件、服务等模板。
@@ -24,10 +29,11 @@ docker-compose run -d --service-ports mysql
 1. 安装依赖
 
 ```bash
-yarn 
+yarn
 ```
 
 2. 运行数据库迁移脚本
+
 ```bash
 yarn migration:run
 ```
@@ -40,8 +46,8 @@ yarn start:dev
 
 ### 运行
 
-| 命令            | 描述       |
-| --------------- | ---------- |
+| 命令                | 描述       |
+| ------------------- | ---------- |
 | `npm run start:dev` | 运行服务器 |
 
 ### 更新数据库

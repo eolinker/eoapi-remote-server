@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ValidateQueryPipe } from 'src/pipe/query.pipe';
@@ -21,9 +22,11 @@ import {
   ApiOkResponseData,
 } from '@/common/class/res.class';
 import { ApiTestHistory } from '@/entities/apiTestHistory.entity';
+import { RolesGuard } from '@/guards';
 
 @ApiTags('apiTestHistory')
 @Controller(`${WORKSPACE_PROJECT_PREFIX}/api_test_history`)
+@UseGuards(RolesGuard)
 export class ApiTestHistoryController {
   private readonly JSON_FIELDS = ['general', 'request', 'response'];
 

@@ -1,17 +1,29 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  OnModuleInit,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ModuleRef } from '@nestjs/core';
+import { uniqBy } from 'lodash';
 import { DeleteResult, FindOneOptions, In, Like, Repository } from 'typeorm';
 import {
   CreateWorkspaceDto,
+  SetRoleDto,
   UpdateWorkspaceDto,
   WorkspaceUser,
 } from './workspace.dto';
+import { PermissionEntity } from '@/entities/permission.entity';
 import { WorkspaceEntity } from '@/entities/workspace.entity';
 import { UserService } from '@/modules/user/user.service';
-import { ProjectService } from '@/modules/workspace/project/project.service';
 import { Project } from '@/entities/project.entity';
 import { CreateDto as ProjectCreateDto } from '@/modules/workspace/project/dto/create.dto';
+import { WorkspaceUserRoleEntity } from '@/entities/workspace-user-role.entity';
+import { RoleEnum } from '@/enums/role.enum';
+import { RoleEntity } from '@/entities/role.entity';
+import { RolePermissionEntity } from '@/entities/role-permission.entity';
+import { ProjectUserRoleEntity } from '@/entities/project-user-role.entity';
 
 @Injectable()
 export class WorkspaceService implements OnModuleInit {
@@ -20,7 +32,16 @@ export class WorkspaceService implements OnModuleInit {
     private moduleRef: ModuleRef,
     @InjectRepository(WorkspaceEntity)
     private workspaceRepository: Repository<WorkspaceEntity>,
-    private projectService: ProjectService,
+    @InjectRepository(WorkspaceUserRoleEntity)
+    private workspaceUserRoleRepo: Repository<WorkspaceUserRoleEntity>,
+    @InjectRepository(ProjectUserRoleEntity)
+    private projectUserRoleRepo: Repository<ProjectUserRoleEntity>,
+    @InjectRepository(RoleEntity)
+    private roleRepo: Repository<RoleEntity>,
+    @InjectRepository(PermissionEntity)
+    private permissionRepo: Repository<PermissionEntity>,
+    @InjectRepository(RolePermissionEntity)
+    private rolePermissionRepo: Repository<RolePermissionEntity>,
   ) {}
 
   onModuleInit() {
@@ -44,19 +65,24 @@ export class WorkspaceService implements OnModuleInit {
         projects: true,
       },
     });
-    project ??= await this.projectService.save({
-      name: '默认项目',
-      description: createWorkspaceDto.title + '默认项目',
-    });
 
-    creator.projects = (creator?.projects || []).concat(project);
+    // this.projectUserRoleRepo.save({
+    //   projectID: project.uuid,
+    //   userID: creator.id,
+    //   roleID: RoleEnum.ProjectOwnerRoleID,
+    // })
 
-    return this.workspaceRepository.save({
+    const workspace = await this.workspaceRepository.save({
       ...createWorkspaceDto,
       creatorID,
       users: [await this.userService.updateUser(creator)],
-      projects: [project],
     });
+    this.workspaceUserRoleRepo.save({
+      workspaceID: workspace.id,
+      userID: creator.id,
+      roleID: RoleEnum.WorkspaceOwnerRoleID,
+    });
+    return workspace;
   }
 
   async update(
@@ -93,13 +119,17 @@ export class WorkspaceService implements OnModuleInit {
         username: Like(`%${username}%`),
       },
     });
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: workspaceId,
-    });
-    return result.map((item) => ({
-      ...item,
-      roleName: item.id === workspace.creatorID ? 'Owner' : 'Member',
-    }));
+
+    for (const item of result) {
+      const userRole = await this.workspaceUserRoleRepo.findOneBy({
+        userID: item.id,
+        workspaceID: workspaceId,
+      });
+      const role = await this.roleRepo.findOneBy({ id: userRole.roleID });
+      Reflect.set(item, 'role', role);
+    }
+
+    return (result as WorkspaceUser[]).sort((a, b) => a.role.id - b.role.id);
   }
 
   async addMembers(workspaceId: number, userIDs: number[]) {
@@ -118,11 +148,16 @@ export class WorkspaceService implements OnModuleInit {
       },
     });
     users.forEach((user) => {
-      user.workspaces.push({
-        ...workspace,
-        users: [],
+      // user.workspaces.push({
+      //   ...workspace,
+      //   users: [],
+      // });
+      this.workspaceUserRoleRepo.save({
+        userID: user.id,
+        roleID: RoleEnum.WorkspaceEditorRoleID,
+        workspaceID: workspaceId,
       });
-      user.projects.push(...workspace.projects);
+      user.projects = uniqBy([...user.projects, ...workspace.projects], 'uuid');
       this.userService.updateUser(user);
     });
     workspace.users.push(...users);
@@ -130,6 +165,18 @@ export class WorkspaceService implements OnModuleInit {
   }
 
   async removeMembers(workspaceId: number, userIDs: number[]) {
+    const workspaceUserRoles = await this.workspaceUserRoleRepo.findBy({
+      userID: In(userIDs),
+    });
+    const workspaceUserRoleOwners = await this.workspaceUserRoleRepo.findBy({
+      roleID: RoleEnum.WorkspaceOwnerRoleID,
+    });
+    if (
+      workspaceUserRoleOwners.length === 1 &&
+      workspaceUserRoles.some((n) => n.roleID === RoleEnum.WorkspaceOwnerRoleID)
+    ) {
+      throw new BadRequestException('操作失败！至少需要一名空间 owner');
+    }
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       relations: {
@@ -139,6 +186,45 @@ export class WorkspaceService implements OnModuleInit {
     workspace.users = workspace.users.filter(
       (user) => !userIDs.includes(user.id),
     );
+    this.workspaceUserRoleRepo.delete({ userID: In(userIDs) });
     return this.workspaceRepository.save(workspace);
+  }
+
+  async setMemberRole(workspaceID: number, dto: SetRoleDto) {
+    const userRole = await this.workspaceUserRoleRepo.findOneBy({
+      workspaceID,
+      userID: dto.memberID,
+    });
+    userRole.roleID = dto.roleID;
+    return this.workspaceUserRoleRepo.save(userRole);
+  }
+
+  async getRolePermission(userID: number, workspaceID: number) {
+    const userRole = await this.workspaceUserRoleRepo.findOneBy({
+      userID,
+      workspaceID,
+    });
+    if (!userRole) {
+      throw new NotFoundException('获取失败！你不在该空间里');
+    }
+    const role = await this.roleRepo.findOneBy({ id: userRole.roleID });
+    const rolePerm = await this.rolePermissionRepo.findBy({
+      roleID: userRole.roleID,
+    });
+    const permissions = await this.permissionRepo.findBy({
+      id: In(rolePerm.map((n) => n.permissionID)),
+    });
+
+    return {
+      permissions: permissions.map((n) => n.name),
+      role,
+    };
+  }
+
+  async hasWorkspaceAuth(workspaceID: number, userID: number) {
+    return this.workspaceUserRoleRepo.findOneBy({
+      workspaceID,
+      userID,
+    });
   }
 }

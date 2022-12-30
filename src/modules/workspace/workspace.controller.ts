@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -21,6 +22,8 @@ import { DeleteResult } from 'typeorm';
 import { WorkspaceService } from './workspace.service';
 import {
   CreateWorkspaceDto,
+  RolePermissionDto,
+  SetRoleDto,
   UpdateWorkspaceDto,
   WorkspaceMemberAddDto,
   WorkspaceMemberRemoveDto,
@@ -29,21 +32,22 @@ import {
 import { WorkspaceEntity } from '@/entities/workspace.entity';
 import { IUser, User } from '@/common/decorators/user.decorator';
 import { UserEntity } from '@/entities/user.entity';
-import {
-  Collections,
-  ImportDto,
-} from '@/modules/workspace/project/dto/import.dto';
+import { ImportDto } from '@/modules/workspace/project/dto/import.dto';
 import { ProjectService } from '@/modules/workspace/project/project.service';
-import { sampleApiData } from '@/modules/workspace/apiData/samples/sample.api.data';
 import { ApiDataService } from '@/modules/workspace/apiData/apiData.service';
 import {
   ApiCreatedResponseData,
   ApiOkResponseData,
 } from '@/common/class/res.class';
+import { RolesGuard } from '@/guards';
+import { RoleEntity } from '@/entities/role.entity';
+import { Permissions } from '@/common/decorators/permission.decorator';
+import { PermissionEnum } from '@/enums/permission.enum';
 
 @ApiBearerAuth()
 @ApiTags('workspace')
 @Controller('workspace')
+@UseGuards(RolesGuard)
 export class WorkspaceController {
   constructor(
     private readonly workspaceService: WorkspaceService,
@@ -62,14 +66,6 @@ export class WorkspaceController {
     const workspace = await this.workspaceService.create(
       user.userId,
       createDto,
-    );
-    const project = workspace.projects.at(0);
-    this.apiDataService.batchCreate(
-      sampleApiData.map((item) => {
-        Reflect.deleteProperty(item, 'uuid');
-        Reflect.deleteProperty(item, 'uniqueID');
-        return { ...item, projectID: project.uuid, project };
-      }),
     );
     return workspace;
   }
@@ -96,6 +92,7 @@ export class WorkspaceController {
     }
   }
 
+  @Permissions(PermissionEnum.UPDATE_WORKSPACE)
   @ApiOkResponseData(WorkspaceEntity)
   @Put(':workspaceID')
   @ApiOperation({ summary: '修改空间名称' })
@@ -106,6 +103,7 @@ export class WorkspaceController {
     return this.workspaceService.update(id, updateDto);
   }
 
+  @Permissions(PermissionEnum.DELETE_WORKSPACE)
   @ApiOkResponseData()
   @Delete(':workspaceID')
   @ApiOperation({ summary: '删除空间' })
@@ -163,6 +161,7 @@ export class WorkspaceController {
     return this.workspaceService.getMemberList(id, username);
   }
 
+  @Permissions(PermissionEnum.ADD_WORKSPACE_MEMBER)
   @ApiCreatedResponseData(WorkspaceEntity)
   @Post(':workspaceID/member/add')
   @ApiOperation({ summary: '添加空间成员' })
@@ -178,6 +177,7 @@ export class WorkspaceController {
     return this.workspaceService.addMembers(id, createCatDto.userIDs);
   }
 
+  @Permissions(PermissionEnum.DELETE_WORKSPACE__MEMBER)
   @ApiOkResponseData(WorkspaceEntity)
   @Delete(':workspaceID/member/remove')
   @ApiOperation({ summary: '移除空间成员' })
@@ -197,5 +197,41 @@ export class WorkspaceController {
       throw new ForbiddenException('空间创建者不能移除自己');
     }
     return this.workspaceService.removeMembers(id, createCatDto.userIDs);
+  }
+
+  @ApiOkResponseData(WorkspaceEntity)
+  @Post(':workspaceID/member/leave')
+  @ApiOperation({ summary: '空间成员主动退出' })
+  async memberLeave(
+    @User() user: IUser,
+    @Param('workspaceID') id,
+  ): Promise<WorkspaceEntity> {
+    const workspace = await this.workspaceService.findOne({ where: { id } });
+    if (!workspace) {
+      throw new UnauthorizedException('空间不存在');
+    }
+    return this.workspaceService.removeMembers(id, [user.userId]);
+  }
+
+  @Post(':workspaceID/member/setRole')
+  @ApiOperation({ summary: '设置空间成员角色' })
+  async setMemberRole(@Param('workspaceID') id, @Body() dto: SetRoleDto) {
+    return this.workspaceService.setMemberRole(id, dto);
+  }
+
+  @Get(':workspaceID/roles')
+  @ApiOperation({ summary: '获取当前空间角色列表' })
+  async getRoles(): Promise<RoleEntity[]> {
+    return [];
+  }
+
+  @ApiOkResponseData(RolePermissionDto)
+  @Get(':workspaceID/rolePermission')
+  @ApiOperation({ summary: '获取当前用户在空间的角色和权限' })
+  async getRolePermission(
+    @User() user: IUser,
+    @Param('workspaceID') workspaceID,
+  ): Promise<RolePermissionDto> {
+    return this.workspaceService.getRolePermission(user.userId, workspaceID);
   }
 }

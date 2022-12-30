@@ -86,16 +86,12 @@ export class UserService implements OnModuleInit {
   validateUser(userDto: Partial<UserEntity>) {
     const userValidator = new UserEntity();
     userValidator.email = userDto.username;
-    userValidator.mobilePhone = userDto.username;
 
     return validate(userValidator).then((errors) => {
       const result = {} as UserEntity;
       const validateFields = errors.map((n) => n.property);
       if (!validateFields.includes('email')) {
         result.email = userDto.username;
-      }
-      if (!validateFields.includes('mobilePhone')) {
-        result.mobilePhone = userDto.username;
       }
       return result;
     });
@@ -122,7 +118,7 @@ export class UserService implements OnModuleInit {
     } else {
       const other = await this.validateUser(userDto);
       if (Object.keys(other).length === 0) {
-        throw new Error('用户名必须是手机号码或邮箱');
+        throw new Error('用户名必须是邮箱');
       }
       const user = await this.userRepository.save({
         ...other,
@@ -130,18 +126,6 @@ export class UserService implements OnModuleInit {
         password: this.utils.md5(userDto.password),
       });
       this.userRepository.update(user.id, { username: `user_${nanoid(10)}` });
-      if (user.id === 1) {
-        const defaultProject = await this.projectService.findOneBy(1);
-        if (defaultProject) {
-          this.workspaceService.create(
-            user.id,
-            {
-              title: '默认空间',
-            },
-            defaultProject,
-          );
-        }
-      }
 
       return {
         ...user,
@@ -165,10 +149,6 @@ export class UserService implements OnModuleInit {
     userId,
     userInfoDto: UpdateUserInfoDto,
   ): Promise<UserEntity> {
-    // const other = await this.validateUser(userInfoDto);
-    // if (userInfoDto.username && Object.keys(other).length === 0) {
-    //   throw new Error('用户名必须是手机号码或邮箱');
-    // }
     const isConflict = await this.userRepository.findOne({
       where: { username: Equal(userInfoDto.username), id: Not(userId) },
     });
@@ -196,10 +176,10 @@ export class UserService implements OnModuleInit {
     if (!userPasswordDto.newPassword) {
       throw new ConflictException('新密码不能为空');
     }
-    const oldPassword = this.utils.md5(userPasswordDto.oldPassword);
-    if (oldPassword !== user.password) {
-      throw new ForbiddenException('旧密码验证失败');
-    }
+    // const oldPassword = this.utils.md5(userPasswordDto.oldPassword);
+    // if (oldPassword !== user.password) {
+    //   throw new ForbiddenException('旧密码验证失败');
+    // }
     await this.userRepository.update(userId, {
       password: this.utils.md5(userPasswordDto.newPassword),
       passwordVersion: user.passwordVersion + 1,

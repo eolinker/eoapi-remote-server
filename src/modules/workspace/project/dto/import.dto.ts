@@ -1,7 +1,7 @@
 export class ImportDto {
   groupID: number;
   collections: Child[];
-  enviroments: Environment[];
+  environments: Environment[];
 }
 
 export type Child =
@@ -30,7 +30,7 @@ export type Environment = {
 
 export type Collections = {
   collections: Child[];
-  enviroments: Environment[];
+  environments: Environment[];
 };
 
 export interface ParamsEnum {
@@ -287,14 +287,14 @@ export interface ApiData {
 }
 
 export type ImportResult = {
-  errors: {
+  error: {
     apiData: any[];
     group: any[];
-    enviroments: any[];
+    environments: any[];
   };
   successes: {
     apiData: any[];
     group: any[];
-    enviroments: any[];
+    environments: any[];
   };
 };

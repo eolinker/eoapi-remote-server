@@ -4,7 +4,7 @@ services:
   eoapi-remote-server:
     # build: 从当前路径构建镜像
     # build: .
-    image: eolinker/eoapi-remote-server:latest
+    image: eolinker/eoapi-remote-server:dev
     container_name: eoapi-remote-server
     deploy:
       restart_policy:
@@ -35,7 +35,7 @@ services:
       - eoapi_net
 
   eoapi:
-    image: eolinker/eoapi:latest
+    image: eolinker/eoapi:dev
     container_name: eoapi
     deploy:
       restart_policy:
@@ -51,7 +51,7 @@ services:
       - eoapi_net
 
   eoapi-test-server:
-    image: eolinker/eoapi-test-server:latest
+    image: eolinker/eoapi-test-server:dev
     container_name: eoapi-test-server
     deploy:
       restart_policy:
